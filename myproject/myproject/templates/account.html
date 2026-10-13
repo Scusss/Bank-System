@@ -1,0 +1,68 @@
+<style>
+  body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    font-family: sans-serif;
+  }
+
+  .balance-container {
+    text-align: center;
+    margin-bottom: 25px;
+    background: white;
+    padding: 15px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  .balance-label {
+    margin: 0;
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .balance-amount {
+    margin: 5px 0 0 0;
+    font-size: 32px;
+    font-weight: bold;
+    color: #090909;
+  }
+
+  .nav-container {
+    display: flex;
+    gap: 10px;
+  }
+
+
+  .nav-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4f5050;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+  }
+
+  .nav-btn:hover {
+    background-color: #1c1d1d;
+  }
+</style>
+
+<h1>{{balance}}</h1>
+<h2>{{fname}}</h2>
+<h3>{{lname}}</h3>
+<h4>{{email}}</h4>
+
+<nav class="nav-container">
+    <a class="nav-btn" href="{{ url_for('home', operation='home') }}">Home</a>
+</nav>
