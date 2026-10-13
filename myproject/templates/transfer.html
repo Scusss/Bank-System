@@ -1,0 +1,29 @@
+<style>
+  body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+</style>
+
+<form method="POST">
+    <p style="margin: 0 0 5px 0;">Transfer Page</p>
+
+    <div class="input-group">
+        <input name="name" placeholder="Amount">
+        <button type="submit">Enter</button>
+        <a href="{{ url_for('home') }}">
+            <button type="button">Go back to home</button>
+        </a>
+    </div>
+</form>
