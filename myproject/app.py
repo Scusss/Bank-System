@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask.views import MethodView
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 import enum
 
 MYSQL_USER = "root"
@@ -52,7 +53,7 @@ class TransactionList(db.Model):
 
 class HomeView(MethodView):
     def get(self):
-        account = Account.query.first()
+        account = Account.query.get(1)
         current_balance = account.balance if account else 0.00
         return render_template('home.html', balance=current_balance)
 
@@ -61,12 +62,35 @@ class BankView(MethodView):
         valid_operations = ['deposit', 'withdraw', 'transfer', 'receipts', 'account', 'home']
         if operation in valid_operations:
             return render_template(f'{operation}.html')
-        return "Page not found", 404
+        return "Page not found"
+
+class TransactionView(MethodView):
+    def post(self, operation):
+        account = Account.query.get(1)
+        amount = request.form.get("amount")
+        try:
+            amount = Decimal(amount)
+            if amount <= 0:
+                return "Amount must be greater than 0."
+        except (TypeError, InvalidOperation):
+            return "Invalid amount provided."
+        
+        if operation == 'deposit':
+            account.balance += amount
+        elif operation == 'withdraw':
+            account.balance -= amount
+            if account.balance < amount:
+                return "Insufficient funds."
+        else:
+            return "Invalid operation"
+        
+        db.session.commit()
+        return redirect(url_for('home'))
 
 class AccountView(MethodView):
     def get(self):
-        account = Account.query.first()
-        customer = Customer.query.first()
+        account = Account.query.get(1)
+        customer = Customer.query.get(1)
         current_balance = account.balance if account else 0.00
         first_name = customer.first_name
         last_name = customer.last_name
@@ -77,6 +101,7 @@ class AccountView(MethodView):
 app.add_url_rule('/', view_func=HomeView.as_view('home'))
 app.add_url_rule('/account', view_func=AccountView.as_view('account'))
 app.add_url_rule('/<operation>', view_func=BankView.as_view('bank'))
+app.add_url_rule('/transaction/<operation>', view_func=TransactionView.as_view('transaction'))
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -16,12 +16,12 @@
   }
 </style>
 
-<form method="POST">
+<form action="/transaction/deposit" method="POST">
     <p style="margin: 0 0 5px 0;">Deposit Page</p>
 
     <div class="input-group">
-        <input name="name" placeholder="Amount">
-        <button type="submit">Enter</button>
+        <input type="text" id="amount" name="amount" autocomplete="off">
+        <button type="submit">Deposit</button>
         <a href="{{ url_for('home') }}">
             <button type="button">Go back to home</button>
         </a>
