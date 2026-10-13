@@ -58,12 +58,24 @@ class HomeView(MethodView):
 
 class BankView(MethodView):
     def get(self, operation):
-        valid_operations = ['deposit', 'withdraw', 'transfer', 'receipts', 'account']
+        valid_operations = ['deposit', 'withdraw', 'transfer', 'receipts', 'account', 'home']
         if operation in valid_operations:
             return render_template(f'{operation}.html')
         return "Page not found", 404
 
+class AccountView(MethodView):
+    def get(self):
+        account = Account.query.first()
+        customer = Customer.query.first()
+        current_balance = account.balance if account else 0.00
+        first_name = customer.first_name
+        last_name = customer.last_name
+        email = customer.email
+        return render_template('account.html', balance=current_balance, fname=first_name, lname=last_name, email=email)
+
+
 app.add_url_rule('/', view_func=HomeView.as_view('home'))
+app.add_url_rule('/account', view_func=AccountView.as_view('account'))
 app.add_url_rule('/<operation>', view_func=BankView.as_view('bank'))
 
 if __name__ == '__main__':
