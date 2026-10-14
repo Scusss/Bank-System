@@ -75,9 +75,15 @@ class TransactionView(MethodView):
         except (TypeError, InvalidOperation):
             return "Invalid amount provided."
         
-        if operation == 'deposit':
+        if operation == 'deposit':  
             account.balance += amount
         elif operation == 'withdraw':
+            account.balance -= amount
+            if account.balance < amount:
+                return "Insufficient funds."
+        elif operation == 'transfer':
+            account2 = Account.query.get(2)
+            account2.balance += amount
             account.balance -= amount
             if account.balance < amount:
                 return "Insufficient funds."
@@ -104,4 +110,4 @@ app.add_url_rule('/<operation>', view_func=BankView.as_view('bank'))
 app.add_url_rule('/transaction/<operation>', view_func=TransactionView.as_view('transaction'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True) 
