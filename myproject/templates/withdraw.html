@@ -1,29 +1,154 @@
-<style>
-  body {
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f5f5f5;
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-  }
-</style>
+    <title>Withdraw Money</title>
 
-<form action="/transaction/withdraw" method="POST">
-    <p style="margin: 0 0 5px 0;">Withdraw Page</p>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
 
-    <div class="input-group">
-        <input type="text" id="amount" name="amount" autocomplete="off">
-        <button type="submit">Withdraw</button>
-        <a href="{{ url_for('home') }}">
-            <button type="button">Go back to home</button>
-        </a>
-    </div>
-</form>
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button,
+        .back-button {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .withdraw-button {
+            background-color: #198754;
+            color: white;
+        }
+
+        .withdraw-button:hover {
+            background-color: #157347;
+        }
+
+        .back-button {
+            background-color: #e9ecef;
+            color: #333;
+        }
+
+        .back-button:hover {
+            background-color: #dee2e6;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+
+          input[type="number"]::-webkit-inner-spin-button,
+          input[type="number"]::-webkit-outer-spin-button {
+              -webkit-appearance: none;
+              margin: 0;
+          }
+        }
+        .flash-message {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 10px;
+          border-radius: 6px;
+          font-size: 14px;
+          text-align: center;
+          }
+
+        .flash-message.error {
+          background-color: #f8d7da;
+          color: #842029;
+          border: 1px solid #f5c2c7;
+          }
+
+        .flash-message.success {
+          background-color: #d1e7dd;
+          color: #0f5132;
+          border: 1px solid #badbcc;
+          }
+    </style>
+</head>
+
+<body>
+    <form
+        action="{{ url_for('transactions.transaction', operation='withdraw') }}"
+        method="POST"
+    >
+        <p class="page-title">Withdraw</p>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash-message {{ category }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="input-group">
+            <label for="amount">Amount to withdraw</label>
+
+            <input
+                type="number"
+                id="amount"
+                name="amount"
+                min="0.01"
+                step="0.01"
+                placeholder="Enter amount"
+                autocomplete="off"
+                required
+            >
+
+            <button type="submit" class="withdraw-button">
+                Withdraw
+            </button>
+
+            <a href="{{ url_for('pages.home') }}"
+               class="back-button">
+                Go back to home
+            </a>
+        </div>
+    </form>
+</body>
+</html>

@@ -1,22 +1,153 @@
-<style>
-  body {
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f5f5f5;
-  }
 
-  form {
-    display: flex;
-    gap: 10px;
-  }
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt History</title>
 
-<form method="POST">
-    <p>Receipts Page</p>
-    <a href="{{ url_for('home') }}">
-        <button type="button">Go back to home</button>
-    </a>
-</form>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .balance {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #198754;
+            font-weight: bold;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 13px 10px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #f8f9fa;
+        }
+
+        .DEPOSIT {
+            color: #198754;
+            font-weight: bold;
+        }
+
+        .WITHDRAW {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .TRANSFER {
+            color: #0d6efd;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 25px;
+            color: #777;
+        }
+
+        .back-button {
+            display: block;
+            margin-top: 25px;
+            padding: 12px;
+            background: #e9ecef;
+            color: #333;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 6px;
+        }
+
+        .back-button:hover {
+            background: #dee2e6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Receipt History</h2>
+
+        <div class="balance">
+            Current Balance: ₱{{ "%.2f"|format(account.balance) }}
+        </div>
+
+        {% if receipts %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Receipt No.</th>
+                            <th>Date & Time</th>
+                            <th>Transaction</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for receipt in receipts %}
+                            <tr>
+                                <td>{{ receipt.transaction_id }}</td>
+
+                                <td>
+                                    {{ receipt.created_at.strftime("%b %d, %Y %I:%M %p") }}
+                                </td>
+
+                                <td class="{{ receipt.type_of_transaction.name }}">
+                                    {{ receipt.type_of_transaction.value }}
+                                </td>
+
+                                <td>
+                                    ₱{{ "%.2f"|format(receipt.amount) }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty">
+                No transaction receipts found.
+            </div>
+        {% endif %}
+
+        <a href="{{ url_for('pages.home') }}" class="back-button">
+            Go back to home
+        </a>
+    </div>
+</body>
+</html>
