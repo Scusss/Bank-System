@@ -1,7 +1,9 @@
 # Bank-System
 
-# python -c "import secrets; print(secrets.token_hex(32))"
-# for producing SECRET KEY
+create .env in app folder
+insert =
+python -c "import secrets; print(secrets.token_hex(32))"
+for producing SECRET KEY
 
 SECRET_KEY=COPY PASTE SECRET KEY
 
