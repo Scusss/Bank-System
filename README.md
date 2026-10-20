@@ -8,3 +8,5 @@ for producing SECRET KEY
 SECRET_KEY=COPY PASTE SECRET KEY
 
 DATABASE_URL = "mysql+pymysql://root:YOURPASSWORD@localhost:3306/bank"
+
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaA
