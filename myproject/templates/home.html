@@ -3,220 +3,783 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>home.html</title>
+    <meta name="theme-color" content="#f5f7fb">
+    <title>Home | MyBank</title>
+
     <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --background: #f5f7fb;
+            --surface: #ffffff;
+            --text: #172033;
+            --muted: #738096;
+            --border: #e7ebf2;
+            --danger: #dc3545;
+            --sidebar-width: 245px;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        body, html {
-            height: 100%;
-            background-color: #000;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                Roboto, Helvetica, Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
         }
 
-        .phone-frame {
-            width: 100%;
-            height: 100%;
-            background-color: #f2f2f2;
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 28px 18px;
             display: flex;
             flex-direction: column;
-            position: relative;
-            overflow: hidden;
+            flex-shrink: 0;
         }
 
-        .status-bar {
-            background-color: #000000;
-            color: #ffffff;
+        .brand {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 12px 20px 8px 20px;
-            font-size: 14px;
+            gap: 12px;
+            padding: 0 10px;
+            margin-bottom: 42px;
+        }
+
+        .brand-icon {
+            width: 43px;
+            height: 43px;
+            display: grid;
+            place-items: center;
+            background: var(--primary);
+            color: white;
+            border-radius: 13px;
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .brand-name {
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: -0.7px;
+        }
+
+        .brand-subtitle {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        .nav-label {
+            padding: 0 12px;
+            margin-bottom: 12px;
+            color: #9aa4b5;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.4px;
+        }
+
+        .nav-links {
+            display: grid;
+            gap: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 13px 14px;
+            border-radius: 10px;
+            color: #69758a;
+            font-size: 13px;
             font-weight: 600;
+            transition: background 0.2s, color 0.2s;
         }
 
-        .status-icons {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary);
+            background: #edf3ff;
         }
 
-        .browser-header {
-            background-color: #000000;
-            color: #ffffff;
-            padding: 10px 16px 14px 16px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            font-size: 16px;
-        }
-
-        .browser-header span {
-            cursor: pointer;
+        .nav-icon {
+            width: 22px;
+            text-align: center;
             font-size: 18px;
         }
 
-        .content-area {
-            flex: 1;
-            background-color: #f2f2f2;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 16px;
-            position: relative;
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 28px;
         }
 
-        .views-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
+        .security-note {
+            padding: 17px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fafbfe;
         }
 
-        .view-section {
-            display: none;
-            width: 100%;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .view-section.active {
-            display: flex;
-        }
-
-        .card {
-            background-color: #ffffff;
-            padding: 20px 24px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            text-align: center;
-            width: 100%;
-            max-width: 320px;
-        }
-
-        .card-title {
-            font-size: 11px;
-            font-weight: 600;
-            color: #666;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-        }
-
-        .card-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #111;
-        }
-
-        .button-container {
-            display: flex;
-            gap: 6px;
-            width: 100%;
-            padding-bottom: 20px;
-        }
-
-        .action-btn {
-            flex: 1;
-            background-color: #555555;
-            color: white;
-            border: none;
-            padding: 12px 2px;
-            font-size: 11px;
-            font-weight: 500;
-            border-radius: 4px;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            white-space: nowrap;
-            transition: background-color 0.2s;
-            display: inline-block;
-        }
-
-        .action-btn:hover {
-            background-color: #444444;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            text-align: left;
-            margin-top: 10px;
-        }
-
-        .form-group label {
+        .security-note strong {
+            display: block;
             font-size: 12px;
-            color: #555;
-            font-weight: 500;
+            margin-bottom: 7px;
         }
 
-        .form-group input {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-            outline: none;
+        .security-note p {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
         }
 
-        .submit-btn {
-            margin-top: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 4px;
-            font-weight: 600;
-            cursor: pointer;
+        .logout-form {
+            margin-top: 15px;
         }
 
-        .submit-btn:hover {
-            background-color: #0056b3;
-        }
-
-        .receipt-item {
+        .logout-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #fff1f2;
+            border: 1px solid #ffe0e3;
+            border-radius: 10px;
+            color: #c52f40;
             font-size: 13px;
-            color: #333;
-            border-bottom: 1px solid #eee;
-            padding: 8px 0;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .logout-button:hover {
+            background: #ffe3e6;
+        }
+
+        /* Main content */
+
+        .main {
+            min-width: 0;
+            flex: 1;
+            padding: 32px 40px;
+        }
+
+        .topbar {
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 36px;
+        }
+
+        .breadcrumb {
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 9px;
+        }
+
+        .page-title {
+            font-size: clamp(23px, 3vw, 30px);
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .page-subtitle {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 13px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: #e8efff;
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            font-size: 17px;
+        }
+
+        .profile-name {
+            font-size: 12px;
+            font-weight: 750;
+            overflow-wrap: anywhere;
+        }
+
+        .profile-role {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* Welcome banner */
+
+        .welcome {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            padding: 32px;
+            margin-bottom: 28px;
+            border-radius: 20px;
+            color: white;
+            background: linear-gradient(120deg, #1e40af, #2563eb 65%, #4f86ff);
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.13);
+        }
+
+        .welcome::after {
+            content: "";
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            right: 3%;
+            top: -135px;
+            border: 1px solid rgba(255,255,255,0.17);
+            border-radius: 50%;
+            box-shadow:
+                0 0 0 30px rgba(255,255,255,0.04),
+                0 0 0 65px rgba(255,255,255,0.04);
+            pointer-events: none;
+        }
+
+        .welcome-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            color: #dbe7ff;
+            margin-bottom: 13px;
+        }
+
+        .welcome h2 {
+            font-size: clamp(22px, 3vw, 30px);
+            line-height: 1.25;
+            letter-spacing: -0.7px;
+        }
+
+        .welcome p {
+            margin-top: 12px;
+            max-width: 430px;
+            color: #e0eaff;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .welcome-badge {
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+            padding: 13px 16px;
+            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.12);
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* Sections */
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin: 34px 0 17px;
+        }
+
+        .section-heading h2 {
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .section-tag {
+            color: var(--primary);
+            background: #eaf1ff;
+            padding: 7px 11px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .action-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            min-height: 142px;
+            padding: 23px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            transition: transform 0.2s, box-shadow 0.2s,
+                border-color 0.2s;
+        }
+
+        .action-card:hover {
+            transform: translateY(-3px);
+            border-color: #c7d7ff;
+            box-shadow: 0 12px 25px rgba(25, 45, 85, 0.06);
+        }
+
+        .action-icon {
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+            border-radius: 13px;
+            font-size: 23px;
+        }
+
+        .icon-blue {
+            color: #2563eb;
+            background: #edf3ff;
+        }
+
+        .icon-green {
+            color: #15803d;
+            background: #e8f8ee;
+        }
+
+        .icon-orange {
+            color: #c76a11;
+            background: #fff3e5;
+        }
+
+        .icon-purple {
+            color: #7c3aed;
+            background: #f1eaff;
+        }
+
+        .action-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .action-info h3 {
+            font-size: 14px;
+            font-weight: 750;
+            margin: 4px 0 8px;
+        }
+
+        .action-info p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .action-arrow {
+            color: #a1adbf;
+            font-size: 19px;
+            align-self: center;
+        }
+
+        /* Footer */
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-top: 25px;
+            margin-top: 38px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .footer strong {
+            color: #657188;
+        }
+
+        /* Responsive layout */
+
+        @media (min-width: 1500px) {
+            .main {
+                padding: 42px 55px;
+            }
+
+            .action-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .sidebar {
+                width: 205px;
+            }
+
+            .main {
+                padding: 28px 24px;
+            }
+
+            .action-card {
+                padding: 18px;
+                gap: 12px;
+            }
+
+            .welcome {
+                padding: 27px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 15px 16px 12px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .brand {
+                margin-bottom: 16px;
+                padding: 0 3px;
+            }
+
+            .brand-icon {
+                width: 38px;
+                height: 38px;
+            }
+
+            .brand-name {
+                font-size: 19px;
+            }
+
+            .nav-label,
+            .sidebar-bottom {
+                display: none;
+            }
+
+            .nav-links {
+                display: flex;
+                overflow-x: auto;
+                gap: 7px;
+                padding-bottom: 3px;
+            }
+
+            .nav-link {
+                flex-shrink: 0;
+                padding: 10px 12px;
+                font-size: 11px;
+                gap: 7px;
+                border: 1px solid var(--border);
+            }
+
+            .nav-icon {
+                font-size: 15px;
+                width: auto;
+            }
+
+            .main {
+                padding: 24px 17px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                margin-bottom: 25px;
+            }
+
+            .profile {
+                padding: 6px;
+                border: none;
+                background: transparent;
+            }
+
+            .profile-details {
+                display: none;
+            }
+
+            .avatar {
+                width: 38px;
+                height: 38px;
+            }
+
+            .welcome {
+                padding: 25px 21px;
+                border-radius: 16px;
+            }
+
+            .welcome-badge {
+                display: none;
+            }
+
+            .action-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .action-card {
+                min-height: 115px;
+                padding: 19px;
+            }
+
+            .section-heading {
+                margin-top: 28px;
+            }
+
+            .footer {
+                margin-top: 28px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition: none !important;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="phone-frame">
-        <div class="status-bar">
-        </div>
-        <div class="browser-header">
-        </div>
+    <div class="layout">
 
-        <div class="content-area">
-            <div class="views-container">
-                <div class="view-section active">
-                    <div class="card">
-                        <div class="card-title">CURRENT BALANCE</div>
-                        <div class="card-value">${{ "%.2f"|format(balance) }}</div>
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="{{ url_for('pages.home') }}" class="brand">
+                <div class="brand-icon" aria-hidden="true">M</div>
+                <div>
+                    <div class="brand-name">MyBank</div>
+                    <div class="brand-subtitle">Personal Banking</div>
+                </div>
+            </a>
+
+            <div class="nav-label">MAIN MENU</div>
+
+            <nav class="nav-links" aria-label="Main navigation">
+                <a href="{{ url_for('pages.home') }}"
+                   class="nav-link active" aria-current="page">
+                    <span class="nav-icon" aria-hidden="true">⌂</span>
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('pages.bank_page', operation='deposit') }}"
+                   class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">↙</span>
+                    Deposit
+                </a>
+
+                <a href="{{ url_for('pages.bank_page', operation='withdraw') }}"
+                   class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">↗</span>
+                    Withdraw
+                </a>
+
+                <a href="{{ url_for('pages.bank_page', operation='transfer') }}"
+                   class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">⇄</span>
+                    Transfer
+                </a>
+
+                <a href="{{ url_for('pages.receipts') }}"
+                   class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">▤</span>
+                    Transactions
+                </a>
+
+                <a href="{{ url_for('pages.account_page') }}"
+                   class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">♙</span>
+                    My Account
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="security-note">
+                    <strong>🛡 Your security matters</strong>
+                    <p>Never share your password or banking credentials with anyone.</p>
+                </div>
+
+                <form action="{{ url_for('auth.logout') }}"
+                      method="POST" class="logout-form">
+                    <input type="hidden" name="csrf_token"
+                           value="{{ csrf_token() }}">
+
+                    <button type="submit" class="logout-button">
+                        ↪ &nbsp; Log out
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main dashboard -->
+        <main class="main">
+            <header class="topbar">
+                <div>
+                    <div class="breadcrumb">MyBank / Dashboard</div>
+                    <h1 class="page-title">Dashboard</h1>
+                    <p class="page-subtitle">
+                        Manage your money and banking activities in one place.
+                    </p>
+                </div>
+
+                <div class="profile">
+                    <div class="avatar" aria-hidden="true">
+                        {{ session.get('username', 'C')[:1]|upper }}
+                    </div>
+                    <div class="profile-details">
+                        <div class="profile-name">
+                            {{ session.get('username', 'Customer') }}
+                        </div>
+                        <div class="profile-role">Customer account</div>
                     </div>
                 </div>
-            </div>
+            </header>
 
-            <div class="button-container">
-                <a href="{{ url_for('pages.bank_page', operation='deposit') }}" class="action-btn">Deposit</a>
-                <a href="{{ url_for('pages.bank_page', operation='withdraw') }}" class="action-btn">Withdraw</a>
-                <a href="{{ url_for('pages.bank_page', operation='transfer') }}" class="action-btn">Transfer</a>
-                <a href="{{ url_for('pages.bank_page', operation='receipts') }}" class="action-btn">Receipts</a>
-                <a href="{{ url_for('pages.bank_page', operation='account') }}" class="action-btn">Account</a>
-            </div>
-        </div>
+            <!-- Welcome banner -->
+            <section class="welcome">
+                <div>
+                    <div class="welcome-label">WELCOME TO MYBANK</div>
+                    <h2>Welcome back,<br>
+                        {{ session.get('username', 'Customer') }}!</h2>
+                    <p>
+                        Your finances, your way. Choose an action below
+                        to manage your account quickly and securely.
+                    </p>
+                </div>
+
+                <div class="welcome-badge">
+                    🛡 &nbsp; Secure Banking
+                </div>
+            </section>
+
+            <!-- Banking actions -->
+            <section aria-labelledby="actions-title">
+                <div class="section-heading">
+                    <div>
+                        <h2 id="actions-title">Quick Actions</h2>
+                        <p>What would you like to do today?</p>
+                    </div>
+                    <span class="section-tag">YOUR SERVICES</span>
+                </div>
+
+                <div class="action-grid">
+                    <a href="{{ url_for('pages.bank_page', operation='deposit') }}"
+                       class="action-card">
+                        <div class="action-icon icon-green"
+                             aria-hidden="true">↙</div>
+                        <div class="action-info">
+                            <h3>Deposit Money</h3>
+                            <p>Add money to your account and manage your funds.</p>
+                        </div>
+                        <span class="action-arrow" aria-hidden="true">›</span>
+                    </a>
+
+                    <a href="{{ url_for('pages.bank_page', operation='withdraw') }}"
+                       class="action-card">
+                        <div class="action-icon icon-orange"
+                             aria-hidden="true">↗</div>
+                        <div class="action-info">
+                            <h3>Withdraw Money</h3>
+                            <p>Withdraw funds from your available balance.</p>
+                        </div>
+                        <span class="action-arrow" aria-hidden="true">›</span>
+                    </a>
+
+                    <a href="{{ url_for('pages.bank_page', operation='transfer') }}"
+                       class="action-card">
+                        <div class="action-icon icon-blue"
+                             aria-hidden="true">⇄</div>
+                        <div class="action-info">
+                            <h3>Transfer Money</h3>
+                            <p>Move money between supported accounts.</p>
+                        </div>
+                        <span class="action-arrow" aria-hidden="true">›</span>
+                    </a>
+
+                    <a href="{{ url_for('pages.receipts') }}"
+                       class="action-card">
+                        <div class="action-icon icon-purple"
+                             aria-hidden="true">▤</div>
+                        <div class="action-info">
+                            <h3>Transaction History</h3>
+                            <p>View your transactions and available receipts.</p>
+                        </div>
+                        <span class="action-arrow" aria-hidden="true">›</span>
+                    </a>
+
+                    <a href="{{ url_for('pages.account_page') }}"
+                       class="action-card">
+                        <div class="action-icon icon-blue"
+                             aria-hidden="true">♙</div>
+                        <div class="action-info">
+                            <h3>Account Details</h3>
+                            <p>Review your customer and account information.</p>
+                        </div>
+                        <span class="action-arrow" aria-hidden="true">›</span>
+                    </a>
+
+                    <a href="{{ url_for('pages.home') }}"
+                       class="action-card">
+                        <div class="action-icon icon-green"
+                             aria-hidden="true">✓</div>
+                        <div class="action-info">
+                            <h3>Banking Overview</h3>
+                            <p>Return to your dashboard whenever you need.</p>
+                        </div>
+                        <span class="action-arrow" aria-hidden="true">›</span>
+                    </a>
+                </div>
+            </section>
+
+            <footer class="footer">
+                <span>© {{ now().year if now is defined else 2026 }} MyBank. All rights reserved.</span>
+                <span><strong>Protect your credentials.</strong> Stay safe online.</span>
+            </footer>
+        </main>
     </div>
 </body>
 </html>

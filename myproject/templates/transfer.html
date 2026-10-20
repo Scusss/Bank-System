@@ -84,6 +84,12 @@
     <form action="{{ url_for('transactions.transaction', operation='transfer') }}"
           method="POST">
 
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="{{ csrf_token() }}"
+        >
+
         <h2>Transfer Money</h2>
 
         {% with messages = get_flashed_messages(with_categories=true) %}

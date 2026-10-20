@@ -115,6 +115,13 @@
         action="{{ url_for('transactions.transaction', operation='withdraw') }}"
         method="POST"
     >
+
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="{{ csrf_token() }}"
+        >
+
         <p class="page-title">Withdraw</p>
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}

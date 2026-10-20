@@ -95,9 +95,17 @@
         action="{{ url_for('transactions.transaction', operation='deposit') }}"
         method="POST"
     >
+
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="{{ csrf_token() }}"
+        >
+
         <p class="page-title">Deposit</p>
 
         <div class="input-group">
+            
             <label for="amount">Amount to deposit</label>
 
             <input
