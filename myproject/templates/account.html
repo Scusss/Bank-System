@@ -1,132 +1,1032 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Account</title>
+    <meta name="theme-color" content="#f5f7fb">
+
+    <title>My Account | Bank</title>
 
     <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --background: #f5f7fb;
+            --surface: #ffffff;
+            --text: #172033;
+            --muted: #738096;
+            --border: #e7ebf2;
+            --success: #15803d;
+            --sidebar-width: 245px;
+        }
+
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                Roboto, Helvetica, Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
             min-height: 100vh;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .layout {
             display: flex;
-            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 28px 18px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            display: flex;
             align-items: center;
-            background-color: #f5f5f5;
-            font-family: Arial, sans-serif;
-            color: #222;
+            gap: 12px;
+            padding: 0 10px;
+            margin-bottom: 42px;
         }
 
-        .account-container {
-            width: 360px;
-            max-width: calc(100% - 32px);
-            padding: 30px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        .brand-icon {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        display: grid;
+        place-items: center;
+        background: #2563eb;
+        color: white;
+        border-radius: 14px;
+        font-size: 16px;
+        font-weight: 900;
+        letter-spacing: -0.8px;
+        flex-shrink: 0;
         }
 
-        h2 {
+        .brand-name {
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: -0.7px;
+        }
+
+        .brand-subtitle {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        .nav-label {
+            padding: 0 12px;
+            margin-bottom: 12px;
+            color: #9aa4b5;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.4px;
+        }
+
+        .nav-links {
+            display: grid;
+            gap: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 13px 14px;
+            border-radius: 10px;
+            color: #69758a;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary);
+            background: #edf3ff;
+        }
+
+        .nav-icon {
+            width: 22px;
             text-align: center;
-            margin: 0 0 25px;
+            font-size: 18px;
         }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 28px;
+        }
+
+        .security-note {
+            padding: 17px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fafbfe;
+        }
+
+        .security-note strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 7px;
+        }
+
+        .security-note p {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .logout-form {
+            margin-top: 15px;
+        }
+
+        .logout-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #fff1f2;
+            border: 1px solid #ffe0e3;
+            border-radius: 10px;
+            color: #c52f40;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background: #ffe3e6;
+        }
+
+        /* Main content */
+
+        .main {
+            min-width: 0;
+            flex: 1;
+            padding: 32px 40px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 36px;
+        }
+
+        .breadcrumb {
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 9px;
+        }
+
+        .page-title {
+            font-size: clamp(23px, 3vw, 30px);
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .page-subtitle {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 13px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: #e8efff;
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            font-size: 17px;
+        }
+
+        .profile-name {
+            font-size: 12px;
+            font-weight: 750;
+            overflow-wrap: anywhere;
+        }
+
+        .profile-role {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* Account banner */
+
+        .welcome {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            padding: 32px;
+            margin-bottom: 28px;
+            border-radius: 20px;
+            color: white;
+            background: linear-gradient(
+                120deg, #1e40af, #2563eb 65%, #4f86ff
+            );
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.13);
+        }
+
+        .welcome::after {
+            content: "";
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            right: 3%;
+            top: -135px;
+            border: 1px solid rgba(255, 255, 255, 0.17);
+            border-radius: 50%;
+            box-shadow:
+                0 0 0 30px rgba(255, 255, 255, 0.04),
+                0 0 0 65px rgba(255, 255, 255, 0.04);
+            pointer-events: none;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            color: #dbe7ff;
+            margin-bottom: 13px;
+        }
+
+        .welcome h2 {
+            font-size: clamp(22px, 3vw, 30px);
+            line-height: 1.3;
+            letter-spacing: -0.7px;
+        }
+
+        .welcome p {
+            margin-top: 12px;
+            max-width: 470px;
+            color: #e0eaff;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .welcome-badge {
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+            padding: 13px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* Section heading */
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin: 34px 0 17px;
+        }
+
+        .section-heading h2 {
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .section-tag {
+            color: var(--primary);
+            background: #edf3ff;
+            padding: 7px 11px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        /* Cards */
+
+        .account-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(230px, 0.8fr);
+            align-items: start;
+            gap: 20px;
+        }
+
+        .account-card,
+        .info-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 27px;
+            min-width: 0;
+        }
+
+        .card-heading {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin-bottom: 25px;
+        }
+
+        .account-icon {
+            width: 49px;
+            height: 49px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            background: #e8efff;
+            color: var(--primary);
+            border-radius: 14px;
+            font-size: 25px;
+        }
+
+        .card-heading h3 {
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .card-heading p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 5px;
+            line-height: 1.6;
+        }
+
+        /* Balance */
 
         .balance-container {
-            text-align: center;
-            background: #f8f9fa;
-            padding: 20px 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            padding: 23px;
+            background: #f0fdf4;
+            border: 1px solid #dcfce7;
+            border-radius: 13px;
+            margin-bottom: 25px;
         }
 
         .balance-label {
-            margin: 0;
-            font-size: 12px;
-            color: #666;
+            color: #166534;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.1px;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
         .balance-amount {
-            margin: 8px 0 0;
-            font-size: 28px;
-            font-weight: bold;
-            color: #198754;
+            margin-top: 10px;
+            color: var(--success);
+            font-size: clamp(27px, 3vw, 35px);
+            font-weight: 800;
+            letter-spacing: -1px;
             overflow-wrap: anywhere;
         }
+
+        .balance-caption {
+            margin-top: 8px;
+            color: #4b765a;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        /* Account details */
 
         .detail-row {
             display: flex;
             justify-content: space-between;
-            gap: 12px;
-            padding: 13px 0;
-            border-bottom: 1px solid #eee;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 17px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
         }
 
         .detail-label {
-            color: #666;
-            font-size: 14px;
+            color: var(--muted);
+            font-size: 12px;
+            flex-shrink: 0;
         }
 
         .detail-value {
-            font-size: 14px;
-            font-weight: bold;
+            font-size: 13px;
+            font-weight: 700;
             text-align: right;
             overflow-wrap: anywhere;
+            min-width: 0;
         }
 
-        .back-button {
-            display: block;
-            width: 100%;
+        .email-value {
+            word-break: break-word;
+        }
+
+        /* Account actions */
+
+        .account-actions {
+            display: grid;
+            gap: 10px;
             margin-top: 25px;
-            padding: 12px;
-            background: #e9ecef;
-            color: #333;
-            text-decoration: none;
-            text-align: center;
-            border-radius: 6px;
+        }
+
+        .action-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 9px;
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 750;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .primary-button {
+            background: var(--primary);
+            color: white;
+            border: 1px solid var(--primary);
+        }
+
+        .primary-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .secondary-button {
+            background: #f7f9fc;
+            color: #58657b;
+            border: 1px solid var(--border);
+        }
+
+        .secondary-button:hover {
+            background: #edf1f7;
+        }
+
+        /* Information card */
+
+        .info-card {
+            padding: 24px;
+        }
+
+        .info-card h3 {
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 22px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .info-item:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .info-item-icon {
+            display: grid;
+            place-items: center;
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            background: #edf3ff;
+            color: var(--primary);
+            border-radius: 10px;
             font-size: 15px;
         }
 
-        .back-button:hover {
-            background: #dee2e6;
+        .info-item strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .info-item p {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .security-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 24px;
+            padding: 14px;
+            border-radius: 11px;
+            background: #f0fdf4;
+            border: 1px solid #dcfce7;
+            color: #166534;
+        }
+
+        .security-banner span {
+            font-size: 16px;
+        }
+
+        .security-banner p {
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-top: 25px;
+            margin-top: 38px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .footer strong {
+            color: #657188;
+        }
+
+        /* Responsive layout */
+
+        @media (max-width: 1100px) {
+            .sidebar {
+                width: 205px;
+            }
+
+            .main {
+                padding: 28px 24px;
+            }
+
+            .account-layout {
+                grid-template-columns: minmax(0, 1.2fr) minmax(210px, 0.8fr);
+            }
+
+            .account-card,
+            .info-card {
+                padding: 21px;
+            }
+        }
+
+        @media (max-width: 850px) {
+            .account-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 15px 16px 12px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .brand {
+                margin-bottom: 16px;
+                padding: 0 3px;
+            }
+
+            .brand-icon {
+                width: 38px;
+                height: 38px;
+            }
+
+            .brand-name {
+                font-size: 19px;
+            }
+
+            .nav-label,
+            .sidebar-bottom {
+                display: none;
+            }
+
+            .nav-links {
+                display: flex;
+                overflow-x: auto;
+                gap: 7px;
+                padding-bottom: 3px;
+            }
+
+            .nav-link {
+                flex-shrink: 0;
+                padding: 10px 12px;
+                font-size: 11px;
+                gap: 7px;
+                border: 1px solid var(--border);
+            }
+
+            .nav-icon {
+                font-size: 15px;
+                width: auto;
+            }
+
+            .main {
+                padding: 24px 17px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                margin-bottom: 25px;
+            }
+
+            .profile {
+                padding: 6px;
+                border: none;
+                background: transparent;
+            }
+
+            .profile-details {
+                display: none;
+            }
+
+            .avatar {
+                width: 38px;
+                height: 38px;
+            }
+
+            .welcome {
+                padding: 25px 21px;
+                border-radius: 16px;
+            }
+
+            .welcome-badge {
+                display: none;
+            }
+
+            .section-heading {
+                margin-top: 28px;
+            }
+
+            .account-card {
+                padding: 21px;
+            }
+
+            .info-card {
+                padding: 23px;
+            }
+
+            .footer {
+                margin-top: 28px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .topbar {
+                gap: 8px;
+            }
+
+            .page-title {
+                font-size: 23px;
+            }
+
+            .page-subtitle {
+                font-size: 12px;
+            }
+
+            .welcome {
+                padding: 23px 18px;
+            }
+
+            .detail-row {
+                gap: 10px;
+            }
+
+            .detail-label {
+                font-size: 11px;
+            }
+
+            .detail-value {
+                font-size: 12px;
+            }
+
+            .section-tag {
+                font-size: 9px;
+                padding: 7px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition: none !important;
+            }
         }
     </style>
 </head>
 
 <body>
-    <main class="account-container">
-        <h2>My Account</h2>
+    <div class="layout">
 
-        <div class="balance-container">
-            <p class="balance-label">Available Balance</p>
-            <p class="balance-amount">
-                ₱{{ "%.2f"|format(balance|float) }}
-            </p>
-        </div>
+        <!-- Sidebar -->
+        <aside class="sidebar">
 
-        <div class="detail-row">
-            <span class="detail-label">First Name</span>
-            <span class="detail-value">{{ fname }}</span>
-        </div>
+            <a href="{{ url_for('pages.home') }}" class="brand">
+                <div class="brand-icon" aria-hidden="true">JAB</div>
+                <div>
+                    <div class="brand-name">Bank</div>
+                    <div class="brand-subtitle">Online Banking</div>
+                </div>
+            </a>
 
-        <div class="detail-row">
-            <span class="detail-label">Last Name</span>
-            <span class="detail-value">{{ lname }}</span>
-        </div>
+            <div class="nav-label">MAIN MENU</div>
 
-        <div class="detail-row">
-            <span class="detail-label">Email</span>
-            <span class="detail-value">{{ email }}</span>
-        </div>
+            <nav class="nav-links" aria-label="Main navigation">
 
-        <a href="{{ url_for('pages.home') }}" class="back-button">
-            Back to Home
-        </a>
-    </main>
+                <a href="{{ url_for('pages.home') }}" class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">⌂</span>
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('pages.bank_page', operation='deposit') }}"
+                   class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">↙</span>
+                    Deposit
+                </a>
+
+                <a href="{{ url_for('pages.bank_page', operation='withdraw') }}"
+                   class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">↗</span>
+                    Withdraw
+                </a>
+
+                <a href="{{ url_for('pages.bank_page', operation='transfer') }}"
+                   class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">⇄</span>
+                    Transfer
+                </a>
+
+                <a href="{{ url_for('pages.receipts') }}" class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">▤</span>
+                    Transactions
+                </a>
+
+                <a href="{{ url_for('pages.account_page') }}"
+                   class="nav-link active" aria-current="page">
+                    <span class="nav-icon" aria-hidden="true">♙</span>
+                    My Account
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+
+                <form action="{{ url_for('auth.logout') }}"
+                      method="POST"
+                      class="logout-form">
+
+                    <input type="hidden"
+                           name="csrf_token"
+                           value="{{ csrf_token() }}">
+
+                    <button type="submit" class="logout-button">
+                        ↪ &nbsp; Log out
+                    </button>
+                </form>
+
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main">
+
+            <header class="topbar">
+
+                <div>
+                    <div class="breadcrumb">
+                        Bank / Banking / My Account
+                    </div>
+
+                    <h1 class="page-title">My Account</h1>
+
+                    <p class="page-subtitle">
+                        View your account information and available balance.
+                    </p>
+                </div>
+
+                <div class="profile">
+                    <div class="avatar" aria-hidden="true">
+                        {{ session.get('username', 'C')[:1]|upper }}
+                    </div>
+
+                    <div class="profile-details">
+                        <div class="profile-name">
+                            {{ session.get('username', 'Customer') }}
+                        </div>
+                        <div class="profile-role">Customer account</div>
+                    </div>
+                </div>
+
+            </header>
+
+            <!-- Welcome banner -->
+            <section class="welcome">
+
+                <div class="welcome-content">
+                    <div class="welcome-label">JABBANK SERVICES</div>
+
+                    <h2>Account,<br>.</h2>
+
+                    <p>
+                        ...
+                    </p>
+                </div>
+
+                <div class="welcome-badge">
+                    🛡 &nbsp; Standard Banking
+                </div>
+
+            </section>
+
+            <!-- Account overview -->
+            <section aria-labelledby="account-heading">
+
+                <div class="section-heading">
+                    <div>
+                        <h2 id="account-heading">Account Overview</h2>
+                        <p>Your balance and personal account details.</p>
+                    </div>
+
+                    <span class="section-tag">♙ MY ACCOUNT</span>
+                </div>
+
+                <div class="account-layout">
+
+                    <!-- Account details card -->
+                    <div class="account-card">
+
+                        <div class="card-heading">
+                            <div class="account-icon" aria-hidden="true">
+                                ♙
+                            </div>
+
+                            <div>
+                                <h3>Personal Information</h3>
+                                <p>Your registered account details.</p>
+                            </div>
+                        </div>
+
+                        <!-- Available balance -->
+                        <div class="balance-container">
+                            <p class="balance-label">
+                                Available Balance
+                            </p>
+
+                            <p class="balance-amount">
+                                ₱{{ "%.2f"|format(balance|float) }}
+                            </p>
+
+                            <p class="balance-caption">
+                                Your current available account balance.
+                            </p>
+                        </div>
+
+                        <!-- User information -->
+                        <div class="detail-row">
+                            <span class="detail-label">First Name</span>
+                            <span class="detail-value">{{ fname }}</span>
+                        </div>
+
+                        <div class="detail-row">
+                            <span class="detail-label">Last Name</span>
+                            <span class="detail-value">{{ lname }}</span>
+                        </div>
+
+                        <div class="detail-row">
+                            <span class="detail-label">Email Address</span>
+                            <span class="detail-value email-value">
+                                {{ email }}
+                            </span>
+                        </div>
+
+                        <!-- Account actions -->
+                        <div class="account-actions">
+
+                        </div>
+
+                    </div>
+
+                    <!-- Information card -->
+                    <aside class="info-card">
+
+                        <h3>Account Information</h3>
+
+                        <div class="info-item">
+                            <div class="info-item-icon" aria-hidden="true">
+                                ✓
+                            </div>
+
+                            <div>
+                                <strong>Personal Details</strong>
+                                <p>
+                                    Your name and email are displayed using
+                                    the information associated with your
+                                    account.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-item-icon" aria-hidden="true">
+                                ₱
+                            </div>
+
+                            <div>
+                                <strong>Available Balance</strong>
+                                <p>
+                                    Check your current balance before making
+                                    a deposit, withdrawal, or transfer.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-item-icon" aria-hidden="true">
+                                ▤
+                            </div>
+
+                            <div>
+                                <strong>Transaction History</strong>
+                                <p>
+                                    Visit the Transactions page to review
+                                    available transaction records and
+                                    receipts.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="security-banner">
+                            <span aria-hidden="true">🛡</span>
+
+                            <p>
+                                <strong>Security reminder</strong><br>
+                                Never share your password or sensitive
+                                banking credentials with anyone.
+                            </p>
+                        </div>
+
+                    </aside>
+
+                </div>
+            </section>
+
+            <!-- Footer -->
+
+
+        </main>
+    </div>
 </body>
 </html>

@@ -1,133 +1,403 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Deposit Money</title>
+    <meta name="theme-color" content="#f5f7fb">
 
-    <style>
-        body {
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f5f5f5;
-            font-family: Arial, sans-serif;
-        }
 
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            align-items: center;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            width: 300px;
-        }
 
-        .page-title {
-            font-size: 22px;
-            font-weight: bold;
-            margin: 0;
-        }
+    <title>Deposit Money | Bank</title>
 
-        input {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 16px;
-        }
 
-        button,
-        .back-button {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 15px;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-        }
 
-        .deposit-button {
-            background-color: #198754;
-            color: white;
-        }
+        <link rel="stylesheet" href="{{ url_for('static', filename='deposit.css') }}">
 
-        .deposit-button:hover {
-            background-color: #157347;
-        }
 
-        .back-button {
-            background-color: #e9ecef;
-            color: #333;
-        }
-
-        .back-button:hover {
-            background-color: #dee2e6;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-
-          input[type="number"]::-webkit-inner-spin-button,
-          input[type="number"]::-webkit-outer-spin-button {
-              -webkit-appearance: none;
-              margin: 0;
-          }
-        }
-    </style>
 </head>
 
+
+
 <body>
-    <form
-        action="{{ url_for('transactions.transaction', operation='deposit') }}"
-        method="POST"
-    >
 
-        <input
-            type="hidden"
-            name="csrf_token"
-            value="{{ csrf_token() }}"
-        >
+    <div class="layout">
 
-        <p class="page-title">Deposit</p>
 
-        <div class="input-group">
-            
-            <label for="amount">Amount to deposit</label>
 
-            <input
-                type="number"
-                id="amount"
-                name="amount"
-                min="0.01"
-                step="0.01"
-                placeholder="Enter amount"
-                autocomplete="off"
-                required
-            >
+        <!-- Sidebar -->
 
-            <button type="submit" class="deposit-button">
-                Deposit
-            </button>
+        <aside class="sidebar">
 
-            <a href="{{ url_for('pages.home') }}"
-               class="back-button">
-                Go back to home
+            <a href="{{ url_for('pages.home') }}" class="brand">
+
+                <div class="brand-icon" aria-hidden="true">JAB</div>
+
+                <div>
+
+                    <div class="brand-name">Bank</div>
+
+                    <div class="brand-subtitle">Online Banking</div>
+
+                </div>
+
             </a>
-        </div>
-    </form>
+
+
+
+            <div class="nav-label">MAIN MENU</div>
+
+
+
+            <nav class="nav-links" aria-label="Main navigation">
+
+                <a href="{{ url_for('pages.home') }}" class="nav-link">
+
+                    <span class="nav-icon" aria-hidden="true">⌂</span>
+
+                    Dashboard
+
+                </a>
+
+
+
+                <a href="{{ url_for('pages.bank_page', operation='deposit') }}"
+
+                   class="nav-link active" aria-current="page">
+
+                    <span class="nav-icon" aria-hidden="true">↙</span>
+
+                    Deposit
+
+                </a>
+
+
+
+                <a href="{{ url_for('pages.bank_page', operation='withdraw') }}"
+
+                   class="nav-link">
+
+                    <span class="nav-icon" aria-hidden="true">↗</span>
+
+                    Withdraw
+
+                </a>
+
+
+
+                <a href="{{ url_for('pages.bank_page', operation='transfer') }}"
+
+                   class="nav-link">
+
+                    <span class="nav-icon" aria-hidden="true">⇄</span>
+
+                    Transfer
+
+                </a>
+
+
+
+                <a href="{{ url_for('pages.receipts') }}" class="nav-link">
+
+                    <span class="nav-icon" aria-hidden="true">▤</span>
+
+                    Transactions
+
+                </a>
+
+
+
+                <a href="{{ url_for('pages.account_page') }}" class="nav-link">
+
+                    <span class="nav-icon" aria-hidden="true">♙</span>
+
+                    My Account
+
+                </a>
+
+            </nav>
+
+
+
+            <div class="sidebar-bottom">
+
+
+                <form action="{{ url_for('auth.logout') }}"
+
+                      method="POST" class="logout-form">
+
+                    <input type="hidden" name="csrf_token"
+
+                           value="{{ csrf_token() }}">
+
+
+
+                    <button type="submit" class="logout-button">
+
+                        ↪ &nbsp; Log out
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- Main content -->
+
+        <main class="main">
+
+
+
+            <header class="topbar">
+
+                <div>
+
+                    <div class="breadcrumb">Bank / Banking / Deposit</div>
+
+                    <h1 class="page-title">Deposit Money</h1>
+
+                    <p class="page-subtitle">
+
+                        Deposit funds
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="profile">
+
+                    <div class="avatar" aria-hidden="true">
+
+                        {{ session.get('username', 'C')[:1]|upper }}
+
+                    </div>
+
+                    <div class="profile-details">
+
+                        <div class="profile-name">
+
+                            {{ session.get('username', 'Customer') }}
+
+                        </div>
+
+                        <div class="profile-role">Customer account</div>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- Welcome banner -->
+
+            <section class="welcome">
+
+                <div>
+
+                    <div class="welcome-label">JABBANK SERVICES</div>
+
+                    <h2>Future<br>Blablbalbalbla</h2>
+
+                    <p>
+
+                        Blalalalala
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="welcome-badge">
+
+                    🛡 &nbsp; Standard Banking
+
+                </div>
+
+            </section>
+
+
+
+            <!-- Deposit section -->
+
+            <section aria-labelledby="deposit-heading">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <h2 id="deposit-heading">Make a Deposit</h2>
+
+                        <p>Enter the amount you want to deposit.</p>
+
+                    </div>
+
+
+
+                    <span class="section-tag">↙ DEPOSIT</span>
+
+                </div>
+
+
+
+                <div class="deposit-layout">
+
+
+
+                    <!-- Form card -->
+
+                    <div class="deposit-card">
+
+                        <div class="card-heading">
+
+                            <div class="deposit-icon" aria-hidden="true">↙</div>
+
+                            <div>
+
+                                <h3>Deposit Details</h3>
+
+                                <p>Provide the amount for your transaction.</p>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Flask flash messages -->
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                <div class="flash-messages" role="status" aria-live="polite">
+                                    {% for category, message in messages %}
+                                        <div class="flash-message {{ category }}">
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+
+
+
+                        <form
+
+                            action="{{ url_for('transactions.transaction', operation='deposit') }}"
+
+                            method="POST"
+
+                        >
+
+                            <input
+
+                                type="hidden"
+
+                                name="csrf_token"
+
+                                value="{{ csrf_token() }}"
+
+                            >
+
+
+
+                            <div class="input-group">
+
+                                <label for="amount">Amount to deposit</label>
+
+
+
+                                <div class="amount-field">
+
+                                    <span class="currency-symbol"
+
+                                          aria-hidden="true">₱</span>
+
+
+
+                                    <input
+
+                                        type="number"
+
+                                        id="amount"
+
+                                        name="amount"
+
+                                        min="0.01"
+
+                                        step="0.01"
+
+                                        placeholder="0.00"
+
+                                        inputmode="decimal"
+
+                                        autocomplete="off"
+
+                                        aria-describedby="amount-hint"
+
+                                        required
+
+                                    >
+
+                                </div>
+
+
+
+                                <p class="field-hint" id="amount-hint">
+
+                                    Enter an amount greater than zero.
+
+                                </p>
+
+                            </div>
+
+
+
+                            <button type="submit" class="deposit-button">
+
+                                <span aria-hidden="true">↙</span>
+
+                                Deposit Money
+
+                            </button>
+
+
+                        </form>
+
+                    </div>
+
+
+
+                    <!-- Helpful information -->
+
+                    <aside class="info-card">
+
+                        <h3>Extra Space</h3>
+
+
+                    </aside>
+
+
+
+                </div>
+
+            </section>
+
+
+
+
+        </main>
+
+    </div>
+
 </body>
+
 </html>

@@ -1,3 +1,4 @@
+
 from decimal import Decimal, InvalidOperation
 
 from flask import Blueprint, request, redirect, url_for, flash, session
@@ -21,24 +22,17 @@ def transaction(operation):
         flash("Please log in first.", "error")
         return redirect(url_for("auth.login"))
 
-    destination = {
-        "deposit": "pages.home",
-        "withdraw": "pages.bank_page",
-        "transfer": "pages.bank_page",
-    }
-
+    # Return to the page where the transaction was performed.
     def return_to_form():
-        if operation == "deposit":
-            return redirect(url_for("pages.bank_page", operation="deposit"))
-        if operation == "withdraw":
-            return redirect(url_for("pages.bank_page", operation="withdraw"))
-        return redirect(url_for("pages.bank_page", operation="transfer"))
+        return redirect(
+            url_for("pages.bank_page", operation=operation)
+        )
 
     try:
         amount = Decimal(request.form.get("amount", "").strip())
     except (InvalidOperation, ValueError, TypeError, AttributeError):
         flash("Please enter a valid amount.", "error")
-        return return_to_form
+        return return_to_form()
 
     if (
         not amount.is_finite()
@@ -46,7 +40,10 @@ def transaction(operation):
         or amount.as_tuple().exponent < -2
         or amount >= Decimal("10000000000000")
     ):
-        flash("Enter a positive amount with at most two decimal places.", "error")
+        flash(
+            "Enter a positive amount with at most two decimal places.",
+            "error",
+        )
         return return_to_form()
 
     recipient_id = None
@@ -59,8 +56,7 @@ def transaction(operation):
             return return_to_form()
 
     try:
-        # Find the sender's account using the logged-in customer,
-        # never an account ID supplied by the browser.
+        # Find the logged-in customer's account.
         sender_ref = db.session.execute(
             select(Account.account_id)
             .where(Account.customer_id == customer_id)
@@ -70,13 +66,13 @@ def transaction(operation):
 
         if sender_ref is None:
             flash("No account is associated with your profile.", "error")
-            return redirect(url_for("pages.home"))
+            return return_to_form()
 
         if operation == "transfer" and recipient_id == sender_ref:
             flash("You cannot transfer money to your own account.", "error")
             return return_to_form()
 
-            # Lock accounts in a consistent order for transfers.
+        # Lock accounts in a consistent order for transfers.
         ids_to_lock = (
             sorted([sender_ref, recipient_id])
             if operation == "transfer"
@@ -100,7 +96,7 @@ def transaction(operation):
         if sender is None or sender.customer_id != customer_id:
             db.session.rollback()
             flash("Your account could not be verified.", "error")
-            return redirect(url_for("pages.home"))
+            return return_to_form()
 
         if operation == "withdraw" and sender.balance < amount:
             db.session.rollback()
@@ -166,4 +162,5 @@ def transaction(operation):
         db.session.rollback()
         raise
 
-    return redirect(url_for("pages.home"))
+    # Return to the same operation page after success.
+    return return_to_form()

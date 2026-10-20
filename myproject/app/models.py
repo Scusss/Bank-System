@@ -1,5 +1,6 @@
 import enum
 from datetime import datetime
+from sqlalchemy.dialects.postgresql import ENUM as PGEnum
 
 from app.extensions import db
 
@@ -67,17 +68,36 @@ class TransactionList(db.Model):
     __tablename__ = "transaction_list"
 
     transaction_id = db.Column(
-        db.Integer, primary_key=True, autoincrement=True
+        db.Integer,
+        primary_key=True,
+        autoincrement=True,
     )
+
     account_id = db.Column(
         db.Integer,
         db.ForeignKey("accounts.account_id"),
         nullable=False,
     )
-    amount = db.Column(db.Numeric(15, 2), nullable=False)
-    type_of_transaction = db.Column(
-        db.Enum(TransactionType), nullable=False
+
+    amount = db.Column(
+        db.Numeric(15, 2),
+        nullable=False,
     )
+
+    type_of_transaction = db.Column(
+        PGEnum(
+            TransactionType,
+            name="transaction_type",
+            create_type=False,
+            values_callable=lambda enum_cls: [
+                member.value for member in enum_cls
+            ],
+        ),
+        nullable=False,
+    )
+
     created_at = db.Column(
-        db.DateTime, default=datetime.utcnow, nullable=False
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False,
     )

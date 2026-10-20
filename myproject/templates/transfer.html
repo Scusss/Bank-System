@@ -1,125 +1,1004 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transfer Money</title>
+    <meta name="theme-color" content="#f5f7fb">
+
+    <title>Transfer Money | Bank</title>
+
     <style>
-        body {
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #f5f5f5;
-            font-family: Arial, sans-serif;
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --background: #f5f7fb;
+            --surface: #ffffff;
+            --text: #172033;
+            --muted: #738096;
+            --border: #e7ebf2;
+            --success: #15803d;
+            --sidebar-width: 245px;
         }
 
-        form {
-            width: 300px;
-            max-width: calc(100% - 60px);
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            padding: 30px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,.1);
-        }
-
-        h2 {
-            text-align: center;
-            margin: 0;
-        }
-
-        input, button, .back-button {
+        * {
             box-sizing: border-box;
-            width: 100%;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 15px;
+            margin: 0;
+            padding: 0;
         }
 
-        input {
-            border: 1px solid #ccc;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                Roboto, Helvetica, Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
         }
 
-        button {
-            border: none;
-            background: #198754;
-            color: white;
-            cursor: pointer;
-        }
-
-        .back-button {
-            background: #e9ecef;
-            color: #333;
-            text-align: center;
+        a {
+            color: inherit;
             text-decoration: none;
         }
 
-        .flash-message.error {
+        button,
+        input {
+            font: inherit;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 28px 18px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px;
+            margin-bottom: 42px;
+        }
+
+        .brand-icon {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        display: grid;
+        place-items: center;
+        background: #2563eb;
+        color: white;
+        border-radius: 14px;
+        font-size: 16px;
+        font-weight: 900;
+        letter-spacing: -0.8px;
+        flex-shrink: 0;
+        }
+
+        .brand-name {
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: -0.7px;
+        }
+
+        .brand-subtitle {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        .nav-label {
+            padding: 0 12px;
+            margin-bottom: 12px;
+            color: #9aa4b5;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.4px;
+        }
+
+        .nav-links {
+            display: grid;
+            gap: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 13px 14px;
+            border-radius: 10px;
+            color: #69758a;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary);
+            background: #edf3ff;
+        }
+
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 28px;
+        }
+
+        .security-note {
+            padding: 17px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fafbfe;
+        }
+
+        .security-note strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 7px;
+        }
+
+        .security-note p {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .logout-form {
+            margin-top: 15px;
+        }
+
+        .logout-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #fff1f2;
+            border: 1px solid #ffe0e3;
+            border-radius: 10px;
+            color: #c52f40;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background: #ffe3e6;
+        }
+
+        /* Main content */
+
+        .main {
+            min-width: 0;
+            flex: 1;
+            padding: 32px 40px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 36px;
+        }
+
+        .breadcrumb {
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 9px;
+        }
+
+        .page-title {
+            font-size: clamp(23px, 3vw, 30px);
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .page-subtitle {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 13px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: #e8efff;
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            font-size: 17px;
+        }
+
+        .profile-name {
+            font-size: 12px;
+            font-weight: 750;
+            overflow-wrap: anywhere;
+        }
+
+        .profile-role {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* Transfer banner */
+
+        .welcome {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            padding: 32px;
+            margin-bottom: 28px;
+            border-radius: 20px;
+            color: white;
+            background: linear-gradient(
+                120deg, #1e40af, #2563eb 65%, #4f86ff
+            );
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.13);
+        }
+
+        .welcome::after {
+            content: "";
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            right: 3%;
+            top: -135px;
+            border: 1px solid rgba(255, 255, 255, 0.17);
+            border-radius: 50%;
+            box-shadow:
+                0 0 0 30px rgba(255, 255, 255, 0.04),
+                0 0 0 65px rgba(255, 255, 255, 0.04);
+            pointer-events: none;
+        }
+
+        .welcome-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            color: #dbe7ff;
+            margin-bottom: 13px;
+        }
+
+        .welcome h2 {
+            font-size: clamp(22px, 3vw, 30px);
+            line-height: 1.3;
+            letter-spacing: -0.7px;
+        }
+
+        .welcome p {
+            margin-top: 12px;
+            max-width: 470px;
+            color: #e0eaff;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .welcome-badge {
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+            padding: 13px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* Flash messages */
+
+        .flash-messages {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .flash-message {
+            padding: 13px 15px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            font-size: 12px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .flash-message.error,
+        .flash-message.danger {
             color: #842029;
-            background: #f8d7da;
-            padding: 10px;
-            border-radius: 6px;
+            background: #fff1f2;
+            border-color: #ffe0e3;
         }
 
         .flash-message.success {
-            color: #0f5132;
-            background: #d1e7dd;
-            padding: 10px;
-            border-radius: 6px;
+            color: #166534;
+            background: #f0fdf4;
+            border-color: #dcfce7;
         }
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
+
+        .flash-message.warning {
+            color: #854d0e;
+            background: #fefce8;
+            border-color: #fef08a;
+        }
+
+        .flash-message.info,
+        .flash-message.message {
+            color: #1e40af;
+            background: #eff6ff;
+            border-color: #dbeafe;
+        }
+
+        /* Transfer form */
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin: 34px 0 17px;
+        }
+
+        .section-heading h2 {
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .section-tag {
+            color: var(--primary);
+            background: #edf3ff;
+            padding: 7px 11px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .transfer-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.5fr) minmax(230px, 0.8fr);
+            align-items: start;
+            gap: 20px;
+        }
+
+        .transfer-card,
+        .info-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 27px;
+            min-width: 0;
+        }
+
+        .card-heading {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin-bottom: 25px;
+        }
+
+        .transfer-icon {
+            width: 49px;
+            height: 49px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            background: #e8efff;
+            color: var(--primary);
+            border-radius: 14px;
+            font-size: 25px;
+        }
+
+        .card-heading h3 {
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .card-heading p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 5px;
+            line-height: 1.6;
+        }
+
+        .input-group {
+            margin-bottom: 21px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .input-field {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            border: 1px solid #dce3ee;
+            border-radius: 11px;
+            padding: 0 15px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-field:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .field-icon {
+            flex-shrink: 0;
+            color: var(--muted);
+            font-size: 17px;
+        }
+
+        .input-field input {
+            width: 100%;
+            min-width: 0;
+            padding: 16px 0;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: var(--text);
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .input-field input::placeholder {
+            color: #b0b9c8;
+            font-size: 13px;
+            font-weight: 400;
+        }
+
+        .input-field input::-webkit-inner-spin-button,
+        .input-field input::-webkit-outer-spin-button {
             -webkit-appearance: none;
             margin: 0;
+        }
+
+        .input-field input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .field-hint {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 9px;
+            line-height: 1.7;
+        }
+
+        .transfer-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 9px;
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 13px;
+            font-weight: 750;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .transfer-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .transfer-button:active {
+            transform: scale(0.99);
+        }
+
+        .back-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin-top: 11px;
+            padding: 13px;
+            background: #f7f9fc;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: #58657b;
+            font-size: 12px;
+            font-weight: 700;
+            transition: background 0.2s;
+        }
+
+        .back-button:hover {
+            background: #edf1f7;
+        }
+
+        /* Information card */
+
+        .info-card {
+            padding: 24px;
+        }
+
+        .info-card h3 {
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-item-icon {
+            display: grid;
+            place-items: center;
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            background: #edf3ff;
+            color: var(--primary);
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        .info-item strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .info-item p {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .security-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 23px;
+            padding: 14px;
+            border-radius: 11px;
+            background: #f0fdf4;
+            border: 1px solid #dcfce7;
+            color: #166534;
+        }
+
+        .security-banner span {
+            font-size: 16px;
+        }
+
+        .security-banner p {
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-top: 25px;
+            margin-top: 38px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .footer strong {
+            color: #657188;
+        }
+
+        /* Responsive layout */
+
+        @media (max-width: 1100px) {
+            .sidebar {
+                width: 205px;
+            }
+
+            .main {
+                padding: 28px 24px;
+            }
+
+            .transfer-layout {
+                grid-template-columns: minmax(0, 1.2fr) minmax(210px, 0.8fr);
+            }
+
+            .transfer-card,
+            .info-card {
+                padding: 21px;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .transfer-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .info-card {
+                padding: 23px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 15px 16px 12px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .brand {
+                margin-bottom: 16px;
+                padding: 0 3px;
+            }
+
+            .brand-icon {
+                width: 38px;
+                height: 38px;
+            }
+
+            .brand-name {
+                font-size: 19px;
+            }
+
+            .nav-label,
+            .sidebar-bottom {
+                display: none;
+            }
+
+            .nav-links {
+                display: flex;
+                overflow-x: auto;
+                gap: 7px;
+                padding-bottom: 3px;
+            }
+
+            .nav-link {
+                flex-shrink: 0;
+                padding: 10px 12px;
+                font-size: 11px;
+                gap: 7px;
+                border: 1px solid var(--border);
+            }
+
+            .nav-icon {
+                font-size: 15px;
+                width: auto;
+            }
+
+            .main {
+                padding: 24px 17px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                margin-bottom: 25px;
+            }
+
+            .profile {
+                padding: 6px;
+                border: none;
+                background: transparent;
+            }
+
+            .profile-details {
+                display: none;
+            }
+
+            .avatar {
+                width: 38px;
+                height: 38px;
+            }
+
+            .welcome {
+                padding: 25px 21px;
+                border-radius: 16px;
+            }
+
+            .welcome-badge {
+                display: none;
+            }
+
+            .section-heading {
+                margin-top: 28px;
+            }
+
+            .transfer-card {
+                padding: 21px;
+            }
+
+            .footer {
+                margin-top: 28px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition: none !important;
+            }
         }
     </style>
 </head>
 
 <body>
-    <form action="{{ url_for('transactions.transaction', operation='transfer') }}"
-          method="POST">
+    <div class="layout">
 
-        <input
-            type="hidden"
-            name="csrf_token"
-            value="{{ csrf_token() }}"
-        >
-
-        <h2>Transfer Money</h2>
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% for category, message in messages %}
-                <div class="flash-message {{ category }}">
-                    {{ message }}
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="{{ url_for('pages.home') }}" class="brand">
+                <div class="brand-icon" aria-hidden="true">JAB</div>
+                <div>
+                    <div class="brand-name">Bank</div>
+                    <div class="brand-subtitle">Online Banking</div>
                 </div>
-            {% endfor %}
-        {% endwith %}
+            </a>
 
-        <label for="recipient_id">Recipient Account ID</label>
-        <input type="number" id="recipient_id" name="recipient_id"
-               min="1" step="1" placeholder="Enter account ID" required>
+            <div class="nav-label">MAIN MENU</div>
 
-        <label for="amount">Amount to transfer</label>
-        <input 
-          type="number" 
-          id="amount" 
-          name="amount"      
-          min="0.01" 
-          step="0.01" 
-          placeholder="Enter amount"
-          autocomplete="off"
-          required>
+            <nav class="nav-links" aria-label="Main navigation">
+                <a href="{{ url_for('pages.home') }}" class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">⌂</span>
+                    Dashboard
+                </a>
 
-        <button type="submit">Transfer</button>
+                <a href="{{ url_for('pages.bank_page', operation='deposit') }}"
+                   class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">↙</span>
+                    Deposit
+                </a>
 
-        <a href="{{ url_for('pages.home') }}" class="back-button">
-            Go back to home
-        </a>
-    </form>
+                <a href="{{ url_for('pages.bank_page', operation='withdraw') }}"
+                   class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">↗</span>
+                    Withdraw
+                </a>
+
+                <a href="{{ url_for('pages.bank_page', operation='transfer') }}"
+                   class="nav-link active" aria-current="page">
+                    <span class="nav-icon" aria-hidden="true">⇄</span>
+                    Transfer
+                </a>
+
+                <a href="{{ url_for('pages.receipts') }}" class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">▤</span>
+                    Transactions
+                </a>
+
+                <a href="{{ url_for('pages.account_page') }}" class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">♙</span>
+                    My Account
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+
+                <form action="{{ url_for('auth.logout') }}"
+                      method="POST" class="logout-form">
+                    <input type="hidden" name="csrf_token"
+                           value="{{ csrf_token() }}">
+
+                    <button type="submit" class="logout-button">
+                        ↪ &nbsp; Log out
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main">
+
+            <header class="topbar">
+                <div>
+                    <div class="breadcrumb">Bank / Banking / Transfer</div>
+                    <h1 class="page-title">Transfer Money</h1>
+                    <p class="page-subtitle">
+                        Send money to another account
+                    </p>
+                </div>
+
+                <div class="profile">
+                    <div class="avatar" aria-hidden="true">
+                        {{ session.get('username', 'C')[:1]|upper }}
+                    </div>
+                    <div class="profile-details">
+                        <div class="profile-name">
+                            {{ session.get('username', 'Customer') }}
+                        </div>
+                        <div class="profile-role">Customer account</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Welcome banner -->
+            <section class="welcome">
+                <div>
+                    <div class="welcome-label">JABBANK SERVICES</div>
+                    <h2>Send money.<br>boom.</h2>
+                    <p>
+                        ...
+                    </p>
+                </div>
+
+                <div class="welcome-badge">
+                    🛡 &nbsp; Standard Banking
+                </div>
+            </section>
+
+
+            <!-- Transfer section -->
+            <section aria-labelledby="transfer-heading">
+                <div class="section-heading">
+                    <div>
+                        <h2 id="transfer-heading">Make a Transfer</h2>
+                        <p>Enter the recipient and transfer amount.</p>
+                    </div>
+
+                    <span class="section-tag">⇄ TRANSFER</span>
+                </div>
+
+                <div class="transfer-layout">
+
+                    <!-- Transfer form card -->
+                    <div class="transfer-card">
+                        <div class="card-heading">
+                            <div class="transfer-icon" aria-hidden="true">⇄</div>
+                            <div>
+                                <h3>Transfer Details</h3>
+                                <p>Provide the account details for your transaction.</p>
+                            </div>
+                        </div>
+
+                        <!-- Flask flash messages -->
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                <div class="flash-messages" role="status" aria-live="polite">
+                                    {% for category, message in messages %}
+                                        <div class="flash-message {{ category }}">
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+
+                        <form
+                            action="{{ url_for('transactions.transaction', operation='transfer') }}"
+                            method="POST"
+                        >
+                            <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ csrf_token() }}"
+                            >
+
+                            <div class="input-group">
+                                <label for="recipient_id">Recipient Account ID</label>
+
+                                <div class="input-field">
+                                    <span class="field-icon" aria-hidden="true">♙</span>
+
+                                    <input
+                                        type="number"
+                                        id="recipient_id"
+                                        name="recipient_id"
+                                        min="1"
+                                        step="1"
+                                        placeholder="Enter recipient account ID"
+                                        inputmode="numeric"
+                                        autocomplete="off"
+                                        aria-describedby="recipient-hint"
+                                        required
+                                    >
+                                </div>
+
+                                <p class="field-hint" id="recipient-hint">
+                                    Double-check the account ID to make sure
+                                    the money goes to the intended recipient.
+                                </p>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="amount">Amount to transfer</label>
+
+                                <div class="input-field">
+                                    <span class="field-icon" aria-hidden="true">₱</span>
+
+                                    <input
+                                        type="number"
+                                        id="amount"
+                                        name="amount"
+                                        min="0.01"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                        inputmode="decimal"
+                                        autocomplete="off"
+                                        aria-describedby="amount-hint"
+                                        required
+                                    >
+                                </div>
+
+                                <p class="field-hint" id="amount-hint">
+                                    Enter an amount greater than zero.
+                                </p>
+                            </div>
+
+                            <button type="submit" class="transfer-button">
+                                <span aria-hidden="true">⇄</span>
+                                Transfer Money
+                            </button>
+
+                        </form>
+                    </div>
+
+                    <!-- Helpful information -->
+                    <aside class="info-card">
+                        <h3>Extra Space</h3>
+
+                        
+                    </aside>
+
+                </div>
+            </section>
+
+        </main>
+    </div>
 </body>
 </html>

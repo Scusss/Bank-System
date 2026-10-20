@@ -35,6 +35,7 @@ def get_customer_account(customer):
 
 from app.extensions import db
 
+
 @pages.route("/")
 @login_required
 def home():
@@ -43,7 +44,14 @@ def home():
 
     balance = account.balance if account else 0
 
-    return render_template("home.html", balance=balance)
+    return render_template(
+        "home.html",
+        balance=balance,
+        username=customer.username,
+        first_name=customer.first_name,
+        last_name=customer.last_name,
+    )
+
 
 
 @pages.route("/account")
