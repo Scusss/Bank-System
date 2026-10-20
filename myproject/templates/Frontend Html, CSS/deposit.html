@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jab Bank - Check Deposit</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <sidebar>
+            <div class="logo">Jab<span>Bank</span></div>
+            <ul>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="transfer.html">💸 Transfer Funds</a></li>
+                <li class="active"><a href="deposit.html">💵 Check Deposit</a></li>
+                <li><a href="loans.html">🏦 Loan Center</a></li>
+                <li><a href="cards.html">💳 Card Control</a></li>
+                <li><a href="statements.html">📄 Statements</a></li>
+                <li><a href="index.html" style="margin-top: 40px; color: var(--accent-red);">Logout</a></li>
+            </ul>
+        </sidebar>
+
+        <main>
+            <header>
+                <h1>Remote Check Deposit Capture</h1>
+            </header>
+
+            <div class="layout-grid">
+                <div class="glass-panel">
+                    <h3 style="margin-bottom: 25px;">Scan Instrument</h3>
+                    <form action="dashboard.html" method="GET">
+                        <div class="input-group">
+                            <label for="target-acc">Target Allocation Stream</label>
+                            <select id="target-acc">
+                                <option>Primary Checking Vault (•••• 7841)</option>
+                                <option>Secondary Yield Savings (•••• 3390)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="check-val">Face Statement Value (₱)</label>
+                            <input type="number" id="check-val" placeholder="0.00" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Capture Front Check Geometry</label>
+                            <input type="file" accept="image/*" style="padding: 10px 0; border: none; background: transparent;" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Transmit Image File</button>
+                    </form>
+                </div>
+
+                <div class="glass-panel" style="background: rgba(255,255,255,0.02);">
+                    <h4 style="margin-bottom: 15px; color: var(--accent-blue);">System Clearance Rules</h4>
+                    <p style="font-size: 14px; color: var(--text-dim); line-height: 1.6;">Checks sent before midnight local time are parsed for automated clearing settlement schedules next morning. Max daily threshold capped at ₱10,000.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

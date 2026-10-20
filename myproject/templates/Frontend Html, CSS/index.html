@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jab Bank - Welcome Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .video-bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+            background-color: #0f172a; 
+        }
+        
+        .video-bg-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(30, 41, 59, 0.85) 100%);
+            backdrop-filter: blur(3px); 
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block; 
+            margin-bottom: 8px; 
+            font-size: 13px; 
+            font-weight: 500; 
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .input-group input {
+            width: 100%; 
+            padding: 12px; 
+            border-radius: 8px; 
+            border: 1px solid rgba(255, 255, 255, 0.15); 
+            background: rgba(0, 0, 0, 0.3); 
+            color: #fff; 
+            box-sizing: border-box;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--accent-blue, #06b6d4);
+        }
+    </style>
+</head>
+<body style="display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; font-family: system-ui, -apple-system, sans-serif;">
+
+    <div class="video-bg-container">
+        <video autoplay loop muted playsinline>
+            
+            <source src="https://mixkit.co/free-stock-video/traffic-on-a-rainy-night-4331/" type="video/mp4">
+        </video>
+    </div>
+    <div class="video-overlay"></div>
+
+    <div style="width: 100%; max-width: 420px; padding: 20px; position: relative; z-index: 1;">
+        
+        <div style="font-size: 32px; font-weight: 700; text-align: center; margin-bottom: 30px; letter-spacing: -1px; color: #fff;">
+            Jab<span style="color: var(--accent-blue, #06b6d4);">Bank</span>
+        </div>
+
+        <div class="glass-panel" style="padding: 30px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; backdrop-filter: blur(12px); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); text-align: center;">
+            
+            <div style="display: flex; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                <button id="tab-login" onclick="switchTab('login')" style="background: none; border: none; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; padding: 5px 10px; border-bottom: 2px solid var(--accent-blue, #06b6d4); transition: all 0.2s; outline: none;">Sign In</button>
+                <button id="tab-signup" onclick="switchTab('signup')" style="background: none; border: none; color: var(--text-dim, #94a3b8); font-size: 16px; font-weight: 500; cursor: pointer; padding: 5px 10px; border-bottom: 2px solid transparent; transition: all 0.2s; outline: none;">Create Account</button>
+            </div>
+
+            <div id="error-message" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 12px; border-radius: 8px; font-size: 14px; margin-bottom: 20px; text-align: left;">
+                ⚠️ <span id="error-text"></span>
+            </div>
+
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <p style="color: var(--text-dim, #94a3b8); font-size: 14px; margin-bottom: 20px; margin-top: 0; text-align: left;">Access your financial portfolio securely.</p>
+                
+                <div class="input-group">
+                    <label for="login-email">Email Address</label>
+                    <input type="email" id="login-email" required placeholder="">
+                </div>
+
+                <div class="input-group" style="margin-bottom: 25px;">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required placeholder="••••••••">
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; font-weight: 600; background: var(--accent-blue, #06b6d4); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 15px;">Secure Log In</button>
+            </form>
+
+            <form id="signup-form" onsubmit="handleSignup(event)" style="display: none;">
+                <p style="color: var(--text-dim, #94a3b8); font-size: 14px; margin-bottom: 20px; margin-top: 0; text-align: left;">Get started with secure digital banking accounts.</p>
+
+                <div class="input-group">
+                    <label for="signup-name">Full Legal Name</label>
+                    <input type="text" id="signup-name" required placeholder="">
+                </div>
+
+                <div class="input-group">
+                    <label for="signup-email">Email Address</label>
+                    <input type="email" id="signup-email" required placeholder="">
+                </div>
+
+                <div class="input-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" required placeholder="••••••••">
+                </div>
+
+                <div class="input-group" style="margin-bottom: 25px;">
+                    <label for="signup-confirm">Confirm Password</label>
+                    <input type="password" id="signup-confirm" required placeholder="••••••••">
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; font-weight: 600; background: var(--accent-blue, #06b6d4); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 15px;">Open Free Account</button>
+            </form>
+
+        </div>
+    </div>
+
+    <script>
+        const errorMessage = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+
+        function switchTab(view) {
+            errorMessage.style.display = "none";
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const tabLogin = document.getElementById('tab-login');
+            const tabSignup = document.getElementById('tab-signup');
+
+            if (view === 'login') {
+                loginForm.style.display = "block";
+                signupForm.style.display = "none";
+                tabLogin.style.color = "#fff";
+                tabLogin.style.borderBottomColor = "var(--accent-blue, #06b6d4)";
+                tabSignup.style.color = "var(--text-dim, #94a3b8)";
+                tabSignup.style.borderBottomColor = "transparent";
+            } else {
+                loginForm.style.display = "none";
+                signupForm.style.display = "block";
+                tabSignup.style.color = "#fff";
+                tabSignup.style.borderBottomColor = "var(--accent-blue, #06b6d4)";
+                tabLogin.style.color = "var(--text-dim, #94a3b8)";
+                tabLogin.style.borderBottomColor = "transparent";
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            window.location.href = "statements.html";
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm').value;
+
+            if (password !== confirmPassword) {
+                errorText.textContent = "Passwords do not match!";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            if (password.length < 6) {
+                errorText.textContent = "Password must be at least 6 characters.";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            errorMessage.style.display = "none";
+            window.location.href = "statements.html";
+        }
+    </script>
+
+</body>
+</html>

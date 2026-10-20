@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jab Bank - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <sidebar>
+            <div class="logo">Jab<span>Bank</span></div>
+            <ul>
+                <li class="active"><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="transfer.html">💸 Transfer Funds</a></li>
+                <li><a href="deposit.html">💵 Check Deposit</a></li>
+                <li><a href="loans.html">🏦 Loan Center</a></li>
+                <li><a href="cards.html">💳 Card Control</a></li>
+                <li><a href="statements.html">📄 Statements</a></li>
+                <li><a href="index.html" style="margin-top: 40px; color: var(--accent-red);">Logout</a></li>
+            </ul>
+        </sidebar>
+
+        <main>
+            <header>
+                <h1>Welcome Back, Customer</h1>
+                <div class="user-tag">Access Tier: Verified Client Account Premium</div>
+            </header>
+
+            <div class="layout-grid">
+                
+                <div class="glass-panel glass-debit-card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <p style="font-size: 11px; text-transform: uppercase; color: var(--text-dim);">Available Asset Base</p>
+                            <h2 style="font-size: 30px; margin-top: 5px;">₱24,850.20</h2>
+                        </div>
+                        <span style="font-weight: 800; font-style: italic; opacity: 0.8;">VISA</span>
+                    </div>
+                    <div class="card-chip"></div>
+                    <div class="card-num">••••  ••••  ••••  7841</div>
+                </div>
+
+                <div class="glass-panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <h3 style="margin-bottom: 10px;">Quick Shortcuts</h3>
+                        <p style="font-size: 14px; color: var(--text-dim);">Safely bounce between account modules instantaneously.</p>
+                    </div>
+                    <div style="display: flex; gap: 15px;">
+                        <a href="transfer.html" class="btn-secondary">Send Wire</a>
+                        <a href="statements.html" class="btn-secondary">View Analysis</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <h3>Recent System Activity Logs</h3>
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Merchant / Event Detail</th>
+                            <th>Execution Date</th>
+                            <th>State</th>
+                            <th>Gross Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Salary Direct Clearing Payout</td>
+                            <td>Oct 16, 2026</td>
+                            <td>Settled</td>
+                            <td class="val-positive">+₱4,200.00</td>
+                        </tr>
+                        <tr>
+                            <td>Restaurant Dining Terminal</td>
+                            <td>Oct 14, 2026</td>
+                            <td>Settled</td>
+                            <td class="val-negative">-₱84.50</td>
+                        </tr>
+                        <tr>
+                            <td>Cloud Subscription Network</td>
+                            <td>Oct 10, 2026</td>
+                            <td>Settled</td>
+                            <td class="val-negative">-₱12.99</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>
