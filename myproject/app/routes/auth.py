@@ -1,11 +1,18 @@
+import random
+import string
 from flask import (Blueprint, render_template, request, redirect, url_for, flash, session)
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import IntegrityError
 from app.extensions import db
-from app.models import Customer
+from app.models import Customer, Account  # Ensure Account is imported
 from hmac import compare_digest
 
 auth = Blueprint("auth", __name__)
+
+
+# Helper function to generate a 10-digit account number
+def generate_account_number():
+    return "".join(random.choices(string.digits, k=10))
 
 
 @auth.route("/register", methods=["GET", "POST"])
@@ -45,12 +52,23 @@ def register():
         )
 
         db.session.add(customer)
-
+        
         try:
+            # Flush to assign the customer_id to the customer object without fully committing yet
+            db.session.flush()
+
+            # Create the corresponding bank account for the customer
+            account = Account(
+                account_number=generate_account_number(),
+                customer_id=customer.customer_id,
+                balance=0.00
+            )
+            db.session.add(account)
+
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
-            flash("That username or email may already be registered.")
+            flash("That username, email, or account number may already be registered.")
             return render_template("register.html")
 
         flash("Registration successful. Please log in.")
