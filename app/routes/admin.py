@@ -27,6 +27,7 @@ from app.services import (
     VERIFICATION_VERIFIED,
     available_bank_types,
     generate_unique_account_number,
+    mask_account_number,
     is_admin,
     is_verified,
     notify,
@@ -73,6 +74,15 @@ def dashboard():
     total_balance = db.session.query(func.coalesce(func.sum(Account.balance), 0)).scalar()
     recent_transactions = TransactionList.query.order_by(TransactionList.created_at.desc()).limit(12).all()
     recent_logs = AuditLog.query.order_by(AuditLog.created_at.desc()).limit(12).all()
+    recent_account_ids = {item.account_id for item in recent_transactions}
+    recent_accounts = (
+        Account.query.filter(Account.account_id.in_(recent_account_ids)).all()
+        if recent_account_ids else []
+    )
+    masked_account_numbers = {
+        account.account_id: mask_account_number(account.account_number)
+        for account in recent_accounts
+    }
     return render_template(
         "admin.html",
         view_name="dashboard",
@@ -83,6 +93,7 @@ def dashboard():
         total_transactions=total_transactions,
         total_balance=total_balance,
         recent_transactions=recent_transactions,
+        masked_account_numbers=masked_account_numbers,
         recent_logs=recent_logs,
     )
 

@@ -7,21 +7,12 @@
                                         <span class="notification-count">{{ unread_count }} new</span>
                                     {% endif %}
                                 </a>
-                                <button type="button" class="action-item" role="menuitem" data-action="security">
-                                    <span class="action-icon" aria-hidden="true">✓</span><span class="action-copy"><strong>Security Settings</strong><span>Password and account security</span></span>
-                                </button>
-                                <button type="button" class="action-item" role="menuitem" data-action="preferences">
-                                    <span class="action-icon" aria-hidden="true">⚙</span><span class="action-copy"><strong>Preferences</strong><span>Customize your banking experience</span></span>
-                                </button>
-                                <button type="button" class="action-item" role="menuitem" data-action="support">
-                                    <span class="action-icon" aria-hidden="true">?</span><span class="action-copy"><strong>Help &amp; Support</strong><span>Get assistance with your account</span></span>
-                                </button>
-                                
-                                <button type="button" class="action-item"
-                                        role="menuitem" data-action="about">
+
+                                <button type="button" class="action-item" role="menuitem" data-action="about" aria-haspopup="dialog">
                                     <span class="action-icon" aria-hidden="true">i</span>
                                     <span class="action-copy">
                                         <strong>About JAB Bank</strong>
+                                        <span>Who we are and what we offer</span>
                                     </span>
                                 </button>
 
@@ -42,6 +33,103 @@
                                     </button>
                                 </form>
 
+                                <template id="aboutBankTemplate">
+                                    <header class="about-header">
+                                        <div class="about-logo" aria-hidden="true">JAB</div>
+                                        <div>
+                                            <h2 id="aboutBankTitle">About JAB Bank</h2>
+                                            <p class="about-tagline">A modern digital banking platform</p>
+                                        </div>
+                                    </header>
+
+                                    <section class="about-section">
+                                        <h3>Overview</h3>
+                                        <p>JAB Bank gives users a convenient, secure, and reliable way to manage their finances through a user-friendly interface.</p>
+                                    </section>
+
+                                    <section class="about-section">
+                                        <h3>What you can do</h3>
+                                        <ul class="about-list">
+                                            <li>Make deposits and withdrawals</li>
+                                            <li>Transfer funds</li>
+                                            <li>Monitor your transactions</li>
+                                            <li>Manage your accounts</li>
+                                        </ul>
+                                    </section>
+
+                                    <section class="about-section">
+                                        <h3>Our goal</h3>
+                                        <p>To make banking simpler, more accessible, and more efficient, while prioritizing security and customer convenience.</p>
+                                    </section>
+
+                                    <section class="about-section about-credits">
+                                        <h3>Developed by</h3>
+                                        <p class="about-names">Coria, Arquiza, and Banay</p>
+                                        <p>Our commitment to applying technology and innovation to create a practical and accessible digital banking experience.</p>
+                                    </section>
+                                </template>
+
+                                <script>
+                                (function () {
+                                    if (window.__aboutBankReady) return;
+                                    window.__aboutBankReady = true;
+
+                                    var backdrop = null, lastFocus = null;
+
+                                    function build() {
+                                        var tpl = document.getElementById('aboutBankTemplate');
+                                        if (!tpl) return null;
+                                        var el = document.createElement('div');
+                                        el.className = 'about-backdrop';
+                                        el.setAttribute('aria-hidden', 'true');
+                                        var dialog = document.createElement('section');
+                                        dialog.className = 'about-modal';
+                                        dialog.setAttribute('role', 'dialog');
+                                        dialog.setAttribute('aria-modal', 'true');
+                                        dialog.setAttribute('aria-labelledby', 'aboutBankTitle');
+                                        dialog.appendChild(tpl.content.cloneNode(true));
+                                        var close = document.createElement('button');
+                                        close.type = 'button';
+                                        close.className = 'about-close';
+                                        close.textContent = 'Close';
+                                        dialog.appendChild(close);
+                                        el.appendChild(dialog);
+                                        document.body.appendChild(el);
+                                        el.addEventListener('click', function (e) {
+                                            if (e.target === el || e.target === close) closeAbout();
+                                        });
+                                        return el;
+                                    }
+
+                                    function openAbout() {
+                                        backdrop = backdrop || build();
+                                        if (!backdrop) return;
+                                        lastFocus = document.activeElement;
+                                        document.querySelectorAll('.utility-panel.is-open').forEach(function (p) {
+                                            p.classList.remove('is-open');
+                                            var t = p.querySelector('[data-toggle-panel]');
+                                            if (t) t.setAttribute('aria-expanded', 'false');
+                                        });
+                                        backdrop.classList.add('is-visible');
+                                        backdrop.setAttribute('aria-hidden', 'false');
+                                        backdrop.querySelector('.about-close').focus();
+                                    }
+
+                                    function closeAbout() {
+                                        if (!backdrop) return;
+                                        backdrop.classList.remove('is-visible');
+                                        backdrop.setAttribute('aria-hidden', 'true');
+                                        if (lastFocus && lastFocus.focus) lastFocus.focus();
+                                    }
+
+                                    document.addEventListener('click', function (e) {
+                                        if (e.target.closest('[data-action="about"]')) openAbout();
+                                    });
+                                    document.addEventListener('keydown', function (e) {
+                                        if (e.key === 'Escape' && backdrop && backdrop.classList.contains('is-visible')) closeAbout();
+                                    });
+                                })();
+                                </script>
                             </div>
                         </div>
                     </div>

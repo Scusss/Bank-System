@@ -878,6 +878,7 @@
     </nav>
 
             <div class="sidebar-bottom">
+                {% include "_sidebar_logout.html" %}
                 <a href="{{ url_for('pages.account_page') }}" class="sidebar-account-card">
                     <div class="sidebar-account-icon" aria-hidden="true">{{ session.get('username', 'C')[:1]|upper }}</div>
                     <div class="sidebar-account-copy">

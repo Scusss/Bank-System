@@ -1,0 +1,9 @@
+{# Logout button shown above the sidebar account card (matches the admin sidebar) #}
+<style>
+.sidebar-logout{margin:0 0 10px}
+.sidebar-logout button{width:100%;border:1px solid #e3e8f1;background:#fff;color:#c0392b;font:inherit;font-weight:700;padding:10px 12px;border-radius:10px;cursor:pointer;text-align:left}
+.sidebar-logout button:hover{background:#fff1f0}
+</style>
+<form class="sidebar-logout" action="{{ url_for('auth.logout') }}" method="POST">
+    <button type="submit">Log out</button>
+</form>

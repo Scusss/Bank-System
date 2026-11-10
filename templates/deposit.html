@@ -119,6 +119,7 @@
 
 
             <div class="sidebar-bottom">
+                {% include "_sidebar_logout.html" %}
                 <a href="{{ url_for('pages.account_page') }}" class="sidebar-account-card">
                     <div class="sidebar-account-icon" aria-hidden="true">{{ session.get('username', 'C')[:1]|upper }}</div>
                     <div class="sidebar-account-copy">
@@ -187,7 +188,7 @@
 
                 <div class="welcome-badge">
 
-                    🛡 &nbsp; JAB Online Banking<br><span class="welcome-account-id">Account ID: {{ account.account_id if account else "N/A" }}</span>
+                    🛡 &nbsp; JAB Online Banking<br><span class="welcome-account-id">Account ID: {{ account.account_number if account else "N/A" }}</span>
 
                 </div>
 

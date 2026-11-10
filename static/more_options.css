@@ -40,3 +40,22 @@
 }
 .utility-panel.is-open .action-popover { display:block !important; }
 @media (max-width:700px) { .mini-action-button { width:34px !important; height:34px !important; min-width:34px !important; min-height:34px !important; } .action-popover { width:min(320px,calc(100vw - 32px)) !important; } }
+
+/* About JAB Bank dialog (shared by every page that includes _more_options_menu.html). */
+.about-backdrop { position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center; padding:20px; background:rgba(15,23,42,.48); }
+.about-backdrop.is-visible { display:flex; }
+.about-modal { box-sizing:border-box; width:min(100%,480px); max-height:88vh; overflow:auto; padding:26px; border-radius:18px; background:#fff; color:var(--text,#172033); box-shadow:0 20px 60px rgba(0,0,0,.22); text-align:left; }
+.about-header { display:flex; align-items:center; gap:14px; padding-bottom:16px; margin-bottom:6px; border-bottom:1px solid var(--border,#e7ebf2); }
+.about-logo { display:grid; place-items:center; width:46px; height:46px; flex-shrink:0; border-radius:13px; background:var(--primary,#2563eb); color:#fff; font-size:13px; font-weight:800; letter-spacing:.04em; }
+.about-modal h2 { margin:0; font-size:20px; line-height:1.25; }
+.about-tagline { margin:3px 0 0; color:var(--muted,#738096); font-size:13px; }
+.about-section { margin-top:18px; }
+.about-section h3 { margin:0 0 6px; color:var(--primary,#2563eb); font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+.about-section p { margin:0; font-size:14px; line-height:1.65; }
+.about-list { margin:0; padding:0; list-style:none; display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:8px; }
+.about-list li { padding:9px 12px; border:1px solid var(--border,#e7ebf2); border-radius:10px; background:#fbfcff; font-size:13px; font-weight:600; }
+.about-credits { padding:14px 16px; border-radius:12px; background:#f2f6fc; }
+.about-credits .about-names { margin-bottom:6px; font-size:15px; font-weight:800; }
+.about-credits p:last-child { color:var(--muted,#738096); font-size:13px; }
+.about-close { display:block; margin:20px 0 0 auto; border:0; border-radius:9px; padding:10px 20px; background:var(--primary,#2563eb); color:#fff; font:inherit; font-weight:700; cursor:pointer; }
+.about-close:hover, .about-close:focus-visible { background:var(--primary-dark,#1d4ed8); }

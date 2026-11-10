@@ -148,6 +148,24 @@
             font-size: 11px;
         }
         .notification-meta .meta-dot { color: #b4becc; }
+        .notifications-card-header { gap: 14px; flex-wrap: wrap; }
+        .mark-all-form { margin: 0; }
+        .mark-all-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 14px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--primary);
+            color: #fff;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background .2s ease;
+        }
+        .mark-all-button:hover, .mark-all-button:focus-visible { background: var(--primary-dark); }
         .notification-read-form { margin-top: 13px; }
         .notification-read-button {
             display: inline-flex;
@@ -277,6 +295,13 @@
                             <h2 id="notifications-list-title">Your alerts</h2>
                             <p>Account updates and important messages appear here.</p>
                         </div>
+                        {% if unread_count > 0 %}
+                            <form class="mark-all-form" method="POST" action="{{ url_for('pages.mark_all_notifications_read') }}">
+                                <button class="mark-all-button" type="submit">
+                                    <span aria-hidden="true">✓✓</span> Mark all as read
+                                </button>
+                            </form>
+                        {% endif %}
                     </div>
 
                     {% if notifications %}

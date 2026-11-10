@@ -46,6 +46,7 @@
     <!-- Account rectangle at the bottom -->
     
     <div class="sidebar-bottom">
+        {% include "_sidebar_logout.html" %}
         <a href="{{ url_for('pages.account_page') }}" class="sidebar-account-card">
 
             <div class="sidebar-account-icon" aria-hidden="true">
@@ -143,7 +144,7 @@
                 </div>
 
                 <div class="welcome-badge">
-                    🛡 &nbsp; JAB Online Banking<br><span class="welcome-account-id">Account ID: {{ account.account_id if account else "N/A" }}</span>
+                    🛡 &nbsp; JAB Online Banking<br><span class="welcome-account-id">Account ID: {{ account.account_number if account else "N/A" }}</span>
                 </div>
 
             </section>
@@ -220,6 +221,21 @@
                         <div class="action-info">
                             <h3>Transaction History</h3>
                             <p>View your transactions and receipts.</p>
+                        </div>
+
+                        <span class="action-arrow" aria-hidden="true">›</span>
+
+                    </a>
+
+                    <a href="{{ url_for('pages.manage_bank_accounts') }}"
+                       class="action-card">
+
+                        <div class="action-icon icon-green"
+                             aria-hidden="true">▣</div>
+
+                        <div class="action-info">
+                            <h3>Manage Bank Accounts</h3>
+                            <p>Open, view and manage your bank accounts and limits.</p>
                         </div>
 
                         <span class="action-arrow" aria-hidden="true">›</span>
@@ -314,21 +330,8 @@
 
 
     <style>
-        .more-modal-backdrop{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.48)}
-        .more-modal-backdrop.is-visible{display:flex}
-        .more-modal{width:min(100%,460px);max-height:85vh;overflow:auto;padding:24px;border-radius:16px;background:#fff;color:#172033;box-shadow:0 20px 60px rgba(0,0,0,.22)}
-        .more-modal h2{margin:0 0 12px;font-size:1.25rem}
-        .more-modal p{margin:10px 0;line-height:1.55}
-        .more-modal .modal-close{margin-top:14px;border:0;border-radius:9px;padding:10px 16px;background:#173f70;color:#fff;cursor:pointer}
         @media(max-width:700px){.action-popover{min-width:min(360px,calc(100vw - 34px))}.topbar-identity{gap:6px}.account-badge{display:none}}
     </style>
-    <div class="more-modal-backdrop" id="moreOptionsModal" aria-hidden="true">
-        <section class="more-modal" role="dialog" aria-modal="true" aria-labelledby="moreOptionsModalTitle">
-            <h2 id="moreOptionsModalTitle">More Options</h2>
-            <div id="moreOptionsModalContent"></div>
-            <button type="button" class="modal-close" id="moreOptionsModalClose">Close</button>
-        </section>
-    </div>
     <script>
     document.addEventListener("DOMContentLoaded", function () {
         const nameElement = document.getElementById("customerName");
@@ -386,54 +389,6 @@
         });
         document.addEventListener("click", event => {
             if (!event.target.closest(".utility-panel")) closePanels();
-        });
-
-        const modal = document.getElementById("moreOptionsModal");
-        const modalTitle = document.getElementById("moreOptionsModalTitle");
-        const modalContent = document.getElementById("moreOptionsModalContent");
-        const closeButton = document.getElementById("moreOptionsModalClose");
-        function openModal(title, message) {
-            if (!modal || !modalTitle || !modalContent) return;
-            modalTitle.textContent = title;
-            modalContent.replaceChildren();
-            const p = document.createElement("p");
-            p.textContent = message;
-            modalContent.appendChild(p);
-            modal.classList.add("is-visible");
-            modal.setAttribute("aria-hidden", "false");
-            if (closeButton) closeButton.focus();
-        }
-        function closeModal() {
-            if (!modal) return;
-            modal.classList.remove("is-visible");
-            modal.setAttribute("aria-hidden", "true");
-        }
-        if (closeButton) closeButton.addEventListener("click", closeModal);
-        if (modal) modal.addEventListener("click", event => {
-            if (event.target === modal) closeModal();
-        });
-        document.addEventListener("keydown", event => {
-            if (event.key === "Escape") closeModal();
-        });
-
-        const menu = document.querySelector(".action-popover");
-        if (menu) menu.addEventListener("click", function (event) {
-            const button = event.target.closest("[data-action]");
-            if (!button) return;
-            switch (button.dataset.action) {
-                case "security":
-                    window.location.href = "{{ url_for('pages.account_page') }}";
-                    break;
-                case "preferences":
-                    openModal("Preferences", "Preferences are not saved yet; this is a display preview only.");
-                    break;
-                case "support":
-                    openModal("Help & Support", "Contact your bank administrator for help. Never share your password, PIN, or one-time verification code.");
-                    break;
-                case "about":
-                    openModal("About JAB Bank", "About Our Bank Our bank is a modern digital banking platform designed to provide users with a convenient, secure, and reliable way to manage their finances. It offers essential banking services such as deposits, withdrawals, fund transfers, transaction monitoring, and account management through a user-friendly interface. The platform aims to make banking simpler, more accessible, and efficient while prioritizing security and customer convenience. **Developed by Coria, Arquiza, and Banay**, this banking system represents our commitment to applying technology and innovation to create a practical and accessible digital banking experience.");
-                    break;
-            }
         });
     });
     </script>

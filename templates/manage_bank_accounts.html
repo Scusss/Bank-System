@@ -41,6 +41,13 @@
         .sidebar-account-copy strong { font-size:12px; overflow-wrap:anywhere; }
         .sidebar-account-copy span { color:var(--muted); font-size:11px; }
         .sidebar-account-arrow { margin-left:auto; color:#7b8ba3; font-size:22px; }
+        .verify-banner { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; padding:16px 20px; margin-bottom:16px; border:1px solid #fde7b0; border-radius:14px; background:#fff9eb; color:#92400e; font-size:13px; line-height:1.6; }
+        .verify-banner a { color:var(--primary); font-weight:700; text-decoration:none; }
+        .verify-banner--ok { border-color:#cfeed9; background:#f1fbf4; color:#166534; }
+        .request-box { margin-top:14px; padding:16px 18px; border:1px dashed var(--border); border-radius:13px; background:#fbfcff; }
+        .request-box p { margin:0 0 12px; }
+        .request-box .reject-note { color:#9f1239; }
+        .limit-button[disabled] { opacity:.5; cursor:not-allowed; }
         .empty-state { text-align:center; padding:30px 18px; color:var(--muted); }
         @media(max-width:700px) { .sidebar { position:static; width:100%; min-width:0; height:auto; } .layout { flex-direction:column; } .main { padding:22px 16px; } }
     </style>
@@ -63,6 +70,7 @@
             <a href="{{ url_for('pages.account_page') }}" class="nav-link"><span class="nav-icon" aria-hidden="true">♙</span>My Account</a>
         </nav>
         <div class="sidebar-bottom">
+            {% include "_sidebar_logout.html" %}
             <a href="{{ url_for('pages.account_page') }}" class="sidebar-account-card">
                 <div class="sidebar-account-icon" aria-hidden="true">{{ customer.username[:1]|upper }}</div>
                 <div class="sidebar-account-copy"><strong>{{ customer.username }}</strong><span>Customer account</span></div>
@@ -76,7 +84,7 @@
                 <div>
                     <div class="breadcrumb">Bank / Banking / Manage Bank Accounts</div>
                     <h1 class="page-title">Manage Bank Accounts</h1>
-                    <p class="page-subtitle">View your bank account applications and account details.</p>
+                    <p class="page-subtitle">Request bank accounts, track your applications and manage account details.</p>
                 </div>
             </header>
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -84,6 +92,22 @@
                     <div class="flash-message {{ category }}">{{ message }}</div>
                 {% endfor %}{% endif %}
             {% endwith %}
+            {% set is_ver = verification_state == 'verified' %}
+            {% if is_ver %}
+                <div class="verify-banner verify-banner--ok">
+                    <span>✔ Your account is verified. You can request any bank account type listed below.</span>
+                </div>
+            {% elif verification_state == 'pending' %}
+                <div class="verify-banner">
+                    <span>⌛ Your verification request is awaiting review. You can request a bank account once it is approved.</span>
+                    <a href="{{ url_for('pages.account_page') }}">View verification status</a>
+                </div>
+            {% else %}
+                <div class="verify-banner">
+                    <span>🛡 {% if verification_state == 'rejected' %}Your last verification request was declined. {% endif %}Your account must be verified before you can request a bank account.</span>
+                    <a href="{{ url_for('pages.account_page') }}">Go to My Account to verify</a>
+                </div>
+            {% endif %}
             {% if bank_management %}
                 {% for item in bank_management %}
                     {% set acct = item.get('account') %}
@@ -99,7 +123,7 @@
                         {% if acct %}
                             <p>Your {{ item.get('label', 'bank')|lower }} account is available in your profile.</p>
                             <div class="manage-details">
-                                <div class="manage-detail"><span>Account number</span><strong>{{ acct.account_id }}</strong></div>
+                                <div class="manage-detail"><span>Account number</span><strong>{{ acct.account_number }}</strong></div>
                                 <div class="manage-detail"><span>Account type</span><strong>{{ acct.account_type|replace('_', ' ')|title }}</strong></div>
                                 <div class="manage-detail"><span>Available balance</span><strong>{{ "{:,.2f}".format(acct.balance or 0) }}</strong></div>
                                 <div class="manage-detail"><span>Account status</span><strong>{{ acct.status|default('Active', true)|title }}</strong></div>
@@ -148,7 +172,29 @@
                                 <p class="limit-help">Limits cannot be changed because this account is closed.</p>
                             {% endif %}
                         {% else %}
-                            <p>Application status: {{ item.get('state', 'Pending')|replace('_', ' ')|title }}.</p>
+                            {% set st = item.get('state') %}
+                            {% set app = item.get('application') %}
+                            {% if st == 'pending' %}
+                                <p>Your {{ item.get('label', 'bank')|lower }} account request was submitted{% if app and app.submitted_at %} on {{ app.submitted_at.strftime('%B %d, %Y') }}{% endif %} and is awaiting review.</p>
+                            {% elif st == 'approved' %}
+                                <p>Your {{ item.get('label', 'bank')|lower }} account request was approved.</p>
+                            {% else %}
+                                <div class="request-box">
+                                    {% if st == 'rejected' %}
+                                        <p class="reject-note">Your previous request was declined.{% if app and app.review_remarks %} Reason: {{ app.review_remarks }}{% endif %} You may submit a new request.</p>
+                                    {% else %}
+                                        <p>You don't have a {{ item.get('label', 'bank')|lower }} account yet.</p>
+                                    {% endif %}
+                                    {% if is_ver %}
+                                        <form method="POST" action="{{ url_for('pages.request_bank_account') }}">
+                                            <input type="hidden" name="account_type" value="{{ item.get('type') }}">
+                                            <button class="limit-button" type="submit">Request {{ item.get('label', 'bank') }} account</button>
+                                        </form>
+                                    {% else %}
+                                        <button class="limit-button" type="button" disabled title="Verify your account first">Request {{ item.get('label', 'bank') }} account</button>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
                         {% endif %}
                     </section>
                 {% endfor %}

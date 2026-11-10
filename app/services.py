@@ -6,6 +6,7 @@ A *bank account* (``Account``) holds money only and is created after the user
 has been verified and an administrator has approved the request.
 """
 
+import re
 import secrets
 import string
 from datetime import datetime, time, timedelta, timezone
@@ -275,12 +276,44 @@ def bank_type_states(user_id):
 # --------------------------------------------------
 
 def generate_unique_account_number():
-    """Generate a 12-digit account number that is not in use."""
+    """Generate an 8-digit account number formatted as XXXX-XXXX that is not in use."""
     for _ in range(10):
-        number = "".join(secrets.choice(string.digits) for _ in range(12))
+        digits = "".join(secrets.choice(string.digits) for _ in range(8))
+        number = f"{digits[:4]}-{digits[4:]}"
         if Account.query.filter_by(account_number=number).first() is None:
             return number
     raise RuntimeError("Unable to generate a unique account number.")
+
+
+def normalize_account_number(value):
+    """Return an account number in XXXX-XXXX form, or None if it is malformed.
+
+    Accepts "12340001" as well as "1234-0001" (spaces are ignored).
+    """
+    cleaned = (value or "").replace(" ", "").strip()
+    if re.fullmatch(r"\d{8}", cleaned):
+        cleaned = f"{cleaned[:4]}-{cleaned[4:]}"
+    if re.fullmatch(r"\d{4}-\d{4}", cleaned):
+        return cleaned
+    return None
+
+
+def mask_account_number(number):
+    """Mask the first 4 digits of an XXXX-XXXX account number: ****-5678."""
+    number = (number or "").strip()
+    if not number:
+        return "—"
+    if "-" in number:
+        return "****-" + number.split("-", 1)[1]
+    return "****" + number[4:] if len(number) > 4 else "****"
+
+
+def find_account_by_number(value):
+    """Look up a bank account by its customer-facing account number."""
+    number = normalize_account_number(value)
+    if number is None:
+        return None
+    return Account.query.filter_by(account_number=number).first()
 
 
 def user_accounts(user_id):

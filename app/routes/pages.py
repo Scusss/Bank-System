@@ -37,6 +37,7 @@ from app.services import (
     account_limits,
     VERIFICATION_PENDING,
     bank_type_states,
+    find_account_by_number,
     is_staff,
     is_admin,
     is_verification_officer,
@@ -281,11 +282,13 @@ def account_page():
 @login_required
 def manage_bank_accounts():
     customer = get_current_customer()
+    state, record = verification_state(customer.user_id)
     return render_template(
         "manage_bank_accounts.html",
         customer=customer,
         bank_management=_bank_management(customer.user_id),
-        verification_state=verification_state(customer.user_id)[0],
+        verification_state=state,
+        verification=record,
         accounts=user_accounts(customer.user_id),
         account_type="Manage Bank Accounts",
     )
@@ -691,9 +694,10 @@ def request_bank_account():
     customer = get_current_customer()
 
     if not is_verified(customer.user_id):
-        flash("Verify your identity before requesting a bank account.",
+        flash("Your account must be verified before you can request a "
+              "bank account. Complete verification under My Account.",
               "error")
-        return redirect(url_for("pages.account_page"))
+        return redirect(url_for("pages.manage_bank_accounts"))
 
     account_type = (request.form.get("account_type") or "").strip().lower()
     states = {s["type"]: s for s in bank_type_states(customer.user_id)}
@@ -701,16 +705,16 @@ def request_bank_account():
 
     if entry is None:
         flash("Choose a valid bank account type.", "error")
-        return redirect(url_for("pages.account_page"))
+        return redirect(url_for("pages.manage_bank_accounts"))
 
     if entry["state"] == APPLICATION_PENDING:
         flash(f"Your {entry['label']} request is already awaiting review.",
               "error")
-        return redirect(url_for("pages.account_page"))
+        return redirect(url_for("pages.manage_bank_accounts"))
 
     if entry["state"] == "approved":
         flash(f"You already have a {entry['label']} account.", "error")
-        return redirect(url_for("pages.account_page"))
+        return redirect(url_for("pages.manage_bank_accounts"))
 
     application = AccountApplication(
         customer_id=customer.user_id,
@@ -742,7 +746,7 @@ def request_bank_account():
     except Exception:
         db.session.rollback()
         flash("Could not submit the request. Please try again.", "error")
-    return redirect(url_for("pages.account_page"))
+    return redirect(url_for("pages.manage_bank_accounts"))
 
 
 @pages.route("/<operation>")
@@ -804,21 +808,19 @@ def add_transfer_contact():
     if not name or len(name) > 150:
         flash("Enter a contact name (up to 150 characters).", "error")
         return redirect(url_for("pages.bank_page", operation="transfer"))
-    try:
-        recipient_id = int(account_value)
-    except (TypeError, ValueError):
-        flash("Enter a valid recipient account ID.", "error")
+    recipient_account = find_account_by_number(account_value)
+    if recipient_account is None:
+        flash("Enter a valid recipient account ID (e.g. 1234-5678).", "error")
         return redirect(url_for("pages.bank_page", operation="transfer"))
 
-    recipient_account = db.session.get(Account, recipient_id)
-    if (recipient_account is None or recipient_account.status != "active"
+    if ( recipient_account.status != "active"
             or recipient_account.customer_id == customer.user_id):
         flash("That active recipient account could not be found.", "error")
         return redirect(url_for("pages.bank_page", operation="transfer"))
 
     duplicate = Beneficiary.query.filter_by(
         customer_id=customer.user_id,
-        account_number=str(recipient_id),
+        account_number=recipient_account.account_number,
     ).first()
     if duplicate:
         flash("That recipient is already in your saved contacts.", "error")
@@ -827,7 +829,7 @@ def add_transfer_contact():
     contact = Beneficiary(
         customer_id=customer.user_id,
         beneficiary_name=name,
-        account_number=str(recipient_id),
+        account_number=recipient_account.account_number,
         bank_name="Coria Bank",
         nickname=name[:50],
     )
@@ -899,6 +901,34 @@ def notifications():
         unread_count=unread_count,
         role_name=role_name(customer) or "customer",
     )
+
+
+@pages.route("/notifications/read-all", methods=["POST"])
+@login_required
+def mark_all_notifications_read():
+    """Mark every unread notification of the signed-in customer as read."""
+    customer = get_current_customer()
+
+    try:
+        updated = (
+            Notification.query
+            .filter_by(customer_id=customer.user_id, is_read=False)
+            .update({Notification.is_read: True}, synchronize_session=False)
+        )
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        logger.exception("Could not mark notifications as read")
+        flash("Could not mark your notifications as read. Please try again.",
+              "error")
+        return redirect(url_for("pages.notifications"))
+
+    if updated:
+        flash(f"{updated} notification{'s' if updated != 1 else ''} "
+              "marked as read.", "success")
+    else:
+        flash("You have no unread notifications.", "success")
+    return redirect(url_for("pages.notifications"))
 
 
 @pages.route("/notifications/<int:notification_id>/read", methods=["POST"])

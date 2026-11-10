@@ -7,7 +7,7 @@ from sqlalchemy import select
 
 from app.extensions import db
 from app.models import Account, AppUser, TransactionList, TransactionType, Notification
-from app.services import account_limits, is_staff, selected_account
+from app.services import account_limits, find_account_by_number, is_staff, selected_account
 
 transactions = Blueprint("transactions", __name__)
 
@@ -69,11 +69,13 @@ def transaction(operation):
     recipient_id = None
 
     if operation == "transfer":
-        try:
-            recipient_id = int(request.form.get("recipient_id", ""))
-        except (ValueError, TypeError):
-            flash("Please enter a valid recipient account ID.", "error")
+        recipient_account = find_account_by_number(
+            request.form.get("recipient_id", "")
+        )
+        if recipient_account is None:
+            flash("Please enter a valid recipient account ID (e.g. 1234-5678).", "error")
             return return_to_form()
+        recipient_id = recipient_account.account_id
 
     try:
         # Use the bank account the user selected (always one they own).
@@ -244,7 +246,7 @@ def transaction(operation):
                     amount=amount,
                     balance_before=sender_before,
                     balance_after=sender.balance,
-                    description=f"Money transfer sent to account #{recipient.account_id}",
+                    description=f"Money transfer sent to account #{recipient.account_number}",
                     status="completed"
                 ),
                 TransactionList(
@@ -254,7 +256,7 @@ def transaction(operation):
                     amount=amount,
                     balance_before=recipient_before,
                     balance_after=recipient.balance,
-                    description=f"Money transfer received from account #{sender.account_id}",
+                    description=f"Money transfer received from account #{sender.account_number}",
                     status="completed"
                 )
             ])

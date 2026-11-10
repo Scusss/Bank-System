@@ -857,6 +857,7 @@
     </nav>
 
             <div class="sidebar-bottom">
+                {% include "_sidebar_logout.html" %}
                 <a href="{{ url_for('pages.account_page') }}" class="sidebar-account-card">
                     <div class="sidebar-account-icon" aria-hidden="true">{{ session.get('username', 'C')[:1]|upper }}</div>
                     <div class="sidebar-account-copy">
@@ -901,7 +902,7 @@
                 </div>
 
                 <div class="welcome-badge">
-                    🛡 &nbsp; JAB Online Banking<br><span class="welcome-account-id">Account ID: {{ account.account_id if account else "N/A" }}</span>
+                    🛡 &nbsp; JAB Online Banking<br><span class="welcome-account-id">Account ID: {{ account.account_number if account else "N/A" }}</span>
                 </div>
             </section>
 
@@ -961,12 +962,13 @@
                                     <span class="field-icon" aria-hidden="true">♙</span>
 
                                     <input
-                                        type="number"
+                                        type="text"
                                         id="recipient_id"
                                         name="recipient_id"
-                                        min="1"
-                                        step="1"
-                                        placeholder="Enter recipient account ID"
+                                        pattern="[0-9]{4}-?[0-9]{4}"
+                                        maxlength="9"
+                                        title="Format: 1234-5678"
+                                        placeholder="e.g. 1234-5678"
                                         inputmode="numeric"
                                         autocomplete="off"
                                         aria-describedby="recipient-hint"
@@ -1021,7 +1023,7 @@
                             <label for="contact-name" style="font-size:.88rem;font-weight:650;color:#26364b;">Contact name</label>
                             <input id="contact-name" name="beneficiary_name" type="text" maxlength="150" placeholder="e.g. Alex Santos" required style="width:100%;padding:12px;border:1px solid #d9e2ef;border-radius:10px;background:#fff;">
                             <label for="contact-account" style="font-size:.88rem;font-weight:650;color:#26364b;">Recipient account ID</label>
-                            <input id="contact-account" name="recipient_id" type="number" min="1" step="1" placeholder="Enter account ID" required style="width:100%;padding:12px;border:1px solid #d9e2ef;border-radius:10px;background:#fff;">
+                            <input id="contact-account" name="recipient_id" type="text" pattern="[0-9]{4}-?[0-9]{4}" maxlength="9" title="Format: 1234-5678" inputmode="numeric" placeholder="e.g. 1234-5678" required style="width:100%;padding:12px;border:1px solid #d9e2ef;border-radius:10px;background:#fff;">
                             <button type="submit" style="padding:12px 16px;border:0;border-radius:10px;background:#2563eb;color:#fff;font-weight:700;cursor:pointer;">＋ Save recipient</button>
                         </form>
                         {% if saved_recipients %}

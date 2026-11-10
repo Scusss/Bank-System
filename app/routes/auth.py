@@ -150,9 +150,9 @@ def register():
         flash("Please enter a valid email address.")
         return render_template("register.html"), 400
 
-    if len(password) < 12 or len(password) > 256:
+    if len(password) < 8 or len(password) > 256:
         flash(
-            "Password must be between 12 and 256 characters."
+            "Password must be between 8 and 256 characters."
         )
         return render_template("register.html"), 400
 

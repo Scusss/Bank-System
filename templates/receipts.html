@@ -1018,53 +1018,7 @@
                     <div class="utility-actions" aria-label="More options">
                         <div class="utility-panel">
                             <button type="button" class="mini-action-button" data-toggle-panel aria-expanded="false" aria-label="More options">⋯</button>
-                            <div class="action-popover" role="menu" aria-label="More options menu">
-                                <div class="more-options-header"><span>More Options</span><span class="dots" aria-hidden="true">⋮</span></div>
-                                <a href="{{ url_for('pages.notifications') }}" class="action-item" role="menuitem">
-                                    <span class="action-icon" aria-hidden="true">🔔</span>
-                                    <strong>Notifications</strong>
-                                    {% if unread_count > 0 %}
-                                        <span class="notification-count">{{ unread_count }} new</span>
-                                    {% endif %}
-                                </a>
-                                <button type="button" class="action-item" role="menuitem" data-action="security">
-                                    <span class="action-icon" aria-hidden="true">✓</span><span class="action-copy"><strong>Security Settings</strong><span>Password and account security</span></span>
-                                </button>
-                                <button type="button" class="action-item" role="menuitem" data-action="preferences">
-                                    <span class="action-icon" aria-hidden="true">⚙</span><span class="action-copy"><strong>Preferences</strong><span>Customize your banking experience</span></span>
-                                </button>
-                                <button type="button" class="action-item" role="menuitem" data-action="support">
-                                    <span class="action-icon" aria-hidden="true">?</span><span class="action-copy"><strong>Help &amp; Support</strong><span>Get assistance with your account</span></span>
-                                </button>
-                                
-                                <button type="button" class="action-item"
-                                        role="menuitem" data-action="about">
-                                    <span class="action-icon" aria-hidden="true">i</span>
-                                    <span class="action-copy">
-                                        <strong>About JAB Bank</strong>
-                                    </span>
-                                </button>
-
-                                <div class="menu-divider"></div>
-
-                                <form action="{{ url_for('auth.logout') }}"
-                                    method="POST"
-                                    class="more-logout-form">
-
-                                    <button type="submit"
-                                            class="action-item action-item--logout"
-                                            role="menuitem">
-                                        <span class="action-icon" aria-hidden="true">↪</span>
-                                        <span class="action-copy">
-                                            <strong>Log out</strong>
-                                            <span>Securely sign out of your account</span>
-                                        </span>
-                                    </button>
-                                </form>
-
-                            </div>
-                        </div>
-                    </div>
+                            {% include "_more_options_menu.html" %}
                 </div>
             </header>
 {% include '_account_switcher.html' %}
