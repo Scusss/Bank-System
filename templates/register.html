@@ -14,6 +14,7 @@
 </head>
 <body>
 
+<div class="page-shell" style="width:100%;display:flex;flex-direction:column;align-items:center;">
     <main class="page-container">
 
         <a href="{{ url_for('auth.login') }}" class="brand">
@@ -140,6 +141,7 @@
     </main>
 
     {% include '_demo_notice.html' %}
+    </div>
 
 </body>
 </html>
