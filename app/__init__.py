@@ -98,10 +98,17 @@ def create_app():
                 is_read=False,
             ).count()
 
+        status = customer.account_status if customer else "active"
+        if customer is not None and status == "active":
+            # A customer whose bank account is frozen is shown as Frozen.
+            from app.models import Account
+            if Account.query.filter_by(
+                customer_id=customer.user_id, status="frozen"
+            ).first() is not None:
+                status = "frozen"
+
         return {
-            "current_account_status": (
-                customer.account_status if customer else "active"
-            ),
+            "current_account_status": status,
             "unread_count": unread_count,
         }
 

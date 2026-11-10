@@ -780,6 +780,10 @@ def bank_page(operation):
         )
         return redirect(url_for("pages.account_page"))
 
+    # A frozen bank account cannot deposit, withdraw or transfer.
+    if (account.status or "active") == "frozen":
+        return redirect(url_for("pages.home"))
+
     account_type_label = account_label(account)
     current_balance = account.balance
     saved_recipients = []

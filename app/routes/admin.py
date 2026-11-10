@@ -113,10 +113,16 @@ def users():
     accounts_by_customer = {}
     for account in Account.query.order_by(Account.account_id.asc()).all():
         accounts_by_customer.setdefault(str(account.customer_id), []).append(account)
+    status_by_customer = {
+        str(c.user_id): _effective_status(
+            c, accounts_by_customer.get(str(c.user_id), [])
+        )
+        for c in customers
+    }
     return render_template(
         "admin.html", view_name="users", customers=customers, roles=roles,
         details_by_id=details_by_id, accounts_by_customer=accounts_by_customer,
-        verified_ids=verified_ids,
+        verified_ids=verified_ids, status_by_customer=status_by_customer,
     )
 
 
@@ -149,6 +155,16 @@ def update_role(customer_id):
     return redirect(url_for("admin.users"))
 
 
+def _effective_status(user, accounts):
+    """Status shown to admins: closed > frozen (bank accounts) > active."""
+    status = (user.account_status or "active").lower()
+    if status in {"closed", "frozen"}:
+        return status
+    if accounts and all((a.status or "active") == "frozen" for a in accounts):
+        return "frozen"
+    return "active"
+
+
 @admin.route("/users/<uuid:customer_id>/status", methods=["POST"])
 @admin_required
 def update_account_status(customer_id):
@@ -165,11 +181,49 @@ def update_account_status(customer_id):
         flash("You cannot freeze or close your own administrator account.", "error")
         return redirect(url_for("admin.users"))
 
-    old_status = target.account_status or "active"
-    target.account_status = new_status
-    # Legacy lock flag: only closed accounts are fully locked out. Frozen
-    # customers can still sign in but cannot move money.
-    target.is_locked = new_status == "closed"
+    accounts = Account.query.filter_by(customer_id=target.user_id).all()
+    old_status = _effective_status(target, accounts)
+    now = datetime.now(timezone.utc)
+
+    if new_status == "frozen":
+        # Freeze the customer's BANK accounts. The user account stays active
+        # so the customer can still sign in, but cannot deposit, withdraw or
+        # transfer from a frozen bank account.
+        target.account_status = "active"
+        target.is_locked = False
+        for account in accounts:
+            if (account.status or "active") == "active":
+                account.status = "frozen"
+                account.frozen_at = now
+                account.status_reason = "Frozen by an administrator"
+    elif new_status == "active":
+        target.account_status = "active"
+        target.is_locked = False
+        for account in accounts:
+            if account.status == "frozen":
+                account.status = "active"
+                account.frozen_at = None
+                account.status_reason = None
+    else:
+        # Closed: the customer can no longer sign in at all.
+        target.account_status = "closed"
+        target.is_locked = True
+
+    if new_status == "frozen" and accounts:
+        notify(
+            target.user_id,
+            "Your bank accounts have been frozen",
+            "An administrator has frozen your bank accounts. You can still "
+            "sign in, but deposits, withdrawals and transfers are disabled. "
+            "Please contact support.",
+        )
+    elif new_status == "active" and old_status == "frozen":
+        notify(
+            target.user_id,
+            "Your bank accounts are active again",
+            "Your bank accounts have been unfrozen. You can use deposits, "
+            "withdrawals and transfers again.",
+        )
     write_audit(
         "customer_account_status_changed", "app_user", target.user_id,
         f"Changed account status for username '{target.username}' from '{old_status}' to '{new_status}'.",

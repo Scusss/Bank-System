@@ -154,7 +154,9 @@ def transaction(operation):
         if sender.status != "active":
             db.session.rollback()
             flash(
-                "Your account is not active. Transactions are unavailable.",
+                "This bank account is frozen. Deposits, withdrawals and "
+                "transfers are unavailable." if sender.status == "frozen"
+                else "Your account is not active. Transactions are unavailable.",
                 "error"
             )
             return return_to_form()
