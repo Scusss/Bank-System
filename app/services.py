@@ -75,6 +75,31 @@ def is_staff(user):
     return is_admin(user) or is_verification_officer(user)
 
 
+def is_frozen(user):
+    """Frozen customers may sign in but cannot move money."""
+    return (
+        user is not None
+        and (user.account_status or "active").lower() == "frozen"
+    )
+
+
+def is_access_blocked(user):
+    """True when the user may not sign in or use any protected page.
+
+    Closed accounts are always blocked. Frozen customers are allowed in
+    (they just cannot deposit, withdraw or transfer); frozen staff remain
+    blocked so a frozen administrator cannot keep using admin tools.
+    """
+    if user is None:
+        return True
+    status = (user.account_status or "active").lower()
+    if status == "closed":
+        return True
+    if status == "frozen":
+        return is_staff(user)
+    return bool(user.is_locked)
+
+
 # --------------------------------------------------
 # Audit log and notifications
 # --------------------------------------------------

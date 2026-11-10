@@ -34,6 +34,7 @@ from app.services import (
     ROLE_ADMIN,
     ROLE_CUSTOMER,
     ROLE_VERIFICATION_OFFICER,
+    is_access_blocked,
     notify,
     write_audit,
 )
@@ -328,10 +329,7 @@ def login():
         flash("Invalid username or password.")
         return render_template("login.html"), 401
 
-    if (
-        customer.is_locked
-        or customer.account_status != "active"
-    ):
+    if is_access_blocked(customer):
         record_login_attempt(
             customer_id=customer.user_id,
             username=customer.username,

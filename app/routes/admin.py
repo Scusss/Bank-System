@@ -28,6 +28,7 @@ from app.services import (
     available_bank_types,
     generate_unique_account_number,
     mask_account_number,
+    is_access_blocked,
     is_admin,
     is_verified,
     notify,
@@ -49,7 +50,7 @@ def admin_required(view):
             customer = db.session.get(AppUser, UUID(str(customer_id)))
         except (ValueError, TypeError, AttributeError):
             customer = None
-        if (customer is None or customer.is_locked or customer.account_status != "active"):
+        if is_access_blocked(customer):
             session.clear()
             flash("Your account is unavailable. Please log in again.", "error")
             return redirect(url_for("auth.login"))
@@ -166,8 +167,9 @@ def update_account_status(customer_id):
 
     old_status = target.account_status or "active"
     target.account_status = new_status
-    # Keep the legacy lock flag synchronized for existing checks/integrations.
-    target.is_locked = new_status != "active"
+    # Legacy lock flag: only closed accounts are fully locked out. Frozen
+    # customers can still sign in but cannot move money.
+    target.is_locked = new_status == "closed"
     write_audit(
         "customer_account_status_changed", "app_user", target.user_id,
         f"Changed account status for username '{target.username}' from '{old_status}' to '{new_status}'.",

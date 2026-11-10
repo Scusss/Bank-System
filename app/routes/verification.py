@@ -18,6 +18,7 @@ from sqlalchemy import select
 from app.extensions import db
 from app.models import AppUser, CustomerDetails, IdentityVerification
 from app.services import (
+    is_access_blocked,
     VERIFICATION_PENDING,
     VERIFICATION_REJECTED,
     VERIFICATION_VERIFIED,
@@ -42,7 +43,7 @@ def officer_required(view):
             user = db.session.get(AppUser, UUID(str(user_id)))
         except (ValueError, TypeError, AttributeError):
             user = None
-        if user is None or user.is_locked or user.account_status != "active":
+        if is_access_blocked(user):
             session.clear()
             flash("Your account is unavailable. Please log in again.", "error")
             return redirect(url_for("auth.login"))

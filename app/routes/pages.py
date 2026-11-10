@@ -39,7 +39,9 @@ from app.services import (
     bank_type_states,
     find_account_by_number,
     is_staff,
+    is_access_blocked,
     is_admin,
+    is_frozen,
     is_verification_officer,
     is_verified,
     missing_profile_fields,
@@ -87,11 +89,7 @@ def login_required(view):
             # Verify customer still exists and is active
             customer = db.session.get(AppUser, customer_uuid)
 
-            if (
-                customer is None
-                or customer.is_locked
-                or customer.account_status != "active"
-            ):
+            if is_access_blocked(customer):
                 session.clear()
                 flash("Your account is unavailable.")
                 return redirect(url_for("auth.login"))
@@ -767,6 +765,11 @@ def bank_page(operation):
         return redirect(url_for("pages.receipts"))
 
     customer = get_current_customer()
+
+    # Frozen customers can sign in but cannot deposit, withdraw or transfer.
+    if is_frozen(customer):
+        return redirect(url_for("pages.home"))
+
     account = get_customer_account(customer)
 
     if account is None:
@@ -802,6 +805,8 @@ def bank_page(operation):
 @login_required
 def add_transfer_contact():
     customer = get_current_customer()
+    if is_frozen(customer):
+        return redirect(url_for("pages.home"))
     name = (request.form.get("beneficiary_name") or "").strip()
     account_value = (request.form.get("recipient_id") or "").strip()
 

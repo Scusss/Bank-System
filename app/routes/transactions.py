@@ -7,7 +7,14 @@ from sqlalchemy import select
 
 from app.extensions import db
 from app.models import Account, AppUser, TransactionList, TransactionType, Notification
-from app.services import account_limits, find_account_by_number, is_staff, selected_account
+from app.services import (
+    account_limits,
+    find_account_by_number,
+    is_access_blocked,
+    is_frozen,
+    is_staff,
+    selected_account,
+)
 
 transactions = Blueprint("transactions", __name__)
 
@@ -32,10 +39,14 @@ def transaction(operation):
         return redirect(url_for("auth.login"))
 
     customer = db.session.get(AppUser, customer_id)
-    if customer is None or customer.is_locked or customer.account_status != "active":
+    if is_access_blocked(customer):
         session.clear()
         flash("Your account is unavailable. Please contact support.", "error")
         return redirect(url_for("auth.login"))
+
+    # Frozen accounts may sign in but cannot deposit, withdraw or transfer.
+    if is_frozen(customer):
+        return redirect(url_for("pages.home"))
 
     # Staff accounts (admin, verification officer) cannot use customer banking.
     if is_staff(customer):

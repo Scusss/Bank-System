@@ -94,6 +94,14 @@
                 </div>
 
             </header>
+
+            {% if current_account_status == 'frozen' %}
+            <div role="alert" style="margin:0 0 20px;padding:14px 18px;border:1px solid #fecdd3;border-radius:14px;background:#fff1f2;color:#9f1239;font-size:13px;line-height:1.7;">
+                <strong>Your account is frozen.</strong>
+                You can still sign in and view your account details, receipts and notifications,
+                but deposits, withdrawals and transfers are disabled. Please contact support.
+            </div>
+            {% endif %}
 {% include '_account_switcher.html' %}
 {% if not account %}
 <div style="margin:0 0 20px;padding:18px 20px;border:1px solid #f7ddaf;border-radius:14px;background:#fff7e6;color:#92400e;">
