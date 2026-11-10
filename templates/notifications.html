@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f7fb">
+    <title>Notifications | JAB Bank</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <style>
+        .notifications-page {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 28px 0 48px;
+        }
+        .notifications-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 22px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+            transition: color .2s ease;
+        }
+        .notifications-back:hover { color: var(--primary); }
+        .notifications-heading {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 26px;
+        }
+        .notifications-heading .breadcrumb { margin-bottom: 8px; }
+        .notifications-heading .page-subtitle { max-width: 560px; }
+        .notifications-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 13px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--surface);
+            color: var(--text);
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+        .notifications-count-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+        .notifications-card {
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: var(--surface);
+            box-shadow: var(--shadow);
+        }
+        .notifications-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 21px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        .notifications-card-header h2 {
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: -.2px;
+        }
+        .notifications-card-header p {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+        .notifications-list { display: grid; }
+        .notification-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 22px 24px;
+            border-bottom: 1px solid var(--border);
+            transition: background .2s ease;
+        }
+        .notification-row:last-child { border-bottom: 0; }
+        .notification-row:hover { background: #fbfcff; }
+        .notification-row.is-unread { background: #f6f9ff; }
+        .notification-row.is-unread:hover { background: #f0f5ff; }
+        .notification-symbol {
+            display: grid;
+            place-items: center;
+            flex: 0 0 44px;
+            width: 44px;
+            height: 44px;
+            border-radius: 13px;
+            background: #edf3ff;
+            color: var(--primary);
+            font-size: 19px;
+        }
+        .notification-row.is-read .notification-symbol {
+            background: #f0f2f6;
+            color: #7a879d;
+        }
+        .notification-body { flex: 1; min-width: 0; }
+        .notification-title-line {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin: 1px 0 6px;
+        }
+        .notification-title-line h3 {
+            font-size: 14px;
+            font-weight: 800;
+            line-height: 1.45;
+        }
+        .notification-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: #eaf1ff;
+            color: #1d4ed8;
+            font-size: 10px;
+            font-weight: 800;
+        }
+        .is-read .notification-status {
+            background: #f0f2f6;
+            color: #738096;
+        }
+        .notification-message {
+            color: #59667c;
+            font-size: 13px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+        .notification-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+        .notification-meta .meta-dot { color: #b4becc; }
+        .notification-read-form { margin-top: 13px; }
+        .notification-read-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 8px 11px;
+            border: 1px solid #d7e3ff;
+            border-radius: 9px;
+            background: #fff;
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background .2s ease, border-color .2s ease;
+        }
+        .notification-read-button:hover {
+            background: #edf3ff;
+            border-color: #bcd0ff;
+        }
+        .notifications-empty {
+            display: grid;
+            justify-items: center;
+            padding: 58px 24px;
+            text-align: center;
+        }
+        .notifications-empty-icon {
+            display: grid;
+            place-items: center;
+            width: 64px;
+            height: 64px;
+            margin-bottom: 17px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            background: #f5f8ff;
+            color: var(--primary);
+            font-size: 27px;
+        }
+        .notifications-empty h3 {
+            margin-bottom: 7px;
+            font-size: 16px;
+            font-weight: 800;
+        }
+        .notifications-empty p {
+            max-width: 350px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        .notifications-flashes { margin: 0 0 20px; }
+        @media (max-width: 700px) {
+            .notifications-page { padding: 18px 0 30px; }
+            .notifications-heading { flex-direction: column; margin-bottom: 20px; }
+            .notifications-count { align-self: flex-start; }
+            .notifications-card-header { padding: 18px; }
+            .notification-row { gap: 12px; padding: 18px; }
+            .notification-symbol { flex-basis: 38px; width: 38px; height: 38px; border-radius: 11px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <a href="{{ url_for('pages.home') }}" class="brand">
+                <div class="brand-icon" aria-hidden="true">JAB</div>
+                <div>
+                    <div class="brand-name">Bank</div>
+                    <div class="brand-subtitle">Online Banking</div>
+                </div>
+            </a>
+
+            <div class="nav-label">MAIN MENU</div>
+            <nav class="nav-links" aria-label="Main navigation">
+        <a href="{{ url_for('pages.home') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">⌂</span>Dashboard</a>
+        <a href="{{ url_for('pages.bank_page', operation='deposit') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">↙</span>Deposit</a>
+        <a href="{{ url_for('pages.bank_page', operation='withdraw') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">↗</span>Withdraw</a>
+        <a href="{{ url_for('pages.bank_page', operation='transfer') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">⇄</span>Transfer</a>
+        <a href="{{ url_for('pages.receipts') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">▤</span>Transactions</a>
+        <a href="{{ url_for('pages.manage_bank_accounts') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">▣</span>Manage Bank Accounts</a>
+        <a href="{{ url_for('pages.account_page') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">♙</span>My Account</a>
+    </nav>
+
+            <div class="sidebar-bottom">
+                <form action="{{ url_for('auth.logout') }}" method="POST" class="logout-form">
+                    <button type="submit" class="logout-button">↪ &nbsp; Log out</button>
+                </form>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="notifications-page">
+                <a class="notifications-back" href="{{ url_for('pages.home') }}">
+                    <span aria-hidden="true">←</span> Back to Dashboard
+                </a>
+
+                <header class="notifications-heading">
+                    <div>
+                        <div class="breadcrumb">Bank / Dashboard / Notifications</div>
+                        <h1 class="page-title">Notifications</h1>
+                        <p class="page-subtitle">Stay up to date with important account alerts and banking activity.</p>
+                    </div>
+                    <span class="account-status-badge account-status-{{ current_account_status|default('active') }}" aria-label="Account status: {{ current_account_status|default('active')|title }}">{{ current_account_status|default('active')|title }}</span>
+                    <div class="notifications-count" aria-live="polite">
+                        <span class="notifications-count-dot" aria-hidden="true"></span>
+                        {{ unread_count }} unread notification{% if unread_count != 1 %}s{% endif %}
+                    </div>
+                </header>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-messages notifications-flashes">
+                            {% for category, message in messages %}
+                                <div class="flash-message {{ category if category in ['success', 'error', 'warning'] else '' }}" role="status">
+                                    <span class="flash-icon" aria-hidden="true">
+                                        {% if category == 'success' %}✓{% elif category == 'error' %}!{% else %}i{% endif %}
+                                    </span>
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <section class="notifications-card" aria-labelledby="notifications-list-title">
+                    <div class="notifications-card-header">
+                        <div>
+                            <h2 id="notifications-list-title">Your alerts</h2>
+                            <p>Account updates and important messages appear here.</p>
+                        </div>
+                    </div>
+
+                    {% if notifications %}
+                        <div class="notifications-list">
+                            {% for item in notifications %}
+                                <article class="notification-row {{ 'is-unread' if not item.is_read else 'is-read' }}">
+                                    <div class="notification-symbol" aria-hidden="true">
+                                        {% if item.notification_type == 'security' %}✓
+                                        {% elif item.notification_type == 'transaction' %}⇄
+                                        {% elif item.notification_type == 'account' %}♙
+                                        {% else %}♢{% endif %}
+                                    </div>
+                                    <div class="notification-body">
+                                        <div class="notification-title-line">
+                                            <h3>{{ item.title }}</h3>
+                                            <span class="notification-status">{{ 'Unread' if not item.is_read else 'Read' }}</span>
+                                        </div>
+                                        <p class="notification-message">{{ item.message }}</p>
+                                        <div class="notification-meta">
+                                            <span>{{ item.created_at.strftime('%b %d, %Y · %I:%M %p') if item.created_at else 'Date unavailable' }}</span>
+                                            {% if item.notification_type %}
+                                                <span class="meta-dot" aria-hidden="true">•</span>
+                                                <span>{{ item.notification_type|replace('_', ' ')|title }}</span>
+                                            {% endif %}
+                                        </div>
+                                        {% if not item.is_read %}
+                                            <form class="notification-read-form" method="POST"
+                                                  action="{{ url_for('pages.mark_notification_read', notification_id=item.notification_id) }}">
+                                                <button class="notification-read-button" type="submit">
+                                                    <span aria-hidden="true">✓</span> Mark as read
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </article>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="notifications-empty">
+                            <div class="notifications-empty-icon" aria-hidden="true">♧</div>
+                            <h3>You're all caught up</h3>
+                            <p>You don't have any notifications yet. Important account updates will appear here.</p>
+                        </div>
+                    {% endif %}
+                </section>
+
+                <footer class="footer">
+                    <span><strong>JAB Bank</strong> · Online Banking</span>
+                    <span>Keep your account details secure.</span>
+                </footer>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

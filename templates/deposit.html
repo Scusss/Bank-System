@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#f5f7fb">
+
+
+
+    <title>Deposit Money | Bank</title>
+
+
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='deposit.css') }}">
+
+
+<style>
+
+/* Shared JAB Bank sidebar account card and More Options menu */
+.sidebar-bottom { margin-top:auto; padding-top:18px; width:100%; }
+.sidebar-account-card { display:flex; align-items:center; gap:10px; width:100%; padding:12px; box-sizing:border-box; border:1px solid var(--border, #e3eaf4); border-radius:14px; background:#fff; color:var(--text, #183153); text-decoration:none; }
+.sidebar-account-card:hover { background:#f2f6fc; }
+.sidebar-account-icon { display:flex; align-items:center; justify-content:center; width:36px; height:36px; flex-shrink:0; border-radius:11px; background:#eaf1ff; color:var(--primary, #2459a9); font-size:17px; font-weight:800; }
+.sidebar-account-copy { display:flex; flex:1; flex-direction:column; gap:4px; min-width:0; }
+.sidebar-account-copy strong { font-size:12px; overflow-wrap:anywhere; }
+.sidebar-account-copy span { color:var(--muted, #75839a); font-size:11px; }
+.sidebar-account-arrow { margin-left:auto; color:#7b8ba3; font-size:22px; }
+
+.account-type-badge { display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; padding:8px 12px; border:1px solid #d8e5f8; border-radius:999px; background:#edf4ff; color:#2459a9; font-size:12px; font-weight:800; line-height:1.2; }
+.account-type-badge--savings { background:#eaf7ef; border-color:#ccebd7; color:#207245; }
+.account-type-badge--checking { background:#edf4ff; border-color:#d8e5f8; color:#2459a9; }
+.account-type-badge--business { background:#f2edff; border-color:#dfd4ff; color:#6841a5; }
+@media (max-width:700px) { .account-type-badge { padding:7px 9px; font-size:11px; } }
+.topbar-profile-actions { display:flex; align-items:center; justify-content:flex-end; gap:12px; min-width:0; }
+.utility-panel { position:relative; }
+.mini-action-button { width:42px; height:42px; border:1px solid var(--border, #e7ebf2); border-radius:12px; background:#fff; color:var(--text, #172033); font-size:25px; cursor:pointer; }
+.action-popover { display:none; position:absolute; z-index:1000; top:calc(100% + 10px); right:0; width:min(320px, calc(100vw - 32px)); padding:8px; background:#fff; border:1px solid var(--border, #e7ebf2); border-radius:15px; box-shadow:0 16px 40px rgba(23,32,51,.15); }
+.utility-panel.is-open .action-popover { display:block; }
+.more-options-header { display:flex; justify-content:space-between; align-items:center; padding:10px 12px; color:var(--text, #172033); font-size:13px; font-weight:800; }
+.action-item { display:flex; align-items:center; gap:11px; width:100%; padding:11px 12px; border:0; border-radius:10px; background:transparent; color:var(--text, #172033); text-align:left; font:inherit; cursor:pointer; text-decoration:none; }
+.action-item:hover { background:#f2f6fc; }
+.action-icon { display:grid; place-items:center; width:32px; height:32px; flex-shrink:0; border-radius:9px; background:#edf3ff; color:var(--primary, #2563eb); }
+.action-copy { display:flex; flex-direction:column; gap:3px; min-width:0; }
+.action-copy strong { font-size:12px; }
+.action-copy span { color:var(--muted, #738096); font-size:11px; line-height:1.4; }
+.menu-divider { height:1px; margin:7px 8px; background:var(--border, #e7ebf2); }
+.more-logout-form { margin:0; }
+.action-item--logout { color:#c0392b; }
+.action-item--logout .action-icon { background:#fff1f0; color:#c0392b; }
+@media (max-width:700px) { .topbar-profile-actions { gap:7px; } .profile { padding:7px 9px; } .profile-role { display:none; } }
+
+
+
+/* Dashboard-matched top navigation identity and account status */
+.topbar-identity { display:flex; align-items:center; justify-content:flex-end; gap:10px; min-width:0; }
+.account-badge { --badge-bg:#edf3ff; --badge-border:#dfeaff; --badge-color:var(--primary,#2563eb); display:inline-flex; align-items:center; justify-content:center; padding:9px 12px; border-radius:999px; background:var(--badge-bg); border:1px solid var(--badge-border); color:var(--badge-color); font-size:11px; font-weight:800; letter-spacing:.4px; white-space:nowrap; }
+.account-badge--savings { --badge-bg:#e8f8ee; --badge-border:#cfeed9; --badge-color:#15803d; }
+.account-badge--business { --badge-bg:#edf3ff; --badge-border:#dfeaff; --badge-color:#2563eb; }
+.account-badge--checking { --badge-bg:#fff3e5; --badge-border:#f7ddaf; --badge-color:#b7791f; }
+.account-status-badge { display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; padding:8px 12px; border:1px solid #ccebd7; border-radius:999px; background:#eaf7ef; color:#207245; font-size:12px; font-weight:800; line-height:1.2; }
+.account-status-frozen, .account-status-closed { background:#fff1f2; border-color:#fecdd3; color:#be123c; }
+.utility-actions { display:flex; align-items:center; gap:8px; padding-left:2px; }
+.utility-panel { position:relative; }
+.mini-action-button { width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--border,#e7ebf2); border-radius:10px; background:#fff; color:var(--text,#172033); font-size:12px; padding:12px 10px 10px; cursor:pointer; }
+.action-popover { display:none; position:absolute; z-index:1000; top:calc(100% + 10px); right:0; width:min(320px,calc(100vw - 32px)); padding:8px; background:#fff; border:1px solid var(--border,#e7ebf2); border-radius:15px; box-shadow:0 16px 40px rgba(23,32,51,.15); }
+.utility-panel.is-open .action-popover { display:block; }
+@media (max-width:700px) { .topbar-identity { gap:7px; } .account-badge,.account-status-badge { padding:7px 9px; font-size:10px; } .mini-action-button { width:34px; height:34px; } }
+</style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='more_options.css') }}">
+</head>
+
+
+
+<body>
+
+    <div class="layout">
+
+
+
+        <!-- Sidebar -->
+
+        <aside class="sidebar">
+
+            <a href="{{ url_for('pages.home') }}" class="brand">
+
+                <div class="brand-icon" aria-hidden="true">JAB</div>
+
+                <div>
+
+                    <div class="brand-name">Bank</div>
+
+                    <div class="brand-subtitle">Online Banking</div>
+
+                </div>
+
+            </a>
+
+
+
+            <div class="nav-label">MAIN MENU</div>
+
+
+
+            <nav class="nav-links" aria-label="Main navigation">
+        <a href="{{ url_for('pages.home') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">⌂</span>Dashboard</a>
+        <a href="{{ url_for('pages.bank_page', operation='deposit') }}" class="nav-link active"><span class="nav-icon" aria-hidden="true">↙</span>Deposit</a>
+        <a href="{{ url_for('pages.bank_page', operation='withdraw') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">↗</span>Withdraw</a>
+        <a href="{{ url_for('pages.bank_page', operation='transfer') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">⇄</span>Transfer</a>
+        <a href="{{ url_for('pages.receipts') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">▤</span>Transactions</a>
+        <a href="{{ url_for('pages.manage_bank_accounts') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">▣</span>Manage Bank Accounts</a>
+        <a href="{{ url_for('pages.account_page') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">♙</span>My Account</a>
+    </nav>
+
+
+
+            <div class="sidebar-bottom">
+                <a href="{{ url_for('pages.account_page') }}" class="sidebar-account-card">
+                    <div class="sidebar-account-icon" aria-hidden="true">{{ session.get('username', 'C')[:1]|upper }}</div>
+                    <div class="sidebar-account-copy">
+                        <strong>{{ session.get('username', 'Customer') }}</strong>
+                        <span>Customer account</span>
+                    </div>
+                    <span class="sidebar-account-arrow" aria-hidden="true">›</span>
+                </a>
+            </div>
+        </aside>
+
+
+
+        <!-- Main content -->
+
+        <main class="main">
+
+
+
+            <header class="topbar">
+
+                <div>
+
+                    <div class="breadcrumb">Bank / Banking / Deposit</div>
+
+                    <h1 class="page-title">Deposit Money</h1>
+
+                    <p class="page-subtitle">
+
+                        Deposit funds
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="topbar-identity">
+                    <div class="account-badge {{ 'account-badge--savings' if (account_type|default('Savings')|lower) == 'savings' else 'account-badge--business' if (account_type|default('Savings')|lower) == 'business' else 'account-badge--checking' }}">
+                        {{ account_type|default('Savings', true)|title }}
+                    </div><span class="account-status-badge account-status-{{ current_account_status|default('active') }}" aria-label="Account status: {{ current_account_status|default('active')|title }}">{{ current_account_status|default('active')|title }}</span>
+                    <div class="utility-actions" aria-label="More options">
+                        <div class="utility-panel">
+                            <button type="button" class="mini-action-button" data-toggle-panel aria-expanded="false" aria-label="More options">⋯</button>
+                            {% include "_more_options_menu.html" %}
+                </div>
+            </header>
+{% include '_account_switcher.html' %}
+
+
+
+            <!-- Welcome banner -->
+
+            <section class="welcome">
+
+                <div>
+
+                    <div class="welcome-label">JABBANK SERVICES</div>
+
+                    <h2>Build better banking<br>into your everyday.</h2>
+                    <p>Make deposits quickly and securely, with clear confirmations and an easy way to keep track of every transaction.</p>
+
+                </div>
+
+
+
+                <div class="welcome-badge">
+
+                    🛡 &nbsp; JAB Online Banking<br><span class="welcome-account-id">Account ID: {{ account.account_id if account else "N/A" }}</span>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- Deposit section -->
+
+            <section aria-labelledby="deposit-heading">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <h2 id="deposit-heading">Make a Deposit</h2>
+
+                        <p>Enter the amount you want to deposit.</p>
+
+                    </div>
+
+
+
+                    <span class="section-tag">↙ DEPOSIT</span>
+
+                </div>
+
+
+
+                <div class="deposit-layout">
+
+
+
+                    <!-- Form card -->
+
+                    <div class="deposit-card">
+
+                        <div class="card-heading">
+
+                            <div class="deposit-icon" aria-hidden="true">↙</div>
+
+                            <div>
+
+                                <h3>Deposit Details</h3>
+
+                                <p>Provide the amount for your transaction.</p>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Flask flash messages -->
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                <div class="flash-messages" role="status" aria-live="polite">
+                                    {% for category, message in messages %}
+                                        <div class="flash-message {{ category }}">
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+
+
+
+                        <div class="current-balance-card" role="status" aria-live="polite" style="margin: 18px 0 22px; padding: 18px 20px; border: 1px solid #d9e7f5; border-radius: 14px; background: linear-gradient(135deg, #f4f8ff, #ffffff);">
+                            <div style="font-size: 0.85rem; color: #53657b; margin-bottom: 6px;">Current Account Balance</div>
+                            <div style="font-size: clamp(1.6rem, 3vw, 2rem); font-weight: 750; color: #163b69; letter-spacing: -0.02em;">₱{{ "{:,.2f}".format(balance|default(0, true)|float) }}</div>
+                            <div style="font-size: 0.8rem; color: #64748b; margin-top: 6px;">Your balance updates after each successful transaction.</div>
+                        </div>
+
+                        <form
+
+                            action="{{ url_for('transactions.transaction', operation='deposit') }}"
+
+                            method="POST"
+
+                        >
+                            <input type="hidden" name="account_id" value="{{ account.account_id if account else '' }}">
+
+
+
+                            <div class="input-group">
+
+                                <label for="amount">Amount to deposit</label>
+
+
+
+                                <div class="amount-field">
+
+                                    <span class="currency-symbol"
+
+                                          aria-hidden="true">₱</span>
+
+
+
+                                    <input
+
+                                        type="number"
+
+                                        id="amount"
+
+                                        name="amount"
+
+                                        min="0.01"
+
+                                        step="0.01"
+
+                                        placeholder="0.00"
+
+                                        inputmode="decimal"
+
+                                        autocomplete="off"
+
+                                        aria-describedby="amount-hint"
+
+                                        required
+
+                                    >
+
+                                </div>
+
+
+
+                                <p class="field-hint" id="amount-hint">
+
+                                    Enter an amount greater than zero.
+
+                                </p>
+
+                            </div>
+
+
+
+                            <button type="submit" class="deposit-button">
+
+                                <span aria-hidden="true">↙</span>
+
+                                Deposit Money
+
+                            </button>
+
+
+                        </form>
+
+                    </div>
+
+
+
+                    <!-- Helpful information -->
+
+                    <aside class="info-card" aria-label="Deposit guidance">
+                        <h3>Deposit with confidence</h3>
+                        <p class="info-intro">A few quick checks help keep your deposit smooth and secure.</p>
+                        <ul class="info-list">
+                            <li>Enter the amount you want to add in Philippine pesos.</li>
+                            <li>Review the amount carefully before confirming your deposit.</li>
+                            <li>Keep your transaction confirmation for your records.</li>
+                        </ul>
+                        <div class="info-callout">
+                            <strong>Need help?</strong> If a deposit does not appear as expected, check your transaction history before trying again.
+                        </div>
+                    </aside>
+
+
+
+                </div>
+
+            </section>
+
+
+
+
+        </main>
+
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const panels = document.querySelectorAll('.utility-panel');
+    panels.forEach(function (panel) {
+        const trigger = panel.querySelector('[data-toggle-panel]');
+        if (!trigger) return;
+        trigger.addEventListener('click', function (event) {
+            event.stopPropagation();
+            const wasOpen = panel.classList.contains('is-open');
+            panels.forEach(function (other) {
+                other.classList.remove('is-open');
+                const otherTrigger = other.querySelector('[data-toggle-panel]');
+                if (otherTrigger) otherTrigger.setAttribute('aria-expanded', 'false');
+            });
+            if (!wasOpen) {
+                panel.classList.add('is-open');
+                trigger.setAttribute('aria-expanded', 'true');
+            }
+        });
+    });
+    document.addEventListener('click', function (event) {
+        if (!event.target.closest('.utility-panel')) {
+            panels.forEach(function (panel) {
+                panel.classList.remove('is-open');
+                const trigger = panel.querySelector('[data-toggle-panel]');
+                if (trigger) trigger.setAttribute('aria-expanded', 'false');
+            });
+        }
+    });
+});
+</script>
+</body>
+
+</html>

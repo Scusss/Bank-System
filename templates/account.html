@@ -1,0 +1,1095 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f7fb">
+
+    <title>My Account | JAB Bank</title>
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --background: #f5f7fb;
+            --surface: #ffffff;
+            --text: #172033;
+            --muted: #738096;
+            --border: #e7ebf2;
+            --success: #15803d;
+            --sidebar-width: 245px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                Roboto, Helvetica, Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 28px 18px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px;
+            margin-bottom: 42px;
+        }
+
+        .brand-icon {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        display: grid;
+        place-items: center;
+        background: #2563eb;
+        color: white;
+        border-radius: 14px;
+        font-size: 16px;
+        font-weight: 900;
+        letter-spacing: -0.8px;
+        flex-shrink: 0;
+        }
+
+        .brand-name {
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: -0.7px;
+        }
+
+        .brand-subtitle {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        .nav-label {
+            padding: 0 12px;
+            margin-bottom: 12px;
+            color: #9aa4b5;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.4px;
+        }
+
+        .nav-links {
+            display: grid;
+            gap: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 13px 14px;
+            border-radius: 10px;
+            color: #69758a;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary);
+            background: #edf3ff;
+        }
+
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 28px;
+        }
+
+        .security-note {
+            padding: 17px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fafbfe;
+        }
+
+        .security-note strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 7px;
+        }
+
+        .security-note p {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .logout-form {
+            margin-top: 15px;
+        }
+
+        .logout-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #fff1f2;
+            border: 1px solid #ffe0e3;
+            border-radius: 10px;
+            color: #c52f40;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background: #ffe3e6;
+        }
+
+        /* Main content */
+
+        .main {
+            min-width: 0;
+            flex: 1;
+            padding: 32px 40px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 36px;
+        }
+
+        .breadcrumb {
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 9px;
+        }
+
+        .page-title {
+            font-size: clamp(23px, 3vw, 30px);
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .page-subtitle {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 13px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: #e8efff;
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            font-size: 17px;
+        }
+
+        .profile-name {
+            font-size: 12px;
+            font-weight: 750;
+            overflow-wrap: anywhere;
+        }
+
+        .profile-role {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* Account banner */
+
+        .welcome {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            padding: 32px;
+            margin-bottom: 28px;
+            border-radius: 20px;
+            color: white;
+            background: linear-gradient(
+                120deg, #1e40af, #2563eb 65%, #4f86ff
+            );
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.13);
+        }
+
+        .welcome::after {
+            content: "";
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            right: 3%;
+            top: -135px;
+            border: 1px solid rgba(255, 255, 255, 0.17);
+            border-radius: 50%;
+            box-shadow:
+                0 0 0 30px rgba(255, 255, 255, 0.04),
+                0 0 0 65px rgba(255, 255, 255, 0.04);
+            pointer-events: none;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            color: #dbe7ff;
+            margin-bottom: 13px;
+        }
+
+        .welcome h2 {
+            font-size: clamp(22px, 3vw, 30px);
+            line-height: 1.3;
+            letter-spacing: -0.7px;
+        }
+
+        .welcome p {
+            margin-top: 12px;
+            max-width: 470px;
+            color: #e0eaff;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .welcome-badge {
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+            padding: 13px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* Section heading */
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin: 34px 0 17px;
+        }
+
+        .section-heading h2 {
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .section-tag {
+            color: var(--primary);
+            background: #edf3ff;
+            padding: 7px 11px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        /* Cards */
+
+        .account-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(230px, 0.8fr);
+            align-items: start;
+            gap: 20px;
+        }
+
+        .account-card,
+        .info-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 27px;
+            min-width: 0;
+        }
+
+        .card-heading {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin-bottom: 25px;
+        }
+
+        .account-icon {
+            width: 49px;
+            height: 49px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            background: #e8efff;
+            color: var(--primary);
+            border-radius: 14px;
+            font-size: 25px;
+        }
+
+        .card-heading h3 {
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .card-heading p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 5px;
+            line-height: 1.6;
+        }
+
+        /* Balance */
+
+        .balance-container {
+            padding: 23px;
+            background: #f0fdf4;
+            border: 1px solid #dcfce7;
+            border-radius: 13px;
+            margin-bottom: 25px;
+        }
+
+        .balance-label {
+            color: #166534;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.1px;
+            text-transform: uppercase;
+        }
+
+        .balance-amount {
+            margin-top: 10px;
+            color: var(--success);
+            font-size: clamp(27px, 3vw, 35px);
+            font-weight: 800;
+            letter-spacing: -1px;
+            overflow-wrap: anywhere;
+        }
+
+        .balance-caption {
+            margin-top: 8px;
+            color: #4b765a;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        /* Account details */
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 17px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .detail-label {
+            color: var(--muted);
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .detail-value {
+            font-size: 13px;
+            font-weight: 700;
+            text-align: right;
+            overflow-wrap: anywhere;
+            min-width: 0;
+        }
+
+        .email-value {
+            word-break: break-word;
+        }
+
+        /* Account actions */
+
+        .account-actions {
+            display: grid;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .action-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 9px;
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 750;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .primary-button {
+            background: var(--primary);
+            color: white;
+            border: 1px solid var(--primary);
+        }
+
+        .primary-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .secondary-button {
+            background: #f7f9fc;
+            color: #58657b;
+            border: 1px solid var(--border);
+        }
+
+        .secondary-button:hover {
+            background: #edf1f7;
+        }
+
+        /* Information card */
+
+        .info-card {
+            padding: 24px;
+        }
+
+        .info-card h3 {
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 22px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .info-item:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .info-item-icon {
+            display: grid;
+            place-items: center;
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            background: #edf3ff;
+            color: var(--primary);
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        .info-item strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .info-item p {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .security-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 24px;
+            padding: 14px;
+            border-radius: 11px;
+            background: #f0fdf4;
+            border: 1px solid #dcfce7;
+            color: #166534;
+        }
+
+        .security-banner span {
+            font-size: 16px;
+        }
+
+        .security-banner p {
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-top: 25px;
+            margin-top: 38px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .footer strong {
+            color: #657188;
+        }
+
+        /* Responsive layout */
+
+        @media (max-width: 1100px) {
+            .sidebar {
+                width: 205px;
+            }
+
+            .main {
+                padding: 28px 24px;
+            }
+
+            .account-layout {
+                grid-template-columns: minmax(0, 1.2fr) minmax(210px, 0.8fr);
+            }
+
+            .account-card,
+            .info-card {
+                padding: 21px;
+            }
+        }
+
+        @media (max-width: 850px) {
+            .account-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 15px 16px 12px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .brand {
+                margin-bottom: 16px;
+                padding: 0 3px;
+            }
+
+            .brand-icon {
+                width: 38px;
+                height: 38px;
+            }
+
+            .brand-name {
+                font-size: 19px;
+            }
+
+            .nav-label,
+            .sidebar-bottom {
+                display: none;
+            }
+
+            .nav-links {
+                display: flex;
+                overflow-x: auto;
+                gap: 7px;
+                padding-bottom: 3px;
+            }
+
+            .nav-link {
+                flex-shrink: 0;
+                padding: 10px 12px;
+                font-size: 11px;
+                gap: 7px;
+                border: 1px solid var(--border);
+            }
+
+            .nav-icon {
+                font-size: 15px;
+                width: auto;
+            }
+
+            .main {
+                padding: 24px 17px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                margin-bottom: 25px;
+            }
+
+            .profile {
+                padding: 6px;
+                border: none;
+                background: transparent;
+            }
+
+            .profile-details {
+                display: none;
+            }
+
+            .avatar {
+                width: 38px;
+                height: 38px;
+            }
+
+            .welcome {
+                padding: 25px 21px;
+                border-radius: 16px;
+            }
+
+            .welcome-badge {
+                display: none;
+            }
+
+            .section-heading {
+                margin-top: 28px;
+            }
+
+            .account-card {
+                padding: 21px;
+            }
+
+            .info-card {
+                padding: 23px;
+            }
+
+            .footer {
+                margin-top: 28px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .topbar {
+                gap: 8px;
+            }
+
+            .page-title {
+                font-size: 23px;
+            }
+
+            .page-subtitle {
+                font-size: 12px;
+            }
+
+            .welcome {
+                padding: 23px 18px;
+            }
+
+            .detail-row {
+                gap: 10px;
+            }
+
+            .detail-label {
+                font-size: 11px;
+            }
+
+            .detail-value {
+                font-size: 12px;
+            }
+
+            .section-tag {
+                font-size: 9px;
+                padding: 7px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition: none !important;
+            }
+        }
+    </style>
+<style>
+
+/* Shared JAB Bank sidebar account card and More Options menu */
+.sidebar-bottom { margin-top:auto; padding-top:18px; width:100%; }
+.sidebar-account-card { display:flex; align-items:center; gap:10px; width:100%; padding:12px; box-sizing:border-box; border:1px solid var(--border, #e3eaf4); border-radius:14px; background:#fff; color:var(--text, #183153); text-decoration:none; }
+.sidebar-account-card:hover { background:#f2f6fc; }
+.sidebar-account-icon { display:flex; align-items:center; justify-content:center; width:36px; height:36px; flex-shrink:0; border-radius:11px; background:#eaf1ff; color:var(--primary, #2459a9); font-size:17px; font-weight:800; }
+.sidebar-account-copy { display:flex; flex:1; flex-direction:column; gap:4px; min-width:0; }
+.sidebar-account-copy strong { font-size:12px; overflow-wrap:anywhere; }
+.sidebar-account-copy span { color:var(--muted, #75839a); font-size:11px; }
+.sidebar-account-arrow { margin-left:auto; color:#7b8ba3; font-size:22px; }
+
+.account-type-badge { display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; padding:8px 12px; border:1px solid #d8e5f8; border-radius:999px; background:#edf4ff; color:#2459a9; font-size:12px; font-weight:800; line-height:1.2; }
+.account-type-badge--savings { background:#eaf7ef; border-color:#ccebd7; color:#207245; }
+.account-type-badge--checking { background:#edf4ff; border-color:#d8e5f8; color:#2459a9; }
+.account-type-badge--business { background:#f2edff; border-color:#dfd4ff; color:#6841a5; }
+@media (max-width:700px) { .account-type-badge { padding:7px 9px; font-size:11px; } }
+.topbar-profile-actions { display:flex; align-items:center; justify-content:flex-end; gap:12px; min-width:0; }
+.utility-panel { position:relative; }
+.mini-action-button { width:42px; height:42px; border:1px solid var(--border, #e7ebf2); border-radius:12px; background:#fff; color:var(--text, #172033); font-size:25px; cursor:pointer; }
+.action-popover { display:none; position:absolute; z-index:1000; top:calc(100% + 10px); right:0; width:min(320px, calc(100vw - 32px)); padding:8px; background:#fff; border:1px solid var(--border, #e7ebf2); border-radius:15px; box-shadow:0 16px 40px rgba(23,32,51,.15); }
+.utility-panel.is-open .action-popover { display:block; }
+.more-options-header { display:flex; justify-content:space-between; align-items:center; padding:10px 12px; color:var(--text, #172033); font-size:13px; font-weight:800; }
+.action-item { display:flex; align-items:center; gap:11px; width:100%; padding:11px 12px; border:0; border-radius:10px; background:transparent; color:var(--text, #172033); text-align:left; font:inherit; cursor:pointer; text-decoration:none; }
+.action-item:hover { background:#f2f6fc; }
+.action-icon { display:grid; place-items:center; width:32px; height:32px; flex-shrink:0; border-radius:9px; background:#edf3ff; color:var(--primary, #2563eb); }
+.action-copy { display:flex; flex-direction:column; gap:3px; min-width:0; }
+.action-copy strong { font-size:12px; }
+.action-copy span { color:var(--muted, #738096); font-size:11px; line-height:1.4; }
+.menu-divider { height:1px; margin:7px 8px; background:var(--border, #e7ebf2); }
+.more-logout-form { margin:0; }
+.action-item--logout { color:#c0392b; }
+.action-item--logout .action-icon { background:#fff1f0; color:#c0392b; }
+@media (max-width:700px) { .topbar-profile-actions { gap:7px; } .profile { padding:7px 9px; } .profile-role { display:none; } }
+
+
+
+/* Dashboard-matched top navigation identity and account status */
+.topbar-identity { display:flex; align-items:center; justify-content:flex-end; gap:10px; min-width:0; }
+.account-badge { --badge-bg:#edf3ff; --badge-border:#dfeaff; --badge-color:var(--primary,#2563eb); display:inline-flex; align-items:center; justify-content:center; padding:9px 12px; border-radius:999px; background:var(--badge-bg); border:1px solid var(--badge-border); color:var(--badge-color); font-size:11px; font-weight:800; letter-spacing:.4px; white-space:nowrap; }
+.account-badge--savings { --badge-bg:#e8f8ee; --badge-border:#cfeed9; --badge-color:#15803d; }
+.account-badge--business { --badge-bg:#edf3ff; --badge-border:#dfeaff; --badge-color:#2563eb; }
+.account-badge--checking { --badge-bg:#fff3e5; --badge-border:#f7ddaf; --badge-color:#b7791f; }
+.account-status-badge { display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; padding:8px 12px; border:1px solid #ccebd7; border-radius:999px; background:#eaf7ef; color:#207245; font-size:12px; font-weight:800; line-height:1.2; }
+.account-status-frozen, .account-status-closed { background:#fff1f2; border-color:#fecdd3; color:#be123c; }
+.utility-actions { display:flex; align-items:center; gap:8px; padding-left:2px; }
+.utility-panel { position:relative; }
+.mini-action-button { width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--border,#e7ebf2); border-radius:10px; background:#fff; color:var(--text,#172033); font-size:12px; padding:12px 10px 10px; cursor:pointer; }
+.action-popover { display:none; position:absolute; z-index:1000; top:calc(100% + 10px); right:0; width:min(320px,calc(100vw - 32px)); padding:8px; background:#fff; border:1px solid var(--border,#e7ebf2); border-radius:15px; box-shadow:0 16px 40px rgba(23,32,51,.15); }
+.utility-panel.is-open .action-popover { display:block; }
+@media (max-width:700px) { .topbar-identity { gap:7px; } .account-badge,.account-status-badge { padding:7px 9px; font-size:10px; } .mini-action-button { width:34px; height:34px; } }
+<style>
+.ua-flash{list-style:none;margin:0 0 16px;padding:0}.ua-flash li{padding:11px 14px;border-radius:10px;background:#eef5ff;margin-bottom:8px;font-size:14px}.ua-flash li.success{background:#edf7ee;color:#166534}.ua-flash li.error{background:#fff1f2;color:#9f1239}
+.ua-section{margin-top:26px}.ua-card{display:block;max-width:none}
+.ua-form{display:grid;gap:14px;margin-top:16px}.ua-form label{display:grid;gap:6px;font-size:13px;font-weight:650;color:#26364b}
+.ua-form input,.ua-form select,.ua-form textarea{width:100%;padding:11px 12px;border:1px solid #d9e2ef;border-radius:10px;background:#fff;font:inherit;font-weight:400;box-sizing:border-box}
+.ua-form input:disabled,.ua-form select:disabled{background:#f1f4f9;color:#8a97ab}
+.ua-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.ua-btn{border:0;border-radius:10px;padding:11px 16px;background:#2563eb;color:#fff;font:inherit;font-weight:700;cursor:pointer;justify-self:start}.ua-btn:hover{background:#1d4ed8}.ua-btn:disabled{background:#b8c4d9;cursor:not-allowed}
+.ua-btn--ghost{background:#edf3ff;color:#2563eb}.ua-btn--ghost:hover{background:#dfeaff}
+.ua-hint{font-size:13px;color:#738096;margin:10px 0 0}
+.ua-state{display:grid;gap:4px;padding:14px 16px;border-radius:12px;font-size:14px;margin-bottom:4px}.ua-state--ok{background:#edf7ee;color:#166534}.ua-state--wait{background:#fff7e6;color:#92400e}.ua-state--bad{background:#fff1f2;color:#9f1239;margin-bottom:12px}
+.ua-banks{display:grid;gap:12px;margin-top:14px}.ua-bank{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 16px;border:1px solid #e7ebf2;border-radius:12px}.ua-bank strong{display:block}.ua-sub{display:block;font-size:13px;color:#738096;margin-top:3px}
+.ua-pill{display:inline-block;padding:6px 11px;border-radius:999px;font-size:12px;font-weight:800}.ua-pill--wait{background:#fff7e6;color:#b45309}
+.ua-manage{margin-top:16px}.ua-manage-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.ua-manage-head strong{display:block;font-size:16px}
+.ua-pill--active{background:#edf7ee;color:#166534}.ua-pill--frozen{background:#e8f1ff;color:#1d4ed8}.ua-pill--closed{background:#fff1f2;color:#9f1239}
+.ua-form label .ua-sub{font-weight:400}
+</style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='more_options.css') }}">
+
+<style>
+.profile-edit-panel { margin-bottom:24px; padding:20px; border:1px solid var(--border,#e3eaf4); border-radius:14px; background:#fbfcff; }
+.profile-edit-panel h3 { margin:0 0 6px; font-size:15px; font-weight:800; color:var(--text,#183153); }
+.profile-edit-panel > p { margin:0 0 17px; color:var(--muted,#718096); font-size:12px; line-height:1.6; }
+.profile-edit-panel .ua-form { margin-top:14px; }
+.profile-edit-panel .ua-form label { display:block; margin-bottom:12px; color:var(--text,#183153); font-size:12px; font-weight:700; }
+.profile-edit-panel .ua-form input { display:block; width:100%; box-sizing:border-box; margin-top:7px; padding:12px 13px; border:1px solid var(--border,#dce4ef); border-radius:9px; background:#fff; color:var(--text,#183153); font:inherit; font-size:13px; }
+.profile-edit-panel .ua-form input:focus { outline:2px solid rgba(37,99,235,.16); border-color:#2563eb; }
+.profile-edit-panel .ua-btn { border:0; cursor:pointer; }
+.email-current { display:flex; flex-direction:column; gap:7px; padding:13px 0 2px; border-top:1px solid var(--border,#e3eaf4); }
+.email-current .detail-value { text-align:left; overflow-wrap:anywhere; }
+</style>
+
+</head>
+
+<body>
+    <div class="layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <a href="{{ url_for('pages.home') }}" class="brand">
+                <div class="brand-icon" aria-hidden="true">JAB</div>
+                <div>
+                    <div class="brand-name">Bank</div>
+                    <div class="brand-subtitle">Online Banking</div>
+                </div>
+            </a>
+
+            <div class="nav-label">MAIN MENU</div>
+
+            <nav class="nav-links" aria-label="Main navigation">
+        <a href="{{ url_for('pages.home') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">⌂</span>Dashboard</a>
+        <a href="{{ url_for('pages.bank_page', operation='deposit') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">↙</span>Deposit</a>
+        <a href="{{ url_for('pages.bank_page', operation='withdraw') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">↗</span>Withdraw</a>
+        <a href="{{ url_for('pages.bank_page', operation='transfer') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">⇄</span>Transfer</a>
+        <a href="{{ url_for('pages.receipts') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">▤</span>Transactions</a>
+        <a href="{{ url_for('pages.manage_bank_accounts') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">▣</span>Manage Bank Accounts</a>
+        <a href="{{ url_for('pages.account_page') }}" class="nav-link active"><span class="nav-icon" aria-hidden="true">♙</span>My Account</a>
+    </nav>
+
+            <div class="sidebar-bottom">
+                <a href="{{ url_for('pages.account_page') }}" class="sidebar-account-card">
+                    <div class="sidebar-account-icon" aria-hidden="true">{{ session.get('username', 'C')[:1]|upper }}</div>
+                    <div class="sidebar-account-copy">
+                        <strong>{{ session.get('username', 'Customer') }}</strong>
+                        <span>Customer account</span>
+                    </div>
+                    <span class="sidebar-account-arrow" aria-hidden="true">›</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main">
+
+            <header class="topbar">
+
+                <div>
+                    <div class="breadcrumb">
+                        Bank / Banking / My Account
+                    </div>
+
+                    <h1 class="page-title">My Account</h1>
+
+                    <p class="page-subtitle">
+                        Manage your profile, identity verification and all of your bank accounts.
+                    </p>
+                </div>
+
+                <div class="topbar-identity">
+                    <div class="account-badge account-badge--{{ 'savings' if verification_state == 'verified' else 'checking' }}">
+                        {{ 'Verified' if verification_state == 'verified' else 'Not verified' if verification_state in ('unverified','rejected') else 'Verification pending' }}
+                    </div><span class="account-status-badge account-status-{{ current_account_status|default('active') }}" aria-label="Account status: {{ current_account_status|default('active')|title }}">{{ current_account_status|default('active')|title }}</span>
+                    <div class="utility-actions" aria-label="More options">
+                        <div class="utility-panel">
+                            <button type="button" class="mini-action-button" data-toggle-panel aria-expanded="false" aria-label="More options">⋯</button>
+                            {% include "_more_options_menu.html" %}
+                </div>
+            </header>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <ul class="ua-flash">
+                  {% for category, message in messages %}<li class="{{ category }}">{{ message }}</li>{% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+
+            <!-- Welcome banner -->
+            <section class="welcome">
+                <div class="welcome-content">
+                    <div class="welcome-label">JABBANK SERVICES</div>
+                    <h2>Your Account Details<br>and Bank Management</h2>
+                    <p>
+                        Review your details, then use the button on each bank type to open it.
+                    </p>
+                </div>
+                <div class="welcome-badge">
+                    {% if verification_state == 'verified' %}✔ &nbsp; Identity verified{% elif verification_state == 'pending' %}⌛ &nbsp; Verification pending{% else %}🛡 &nbsp; Not yet verified{% endif %}
+                </div>
+            </section>
+
+            <!-- Account details (belongs to the user account) -->
+            <section aria-labelledby="info-heading" class="ua-section">
+                <div class="section-heading">
+                    <div>
+                        <h2 id="info-heading">Account Details</h2>
+                        <p>These details belong to your user account and are shared by all of your bank accounts.</p>
+                    </div>
+                    <span class="section-tag">♙ USER ACCOUNT</span>
+                </div>
+
+                <div class="account-card ua-card">
+                    <div class="profile-edit-panel">
+                        <h3>Login details</h3>
+                        <p>Update the username you use to sign in. You can change your email immediately and verify it separately if you choose.</p>
+                        <form method="post" action="{{ url_for('pages.update_account_details') }}" class="ua-form">
+                            <label>Username
+                                <input name="username" maxlength="50" required pattern="[A-Za-z0-9_.-]+" value="{{ customer.username }}" autocomplete="username">
+                            </label>
+                            <button type="submit" class="ua-btn">Save username</button>
+                        </form>
+                        <div class="email-current">
+                            <span class="detail-label">Current email address</span>
+                            <strong class="detail-value email-value">{{ customer.email }}</strong>
+                        </div>
+                        <form method="post" action="{{ url_for('pages.request_email_change') }}" class="ua-form">
+                            <label>New email address
+                                <input type="email" name="email" maxlength="150" required placeholder="Enter your new email address" autocomplete="email">
+                            </label>
+                            <button type="submit" class="ua-btn">Change email</button>
+                        </form>
+                        {% if session.get('pending_email_change') and session.get('pending_email_change')|lower == customer.email|lower %}
+                            <div class="ua-state ua-state--wait" style="margin-top:16px">
+                                <strong>Email changed — verification optional</strong>
+                                <span>{{ customer.email }} is your current login email and has not yet been verified.</span>
+                            </div>
+                            <form method="post" action="{{ url_for('pages.send_email_change_verification') }}" class="ua-form" style="margin-top:14px">
+                                <button type="submit" class="ua-btn">Send verification code</button>
+                            </form>
+                            <form method="post" action="{{ url_for('pages.verify_email_change') }}" class="ua-form" style="margin-top:14px">
+                                <label>Email verification code
+                                    <input name="verification_code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,8}" minlength="6" maxlength="8" required placeholder="Enter 6–8 digit code">
+                                </label>
+                                <button type="submit" class="ua-btn">Verify email address</button>
+                            </form>
+                        {% endif %}
+                    </div>
+
+                    <form method="post" action="{{ url_for('pages.update_account_details') }}" class="ua-form">
+                        <div class="ua-grid">
+                            <label>First name *
+                                <input name="first_name" maxlength="100" required value="{{ details.first_name if details else '' }}">
+                            </label>
+                            <label>Middle name
+                                <input name="middle_name" maxlength="100" value="{{ details.middle_name or '' if details else '' }}">
+                            </label>
+                            <label>Last name *
+                                <input name="last_name" maxlength="100" required value="{{ details.last_name if details else '' }}">
+                            </label>
+                            <label>Suffix
+                                <input name="suffix" maxlength="20" placeholder="Jr., III" value="{{ details.suffix or '' if details else '' }}">
+                            </label>
+                            <label>Birth date
+                                <input type="date" name="birth_date" value="{{ details.birth_date.strftime('%Y-%m-%d') if details and details.birth_date else '' }}">
+                            </label>
+                            <label>Phone number
+                                <input name="phone_number" maxlength="20" placeholder="+63 900 000 0000" value="{{ details.phone_number or '' if details else '' }}">
+                            </label>
+                        </div>
+                        <label>Address
+                            <textarea name="address" maxlength="500" rows="2">{{ details.address or '' if details else '' }}</textarea>
+                        </label>
+                        {% if verification_state == 'verified' %}
+                          <p class="ua-hint">Your name and birth date are verified and can no longer be changed here.</p>
+                        {% endif %}
+                        <button type="submit" class="ua-btn">Save information</button>
+                    </form>
+                </div>
+
+                <div class="section-heading" style="margin-top:22px">
+                    <div>
+                        <h3 id="verify-heading" style="margin:0">Identity Verification</h3>
+                        <p>A verification officer reviews your account details before you can open a bank account.</p>
+                    </div>
+                    <span class="section-tag">🪪 VERIFICATION</span>
+                </div>
+
+                <div class="account-card ua-card">
+                    {% if verification_state == 'verified' %}
+                        <div class="ua-state ua-state--ok">
+                            <strong>✔ Your identity is verified.</strong>
+                            <span>{% if verification and verification.reviewed_at %}Verified on {{ verification.reviewed_at.strftime('%B %d, %Y') }}. {% endif %}You can request bank accounts under Bank Management.</span>
+                        </div>
+                    {% elif verification_state == 'pending' %}
+                        <div class="ua-state ua-state--wait">
+                            <strong>⌛ Verification request sent.</strong>
+                            <span>Submitted {{ verification.submitted_at.strftime('%B %d, %Y %H:%M') if verification and verification.submitted_at else '' }} A verification officer is reviewing your account information.</span>
+                        </div>
+                    {% else %}
+                        {% if verification_state == 'rejected' and verification %}
+                          <div class="ua-state ua-state--bad">
+                              <strong>Your last request was declined.</strong>
+                              <span>{{ verification.review_remarks or 'No reason was given.' }} You may correct your information and submit a new request.</span>
+                          </div>
+                        {% endif %}
+
+                        {% if missing_fields %}
+                          <p class="ua-hint">Before you can request verification, complete your account information above: <strong>{{ missing_fields|join(', ') }}</strong>.</p>
+                        {% endif %}
+
+                        <form method="post" action="{{ url_for('pages.request_verification') }}" class="ua-form">
+                            <button type="submit" class="ua-btn" {% if missing_fields %}disabled{% endif %}>Request verification</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </section>
+
+            <!-- Footer -->
+
+
+        </main>
+    </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const panels = document.querySelectorAll('.utility-panel');
+    panels.forEach(function (panel) {
+        const trigger = panel.querySelector('[data-toggle-panel]');
+        if (!trigger) return;
+        trigger.addEventListener('click', function (event) {
+            event.stopPropagation();
+            const wasOpen = panel.classList.contains('is-open');
+            panels.forEach(function (other) {
+                other.classList.remove('is-open');
+                const otherTrigger = other.querySelector('[data-toggle-panel]');
+                if (otherTrigger) otherTrigger.setAttribute('aria-expanded', 'false');
+            });
+            if (!wasOpen) {
+                panel.classList.add('is-open');
+                trigger.setAttribute('aria-expanded', 'true');
+            }
+        });
+    });
+    document.addEventListener('click', function (event) {
+        if (!event.target.closest('.utility-panel')) {
+            panels.forEach(function (panel) {
+                panel.classList.remove('is-open');
+                const trigger = panel.querySelector('[data-toggle-panel]');
+                if (trigger) trigger.setAttribute('aria-expanded', 'false');
+            });
+        }
+    });
+});
+</script>
+</body>
+</html>

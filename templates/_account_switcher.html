@@ -1,0 +1,15 @@
+{# Shown only when the user owns more than one bank account. #}
+{% if accounts and accounts|length > 1 %}
+<form method="post" action="{{ url_for('pages.switch_account') }}" class="acct-switcher" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 18px;padding:12px 16px;border:1px solid #e7ebf2;border-radius:12px;background:#fff;">
+    <input type="hidden" name="next" value="{{ request.path }}">
+    <label for="acct-switch-select" style="font-size:.85rem;font-weight:650;color:#26364b;">Bank account</label>
+    <select id="acct-switch-select" name="account_id" onchange="this.form.submit()" style="padding:8px 10px;border:1px solid #d9e2ef;border-radius:8px;background:#fff;font:inherit;">
+        {% for acct in accounts %}
+        <option value="{{ acct.account_id }}" {% if account and acct.account_id == account.account_id %}selected{% endif %}>
+            {{ acct.account_type|replace('_',' ')|title }} · {{ acct.account_number }}
+        </option>
+        {% endfor %}
+    </select>
+    <noscript><button type="submit">Switch</button></noscript>
+</form>
+{% endif %}

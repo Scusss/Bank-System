@@ -1,0 +1,188 @@
+.withdraw-layout {
+    display: grid;
+    grid-template-columns: 1.4fr 0.8fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.withdraw-card,
+.info-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 10px 24px rgba(23, 32, 51, 0.04);
+}
+
+.card-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.withdraw-icon {
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: #fff3e5;
+    color: #c76a11;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.card-heading h3 {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.2px;
+}
+
+.card-heading p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+    margin-top: 4px;
+}
+
+.amount-field {
+    padding: 0 14px;
+}
+
+.currency-symbol {
+    color: #8b97aa;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.withdraw-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 15px 18px;
+    border: none;
+    border-radius: 11px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.withdraw-button:hover {
+    filter: brightness(0.98);
+}
+
+.withdraw-button:active {
+    transform: translateY(1px);
+}
+
+.info-card {
+    display: grid;
+    gap: 14px;
+}
+
+.info-card h3 {
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.info-list {
+    list-style: none;
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+}
+
+.info-list li {
+    position: relative;
+    padding-left: 18px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.info-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--warning);
+    font-size: 18px;
+    line-height: 1.2;
+}
+
+@media (max-width: 900px) {
+    .withdraw-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* Helpful guidance panel */
+.info-intro {
+    margin: -5px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.info-callout {
+    padding: 13px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(37, 99, 235, 0.05);
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.info-callout strong {
+    display: block;
+    margin-bottom: 3px;
+    color: var(--text);
+    font-size: 12px;
+}
+
+/* Match the Deposit page's guidance panel treatment */
+.withdraw-layout .info-card {
+    display: grid;
+    align-content: start;
+    gap: 14px;
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: 0 10px 24px rgba(23, 32, 51, 0.04);
+}
+.withdraw-layout .info-card h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text);
+}
+.withdraw-layout .info-intro,
+.withdraw-layout .info-list li,
+.withdraw-layout .info-callout {
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.info-list {
+    margin: 8px 0 14px;
+    padding-left: 22px;
+}
+
+.info-list li {
+    margin-bottom: 4px;
+}
+
+.info-callout {
+    margin-top: 12px;
+    line-height: 1.5;
+}

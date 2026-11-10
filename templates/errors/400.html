@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Error | JABBank</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <main class="page-container">
+        <section class="login-card">
+            <h1>Security Verification Failed</h1>
+
+            <p>
+                {{ message or "Your session expired or your security token is invalid." }}
+            </p>
+
+            <a href="{{ url_for('auth.login') }}">
+                Return to Login
+            </a>
+        </section>
+    </main>
+
+</body>
+</html>

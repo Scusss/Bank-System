@@ -1,0 +1,42 @@
+/* Shared More Options styling used by every page that exposes the menu. */
+.utility-actions { display:flex; align-items:center; gap:8px; padding-left:2px; }
+.utility-panel { position:relative; }
+.mini-action-button { width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--border,#e7ebf2); border-radius:10px; background:#fff; color:var(--text,#172033); font-size:12px; padding:12px 10px 10px; cursor:pointer; }
+.mini-action-button:hover, .mini-action-button:focus-visible { background:#f2f6fc; outline-color:var(--primary,#2563eb); }
+.action-popover { display:none; position:absolute; z-index:1000; top:calc(100% + 10px); right:0; width:min(320px,calc(100vw - 32px)); padding:8px; background:#fff; border:1px solid var(--border,#e7ebf2); border-radius:15px; box-shadow:0 16px 40px rgba(23,32,51,.15); }
+.utility-panel.is-open .action-popover { display:block; }
+.more-options-header { display:flex; justify-content:space-between; align-items:center; padding:10px 12px; color:var(--text,#172033); font-size:13px; font-weight:800; }
+.action-item { display:flex; align-items:center; gap:11px; width:100%; padding:11px 12px; border:0; border-radius:10px; background:transparent; color:var(--text,#172033); text-align:left; font:inherit; cursor:pointer; text-decoration:none; box-sizing:border-box; }
+.action-item:hover, .action-item:focus-visible { background:#f2f6fc; outline-color:var(--primary,#2563eb); }
+.action-icon { display:grid; place-items:center; width:32px; height:32px; flex-shrink:0; border-radius:9px; background:#edf3ff; color:var(--primary,#2563eb); }
+.action-copy { display:flex; flex-direction:column; gap:3px; min-width:0; }
+.action-copy strong { font-size:12px; }
+.action-copy span { color:var(--muted,#738096); font-size:11px; line-height:1.4; }
+.notification-count { margin-left:auto; padding:4px 7px; border-radius:999px; background:#eaf1ff; color:#1d4ed8; font-size:10px; font-weight:800; white-space:nowrap; }
+.menu-divider { height:1px; margin:7px 8px; background:var(--border,#e7ebf2); }
+.more-logout-form { margin:0; }
+.action-item--logout { color:#c0392b; }
+.action-item--logout .action-icon { background:#fff1f0; color:#c0392b; }
+@media (max-width:700px) { .action-popover { width:min(320px,calc(100vw - 32px)); } .mini-action-button { width:34px; height:34px; } }
+
+
+/* Account-page More Options button design: shared final rules for all pages. */
+.utility-actions { display:flex !important; align-items:center !important; gap:8px !important; padding-left:2px !important; }
+.utility-panel { position:relative !important; }
+.mini-action-button {
+  box-sizing:border-box !important; width:36px !important; height:36px !important; min-width:36px !important; min-height:36px !important;
+  display:inline-flex !important; align-items:center !important; justify-content:center !important;
+  border:1px solid var(--border,#e7ebf2) !important; border-radius:10px !important;
+  background:#fff !important; color:var(--text,#172033) !important;
+  font-family:inherit !important; font-size:12px !important; line-height:1 !important;
+  padding:0 !important; cursor:pointer !important; box-shadow:none !important;
+}
+.mini-action-button:hover, .mini-action-button:focus-visible { background:#f2f6fc !important; outline-color:var(--primary,#2563eb) !important; }
+.action-popover {
+  box-sizing:border-box !important; display:none; position:absolute !important; z-index:1000 !important;
+  top:calc(100% + 10px) !important; right:0 !important; width:min(320px,calc(100vw - 32px)) !important; min-width:0 !important;
+  padding:8px !important; background:#fff !important; border:1px solid var(--border,#e7ebf2) !important;
+  border-radius:15px !important; box-shadow:0 16px 40px rgba(23,32,51,.15) !important;
+}
+.utility-panel.is-open .action-popover { display:block !important; }
+@media (max-width:700px) { .mini-action-button { width:34px !important; height:34px !important; min-width:34px !important; min-height:34px !important; } .action-popover { width:min(320px,calc(100vw - 32px)) !important; } }

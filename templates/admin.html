@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Tools | JAB Bank</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <style>
+        .admin-page{max-width:1400px;margin:0 auto;padding:28px 32px 48px}.admin-top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px}.admin-top h1{font-size:clamp(24px,3vw,34px);margin:0 0 6px}.admin-top p,.muted{color:#738096}.admin-tag{display:inline-flex;align-items:center;border-radius:999px;padding:7px 12px;background:#e8efff;color:#1d4ed8;font-weight:800;font-size:12px}.admin-nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 24px}.admin-nav a,.back-link{display:inline-block;padding:10px 13px;border:1px solid #e3e8f1;border-radius:10px;background:#fff;color:#334155;text-decoration:none;font-size:13px;font-weight:700}.admin-nav a.active,.admin-nav a:hover{background:#1d4ed8;color:white;border-color:#1d4ed8}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}.stat,.panel{background:white;border:1px solid #e5eaf2;border-radius:16px;padding:18px;box-shadow:0 4px 16px rgba(24,39,75,.04)}.stat span{display:block;color:#738096;font-size:12px;margin-bottom:8px}.stat strong{font-size:24px;overflow-wrap:anywhere}.panel{margin-bottom:20px;overflow:hidden}.panel h2{font-size:18px;margin:0 0 14px}.table-wrap{width:100%;overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px;min-width:700px}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid #edf0f5;vertical-align:top}th{background:#f8fafc;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.04em}tr:last-child td{border-bottom:0}.role-form{display:flex;gap:7px;min-width:180px}.role-form select,.search-input{min-width:0;padding:8px;border:1px solid #dbe2ed;border-radius:8px;background:white}.btn{border:0;border-radius:8px;padding:9px 11px;background:#1d4ed8;color:white;font-weight:700;cursor:pointer}.btn:hover{background:#1e40af}.status{display:inline-block;border-radius:999px;padding:4px 8px;background:#edf7ee;color:#23743b;font-size:11px;font-weight:800}.status.inactive,.status-frozen,.status-closed{background:#fff1f2;color:#be123c}.status-active{background:#edf7ee;color:#23743b}.flash-list{margin:0 0 16px;padding:0;list-style:none}.flash-list li{padding:11px 13px;border-radius:9px;background:#eef5ff;margin-bottom:8px;font-size:13px}.flash-list li.error{background:#fff1f2;color:#9f1239}.empty{padding:28px;text-align:center;color:#738096}.account-list{line-height:1.8}.money{font-variant-numeric:tabular-nums;white-space:nowrap}.description{max-width:330px;overflow-wrap:anywhere}.admin-footer{margin-top:24px;color:#738096;font-size:12px}@media(max-width:700px){.admin-page{padding:18px 12px 32px}.stat strong{font-size:20px}}
+.admin-main{padding:28px 32px 48px}.admin-page{padding:0;max-width:1400px}.sidebar-logout{margin:0 0 10px}.sidebar-logout button{width:100%;border:1px solid #e3e8f1;background:#fff;color:#c0392b;font:inherit;font-weight:700;padding:10px 12px;border-radius:10px;cursor:pointer;text-align:left}.sidebar-logout button:hover{background:#fff1f0}@media(max-width:900px){.layout{flex-direction:column}.sidebar{position:static;height:auto;width:100%;min-width:0}.admin-main{padding:18px 12px 32px}}
+    </style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+    <a href="{{ url_for('admin.dashboard') }}" class="brand">
+        <div class="brand-icon" aria-hidden="true">JAB</div>
+        <div>
+            <div class="brand-name">Bank</div>
+            <div class="brand-subtitle">Administration</div>
+        </div>
+    </a>
+
+    <div class="nav-label">ADMIN CONTROLS</div>
+    <nav class="nav-links" aria-label="Admin tools navigation">
+        <a class="nav-link {% if view_name == 'dashboard' %}active{% endif %}" href="{{ url_for('admin.dashboard') }}"><span class="nav-icon" aria-hidden="true">⌂</span>Overview</a>
+        <a class="nav-link {% if view_name == 'users' %}active{% endif %}" href="{{ url_for('admin.users') }}"><span class="nav-icon" aria-hidden="true">♙</span>Manage Users</a>
+        <a class="nav-link" href="{{ url_for('verification.dashboard') }}"><span class="nav-icon" aria-hidden="true">🪪</span>Verification Requests</a>
+        <a class="nav-link {% if view_name == 'account_requests' %}active{% endif %}" href="{{ url_for('admin.account_requests') }}"><span class="nav-icon" aria-hidden="true">＋</span>Bank Account Requests</a>
+        <a class="nav-link {% if view_name == 'transactions' %}active{% endif %}" href="{{ url_for('admin.transactions') }}"><span class="nav-icon" aria-hidden="true">▤</span>All Transactions</a>
+        <a class="nav-link {% if view_name == 'audit' %}active{% endif %}" href="{{ url_for('admin.audit_logs') }}"><span class="nav-icon" aria-hidden="true">✓</span>Audit Logs</a>
+        <a class="nav-link {% if view_name == 'login_history' %}active{% endif %}" href="{{ url_for('admin.login_history') }}"><span class="nav-icon" aria-hidden="true">◷</span>Login History</a>
+    </nav>
+
+    <div class="sidebar-bottom">
+        <form class="sidebar-logout" action="{{ url_for('auth.logout') }}" method="POST">
+            <button type="submit">Log out</button>
+        </form>
+        <div class="sidebar-account-card">
+            <div class="sidebar-account-icon" aria-hidden="true">{{ session.get('username', 'A')[:1]|upper }}</div>
+            <div class="sidebar-account-copy">
+                <strong>{{ session.get('username', 'Admin') }}</strong>
+                <span>Administrator</span>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<main class="main admin-main">
+<div class="admin-page">
+    <div class="admin-top">
+        <div><div class="muted">JAB BANK / ADMINISTRATION</div><h1>{% if view_name == 'users' %}Manage Users{% elif view_name == 'account_requests' %}Bank Account Requests{% elif view_name == 'transactions' %}All Transactions{% elif view_name == 'audit' %}Audit Logs{% elif view_name == 'login_history' %}Login History{% else %}Admin Dashboard{% endif %}</h1><p>Administrator accounts do not have access to customer banking.</p></div>
+        <span class="admin-tag">🛡 ADMIN ACCESS</span>
+    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}<ul class="flash-list">{% for category, message in messages %}<li class="{{ category }}">{{ message }}</li>{% endfor %}</ul>{% endif %}
+    {% endwith %}
+
+    {% if view_name == 'dashboard' %}
+      <section class="stats">
+        <div class="stat"><span>Registered Users</span><strong>{{ total_customers }}</strong></div>
+        <div class="stat"><span><a href="{{ url_for('verification.dashboard') }}" style="color:inherit">Pending Verifications</a></span><strong>{{ pending_verifications }}</strong></div>
+        <div class="stat"><span><a href="{{ url_for('admin.account_requests') }}" style="color:inherit">Pending Bank Requests</a></span><strong>{{ pending_applications }}</strong></div>
+        <div class="stat"><span>Bank Accounts</span><strong>{{ total_accounts }}</strong></div>
+        <div class="stat"><span>Transactions Recorded</span><strong>{{ total_transactions }}</strong></div>
+        <div class="stat"><span>Total Account Balances</span><strong>₱{{ '{:,.2f}'.format(total_balance|float) }}</strong></div>
+      </section>
+      <section class="panel"><h2>Recent Transactions</h2><div class="table-wrap"><table><thead><tr><th>Date</th><th>Reference</th><th>Account ID</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead><tbody>
+      {% for item in recent_transactions %}<tr><td>{{ item.created_at.strftime('%Y-%m-%d %H:%M') if item.created_at else '—' }}</td><td>{{ item.reference_number }}</td><td>{{ item.account_id }}</td><td>{{ item.transaction_type|replace('_',' ')|title }}</td><td class="money">₱{{ '{:,.2f}'.format(item.amount|float) }}</td><td>{{ item.status|title }}</td></tr>{% else %}<tr><td colspan="6" class="empty">No transactions recorded yet.</td></tr>{% endfor %}
+      </tbody></table></div></section>
+      <section class="panel"><h2>Recent Admin Audit Logs</h2><div class="table-wrap"><table><thead><tr><th>Date</th><th>Action</th><th>Entity</th><th>Description</th></tr></thead><tbody>{% for log in recent_logs %}<tr><td>{{ log.created_at.strftime('%Y-%m-%d %H:%M') if log.created_at else '—' }}</td><td>{{ log.action }}</td><td>{{ log.entity_type or '—' }}</td><td class="description">{{ log.description or '—' }}</td></tr>{% else %}<tr><td colspan="4" class="empty">No admin actions have been logged yet.</td></tr>{% endfor %}</tbody></table></div></section>
+
+    {% elif view_name == 'users' %}
+      <section class="panel"><h2>User Accounts and Roles</h2><p class="muted">Role changes use roles already present in your database. Only promote trusted accounts to admin.</p><div class="table-wrap"><table><thead><tr><th>Customer</th><th>Email</th><th>Current Role</th><th>Identity</th><th>Bank Account(s)</th><th>User Account Status</th><th>Change Status</th><th>Change Role</th></tr></thead><tbody>
+      {% for customer in customers %}{% set detail = details_by_id.get(customer.user_id|string) %}<tr><td><strong>{{ detail.first_name ~ ' ' ~ detail.last_name if detail else customer.username }}</strong><br><span class="muted">@{{ customer.username }}</span></td><td>{{ customer.email }}</td><td>{{ customer.role.role_name if customer.role else 'Unknown' }}</td><td>{% if customer.user_id|string in verified_ids %}<span class="status status-active">Verified</span>{% else %}<span class="muted">Not verified</span>{% endif %}</td><td class="account-list">{% for account in accounts_by_customer.get(customer.user_id|string, []) %}{{ account.account_number }} · {{ account.account_type|title }} · ₱{{ '{:,.2f}'.format(account.balance|float) }}<br>{% else %}<span class="muted">No account</span>{% endfor %}</td><td><span class="status status-{{ customer.account_status|default('active') }}">{{ customer.account_status|default('active')|title }}</span></td><td><form class="role-form" method="post" action="{{ url_for('admin.update_account_status', customer_id=customer.user_id) }}"><select name="account_status" aria-label="Account status for {{ customer.username }}">{% for status_option in ['active', 'frozen', 'closed'] %}<option value="{{ status_option }}" {% if (customer.account_status or 'active') == status_option %}selected{% endif %}>{{ status_option|title }}</option>{% endfor %}</select><button class="btn" type="submit">Save</button></form></td><td><form class="role-form" method="post" action="{{ url_for('admin.update_role', customer_id=customer.user_id) }}"><select name="role_id" aria-label="Role for {{ customer.username }}">{% for role in roles %}<option value="{{ role.role_id }}" {% if customer.role_id == role.role_id %}selected{% endif %}>{{ role.role_name }}</option>{% endfor %}</select><button class="btn" type="submit">Save</button></form></td></tr>{% else %}<tr><td colspan="8" class="empty">No users found.</td></tr>{% endfor %}
+      </tbody></table></div></section>
+
+    {% elif view_name == 'account_requests' %}
+      <section class="panel"><h2>Bank account requests</h2><p class="muted">Only identity-verified users can request a bank account, once per bank type. Approving a request opens the bank account.</p><div class="table-wrap"><table><thead><tr><th>Submitted</th><th>User</th><th>Bank type</th><th>Status</th><th>Review</th></tr></thead><tbody>
+      {% for app in applications %}{% set user = users_by_id.get(app.customer_id|string) %}{% set d = details_by_id.get(app.customer_id|string) %}<tr><td>{{ app.submitted_at.strftime('%Y-%m-%d %H:%M') if app.submitted_at else '—' }}</td><td><strong>{{ d.first_name ~ ' ' ~ d.last_name if d else (user.username if user else 'Unknown') }}</strong><br><span class="muted">@{{ user.username if user else '' }}</span></td><td>{{ app.account_type|replace('_',' ')|title }}</td><td><span class="status {% if app.application_status == 'pending' %}status-frozen{% elif app.application_status == 'rejected' %}inactive{% endif %}">{{ app.application_status|title }}</span></td><td>{% if app.application_status == pending_status %}<form method="post" action="{{ url_for('admin.review_account_request', application_id=app.application_id) }}" style="display:grid;gap:8px;min-width:230px"><textarea name="remarks" maxlength="1000" placeholder="Remarks (required when rejecting)" style="padding:8px;border:1px solid #dbe2ed;border-radius:8px;font:inherit;font-size:12px"></textarea><div style="display:flex;gap:7px"><button class="btn" type="submit" name="decision" value="approve">Approve</button><button class="btn" style="background:#be123c" type="submit" name="decision" value="reject">Reject</button></div></form>{% else %}{{ app.reviewed_at.strftime('%Y-%m-%d %H:%M') if app.reviewed_at else '' }}{% if app.review_remarks %}<br><span class="description">{{ app.review_remarks }}</span>{% endif %}{% if app.resulting_account %}<br><span class="muted">Account {{ app.resulting_account.account_number }}</span>{% endif %}{% endif %}</td></tr>{% else %}<tr><td colspan="5" class="empty">No bank account requests yet.</td></tr>{% endfor %}
+      </tbody></table></div></section>
+
+    {% elif view_name == 'transactions' %}
+      <section class="panel"><h2>Latest 250 transactions</h2><div class="table-wrap"><table><thead><tr><th>Date</th><th>Reference</th><th>Customer</th><th>Account</th><th>Type</th><th>Amount</th><th>Balance After</th><th>Status</th><th>Description</th></tr></thead><tbody>
+      {% for item in transactions %}{% set account = accounts_by_id.get(item.account_id) %}{% set customer = customers_by_id.get(account.customer_id|string) if account else none %}<tr><td>{{ item.created_at.strftime('%Y-%m-%d %H:%M') if item.created_at else '—' }}</td><td>{{ item.reference_number }}</td><td>{{ customer.username if customer else 'Unknown' }}</td><td>{{ account.account_number if account else item.account_id }}</td><td>{{ item.transaction_type|replace('_',' ')|title }}</td><td class="money">₱{{ '{:,.2f}'.format(item.amount|float) }}</td><td class="money">{{ '₱{:,.2f}'.format(item.balance_after|float) if item.balance_after is not none else '—' }}</td><td>{{ item.status|title }}</td><td class="description">{{ item.description or '—' }}</td></tr>{% else %}<tr><td colspan="9" class="empty">No transactions found.</td></tr>{% endfor %}
+      </tbody></table></div></section>
+
+    {% elif view_name == 'audit' %}
+      <section class="panel"><h2>Latest 250 audit entries</h2><div class="table-wrap"><table><thead><tr><th>Date</th><th>Actor</th><th>Action</th><th>Entity</th><th>Description</th><th>IP Address</th></tr></thead><tbody>{% for log in logs %}<tr><td>{{ log.created_at.strftime('%Y-%m-%d %H:%M') if log.created_at else '—' }}</td><td>{% set actor_id = (log.performed_by or log.customer_id) %}{{ actors_by_id.get(actor_id|string).username if actor_id and actors_by_id.get(actor_id|string) else 'System/Unknown' }}{% if log.performed_by_role %} <span class="muted">({{ log.performed_by_role }})</span>{% endif %}</td><td>{{ log.action }}</td><td>{{ log.entity_type or '—' }} {{ log.entity_id or '' }}</td><td class="description">{{ log.description or '—' }}</td><td>{{ log.ip_address or '—' }}</td></tr>{% else %}<tr><td colspan="6" class="empty">No audit entries found.</td></tr>{% endfor %}</tbody></table></div></section>
+
+    {% elif view_name == 'login_history' %}
+      <section class="panel"><h2>Latest 250 login attempts</h2><div class="table-wrap"><table><thead><tr><th>Date</th><th>Username Attempted</th><th>Status</th><th>IP Address</th><th>Device</th></tr></thead><tbody>{% for entry in entries %}<tr><td>{{ entry.login_time.strftime('%Y-%m-%d %H:%M') if entry.login_time else '—' }}</td><td>{{ entry.username_attempted or '—' }}</td><td><span class="status {% if entry.login_status != 'success' %}inactive{% endif %}">{{ entry.login_status|title }}</span></td><td>{{ entry.ip_address or '—' }}</td><td class="description">{{ entry.device_info or '—' }}</td></tr>{% else %}<tr><td colspan="5" class="empty">No login history found.</td></tr>{% endfor %}</tbody></table></div></section>
+    {% endif %}
+    <p class="admin-footer">Administrative pages are restricted by server-side role checks. Review permissions and database role values before deployment.</p>
+</div>
+</main>
+</div>
+</body>
+</html>

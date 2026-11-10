@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f7fb">
+    <title>Manage Bank Accounts | Bank</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .manage-page { max-width: 1200px; margin: 0 auto; }
+        .manage-intro { margin: -18px 0 24px; color: var(--muted); font-size: 13px; }
+        .manage-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-bottom: 16px; box-shadow: 0 8px 22px rgba(23,32,51,.04); }
+        .manage-card-head { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+        .manage-card h2 { font-size:17px; margin:0; }
+        .manage-card p { color:var(--muted); font-size:13px; line-height:1.6; }
+        .manage-status { display:inline-flex; padding:6px 11px; border-radius:999px; font-size:11px; font-weight:800; text-transform:capitalize; background:#edf7ee; color:#166534; }
+        .manage-status--pending,.manage-status--submitted { background:#fff7e6; color:#92400e; }
+        .manage-status--rejected,.manage-status--closed { background:#fff1f2; color:#9f1239; }
+        .manage-status--frozen { background:#e8f1ff; color:#1d4ed8; }
+        .manage-details { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-top:16px; }
+        .manage-detail { padding:12px 14px; border:1px solid var(--border); border-radius:11px; }
+        .manage-detail span { display:block; color:var(--muted); font-size:11px; margin-bottom:5px; }
+        .manage-detail strong { font-size:14px; overflow-wrap:anywhere; }
+        .limit-panel { margin-top:18px; padding:18px; border:1px solid var(--border); border-radius:13px; background:#fbfcff; }
+        .limit-panel h3 { margin:0 0 5px; font-size:15px; }
+        .limit-help { margin:0 0 14px; color:var(--muted); font-size:12px; line-height:1.6; }
+        .limit-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; }
+        .limit-field label { display:block; margin-bottom:6px; font-size:12px; font-weight:700; color:var(--text); }
+        .limit-field input { width:100%; min-height:42px; padding:10px 12px; border:1px solid var(--border); border-radius:9px; background:#fff; color:var(--text); font:inherit; }
+        .limit-field input:focus { outline:2px solid rgba(37,99,235,.18); border-color:var(--primary); }
+        .limit-meta { margin-top:6px; color:var(--muted); font-size:11px; line-height:1.5; }
+        .limit-actions { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:15px; }
+        .limit-button { border:0; border-radius:9px; padding:10px 16px; background:var(--primary); color:#fff; font-weight:700; cursor:pointer; }
+        .limit-button:hover { background:var(--primary-dark); }
+        .limit-note { color:var(--muted); font-size:11px; }
+        .sidebar-bottom { margin-top:auto; padding-top:18px; width:100%; }
+        .sidebar-account-card { display:flex; align-items:center; gap:10px; width:100%; padding:12px; box-sizing:border-box; border:1px solid var(--border); border-radius:14px; background:#fff; color:var(--text); text-decoration:none; }
+        .sidebar-account-card:hover { background:#f2f6fc; }
+        .sidebar-account-icon { display:flex; align-items:center; justify-content:center; width:36px; height:36px; min-width:36px; flex-shrink:0; border-radius:11px; background:#eaf1ff; color:var(--primary); font-size:15px; font-weight:800; }
+        .sidebar-account-copy { display:flex; flex:1; flex-direction:column; gap:4px; min-width:0; }
+        .sidebar-account-copy strong { font-size:12px; overflow-wrap:anywhere; }
+        .sidebar-account-copy span { color:var(--muted); font-size:11px; }
+        .sidebar-account-arrow { margin-left:auto; color:#7b8ba3; font-size:22px; }
+        .empty-state { text-align:center; padding:30px 18px; color:var(--muted); }
+        @media(max-width:700px) { .sidebar { position:static; width:100%; min-width:0; height:auto; } .layout { flex-direction:column; } .main { padding:22px 16px; } }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <a href="{{ url_for('pages.home') }}" class="brand">
+            <div class="brand-icon" aria-hidden="true">JAB</div>
+            <div><div class="brand-name">Bank</div><div class="brand-subtitle">Online Banking</div></div>
+        </a>
+        <div class="nav-label">MAIN MENU</div>
+        <nav class="nav-links" aria-label="Main navigation">
+            <a href="{{ url_for('pages.home') }}" class="nav-link"><span class="nav-icon" aria-hidden="true">⌂</span>Dashboard</a>
+            <a href="{{ url_for('pages.bank_page', operation='deposit') }}" class="nav-link"><span class="nav-icon" aria-hidden="true">↙</span>Deposit</a>
+            <a href="{{ url_for('pages.bank_page', operation='withdraw') }}" class="nav-link"><span class="nav-icon" aria-hidden="true">↗</span>Withdraw</a>
+            <a href="{{ url_for('pages.bank_page', operation='transfer') }}" class="nav-link"><span class="nav-icon" aria-hidden="true">⇄</span>Transfer</a>
+            <a href="{{ url_for('pages.receipts') }}" class="nav-link"><span class="nav-icon" aria-hidden="true">▤</span>Transactions</a>
+            <a href="{{ url_for('pages.manage_bank_accounts') }}" class="nav-link active"><span class="nav-icon" aria-hidden="true">▣</span>Manage Bank Accounts</a>
+            <a href="{{ url_for('pages.account_page') }}" class="nav-link"><span class="nav-icon" aria-hidden="true">♙</span>My Account</a>
+        </nav>
+        <div class="sidebar-bottom">
+            <a href="{{ url_for('pages.account_page') }}" class="sidebar-account-card">
+                <div class="sidebar-account-icon" aria-hidden="true">{{ customer.username[:1]|upper }}</div>
+                <div class="sidebar-account-copy"><strong>{{ customer.username }}</strong><span>Customer account</span></div>
+                <span class="sidebar-account-arrow" aria-hidden="true">›</span>
+            </a>
+        </div>
+    </aside>
+    <main class="main">
+        <div class="manage-page">
+            <header class="topbar">
+                <div>
+                    <div class="breadcrumb">Bank / Banking / Manage Bank Accounts</div>
+                    <h1 class="page-title">Manage Bank Accounts</h1>
+                    <p class="page-subtitle">View your bank account applications and account details.</p>
+                </div>
+            </header>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}{% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}{% endif %}
+            {% endwith %}
+            {% if bank_management %}
+                {% for item in bank_management %}
+                    {% set acct = item.get('account') %}
+                    <section class="manage-card">
+                        <div class="manage-card-head">
+                            <h2>{{ item.get('label', item.get('type', 'Bank Account')|replace('_', ' ')|title) }}</h2>
+                            {% if acct %}
+                                <span class="manage-status manage-status--{{ (acct.status or 'active')|lower }}">{{ acct.status or 'Active' }}</span>
+                            {% else %}
+                                <span class="manage-status manage-status--{{ (item.get('state') or 'pending')|lower }}">{{ item.get('state', 'Pending')|replace('_', ' ') }}</span>
+                            {% endif %}
+                        </div>
+                        {% if acct %}
+                            <p>Your {{ item.get('label', 'bank')|lower }} account is available in your profile.</p>
+                            <div class="manage-details">
+                                <div class="manage-detail"><span>Account number</span><strong>{{ acct.account_id }}</strong></div>
+                                <div class="manage-detail"><span>Account type</span><strong>{{ acct.account_type|replace('_', ' ')|title }}</strong></div>
+                                <div class="manage-detail"><span>Available balance</span><strong>{{ "{:,.2f}".format(acct.balance or 0) }}</strong></div>
+                                <div class="manage-detail"><span>Account status</span><strong>{{ acct.status|default('Active', true)|title }}</strong></div>
+                            </div>
+
+                            {% set limits = item.get('limits') %}
+                            {% if limits and acct.status|lower != 'closed' %}
+                                <form class="limit-panel" method="POST"
+                                      action="{{ url_for('pages.update_account_limits', account_id=acct.account_id) }}">
+                                    <h3>Daily transaction limits</h3>
+                                    <p class="limit-help">Set the maximum amount you can withdraw or transfer each day from this account. You can lower the bank's maximum, but cannot set a higher limit. Leave a field blank to remove your personal limit.</p>
+                                    <div class="limit-grid">
+                                        <div class="limit-field">
+                                            <label for="withdraw-limit-{{ acct.account_id }}">Daily withdrawal limit (₱)</label>
+                                            <input id="withdraw-limit-{{ acct.account_id }}" name="daily_withdrawal_limit"
+                                                   type="number" min="0.01" step="0.01"
+                                                   max="{{ limits.withdrawal.cap if limits.withdrawal.cap is not none else '' }}"
+                                                   value="{{ limits.withdrawal.mine if limits.withdrawal.mine is not none else '' }}"
+                                                   placeholder="No personal limit">
+                                            <div class="limit-meta">
+                                                {% if limits.withdrawal.cap is not none %}Bank maximum: ₱{{ "{:,.2f}".format(limits.withdrawal.cap) }} · {% else %}Bank maximum: No set cap · {% endif %}
+                                                Used today: ₱{{ "{:,.2f}".format(limits.withdrawal.used) }}
+                                                {% if limits.withdrawal.remaining is not none %} · Remaining: ₱{{ "{:,.2f}".format(limits.withdrawal.remaining) }}{% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="limit-field">
+                                            <label for="transfer-limit-{{ acct.account_id }}">Daily transfer limit (₱)</label>
+                                            <input id="transfer-limit-{{ acct.account_id }}" name="daily_transfer_limit"
+                                                   type="number" min="0.01" step="0.01"
+                                                   max="{{ limits.transfer.cap if limits.transfer.cap is not none else '' }}"
+                                                   value="{{ limits.transfer.mine if limits.transfer.mine is not none else '' }}"
+                                                   placeholder="No personal limit">
+                                            <div class="limit-meta">
+                                                {% if limits.transfer.cap is not none %}Bank maximum: ₱{{ "{:,.2f}".format(limits.transfer.cap) }} · {% else %}Bank maximum: No set cap · {% endif %}
+                                                Used today: ₱{{ "{:,.2f}".format(limits.transfer.used) }}
+                                                {% if limits.transfer.remaining is not none %} · Remaining: ₱{{ "{:,.2f}".format(limits.transfer.remaining) }}{% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="limit-actions">
+                                        <span class="limit-note">Limits apply to transactions made today and reset daily.</span>
+                                        <button class="limit-button" type="submit">Save limits</button>
+                                    </div>
+                                </form>
+                            {% elif acct.status|lower == 'closed' %}
+                                <p class="limit-help">Limits cannot be changed because this account is closed.</p>
+                            {% endif %}
+                        {% else %}
+                            <p>Application status: {{ item.get('state', 'Pending')|replace('_', ' ')|title }}.</p>
+                        {% endif %}
+                    </section>
+                {% endfor %}
+            {% else %}
+                <section class="manage-card empty-state">
+                    <h2>No bank accounts found</h2>
+                    <p>Your bank account applications and accounts will appear here.</p>
+                    <p><a href="{{ url_for('pages.account_page') }}">Go to My Account</a> to review your profile and account options.</p>
+                </section>
+            {% endif %}
+        </div>
+    </main>
+</div>
+</body>
+</html>

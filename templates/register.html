@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f7fb">
+
+    <title>Create Account | Bank</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='register.css') }}">
+</head>
+<body>
+
+    <main class="page-container">
+
+        <a href="{{ url_for('auth.login') }}" class="brand">
+            <div class="brand-icon" aria-hidden="true">JAB</div>
+            <div>
+                <div class="brand-name">Bank</div>
+                <div class="brand-subtitle">Online Banking</div>
+            </div>
+        </a>
+
+        <section class="register-card">
+
+            <div class="welcome-icon" aria-hidden="true">♙</div>
+
+            <h1>Create your account</h1>
+
+            <p class="subtitle">
+                Join JABBank.
+            </p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in messages %}
+                    <div class="message {{ category }}" role="alert">
+                        <span aria-hidden="true">!</span>
+                        <span>{{ message }}</span>
+                    </div>
+                {% endfor %}
+            {% endwith %}
+
+            <form method="POST"
+                  action="{{ url_for('auth.register') }}">
+
+                <div class="input-group">
+                    <label for="first_name">First Name</label>
+                    <div class="input-field">
+                        <input
+                            type="text"
+                            id="first_name"
+                            name="first_name"
+                            placeholder="Enter your first name"
+                            maxlength="150"
+                            autocomplete="given-name"
+                            required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="last_name">Last Name</label>
+                    <div class="input-field">
+                        <input
+                            type="text"
+                            id="last_name"
+                            name="last_name"
+                            placeholder="Enter your last name"
+                            maxlength="150"
+                            autocomplete="family-name"
+                            required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <div class="input-field">
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="Choose a username"
+                            maxlength="50"
+                            autocomplete="username"
+                            required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-field">
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email address"
+                            maxlength="150"
+                            autocomplete="email"
+                            required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="input-field">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Create a secure password"
+                            minlength="12"
+                            maxlength="256"
+                            autocomplete="new-password"
+                            aria-describedby="password-help"
+                            required>
+                    </div>
+                    <p class="field-help" id="password-help">
+                        Use 12 to 256 characters.
+                    </p>
+                </div>
+
+                <button type="submit" class="register-button">
+                    Create Account
+                    <span aria-hidden="true">→</span>
+                </button>
+
+            </form>
+
+            <p class="login-prompt">
+                Already have an account?
+                <a href="{{ url_for('auth.login') }}">Log in</a>
+            </p>
+
+
+        </section>
+
+
+    </main>
+
+</body>
+</html>

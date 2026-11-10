@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f7fb">
+
+    <title>Transfer Money | Bank</title>
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --background: #f5f7fb;
+            --surface: #ffffff;
+            --text: #172033;
+            --muted: #738096;
+            --border: #e7ebf2;
+            --success: #15803d;
+            --sidebar-width: 245px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                Roboto, Helvetica, Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 28px 18px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px;
+            margin-bottom: 42px;
+        }
+
+        .brand-icon {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        display: grid;
+        place-items: center;
+        background: #2563eb;
+        color: white;
+        border-radius: 14px;
+        font-size: 16px;
+        font-weight: 900;
+        letter-spacing: -0.8px;
+        flex-shrink: 0;
+        }
+
+        .brand-name {
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: -0.7px;
+        }
+
+        .brand-subtitle {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        .nav-label {
+            padding: 0 12px;
+            margin-bottom: 12px;
+            color: #9aa4b5;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.4px;
+        }
+
+        .nav-links {
+            display: grid;
+            gap: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 13px 14px;
+            border-radius: 10px;
+            color: #69758a;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary);
+            background: #edf3ff;
+        }
+
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 28px;
+        }
+
+        .security-note {
+            padding: 17px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fafbfe;
+        }
+
+        .security-note strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 7px;
+        }
+
+        .security-note p {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .logout-form {
+            margin-top: 15px;
+        }
+
+        .logout-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #fff1f2;
+            border: 1px solid #ffe0e3;
+            border-radius: 10px;
+            color: #c52f40;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background: #ffe3e6;
+        }
+
+        /* Main content */
+
+        .main {
+            min-width: 0;
+            flex: 1;
+            padding: 32px 40px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 36px;
+        }
+
+        .breadcrumb {
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 9px;
+        }
+
+        .page-title {
+            font-size: clamp(23px, 3vw, 30px);
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .page-subtitle {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 13px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: #e8efff;
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            font-size: 17px;
+        }
+
+        .profile-name {
+            font-size: 12px;
+            font-weight: 750;
+            overflow-wrap: anywhere;
+        }
+
+        .profile-role {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* Transfer banner */
+
+        .welcome {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            padding: 32px;
+            margin-bottom: 28px;
+            border-radius: 20px;
+            color: white;
+            background: linear-gradient(
+                120deg, #1e40af, #2563eb 65%, #4f86ff
+            );
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.13);
+        }
+
+        .welcome::after {
+            content: "";
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            right: 3%;
+            top: -135px;
+            border: 1px solid rgba(255, 255, 255, 0.17);
+            border-radius: 50%;
+            box-shadow:
+                0 0 0 30px rgba(255, 255, 255, 0.04),
+                0 0 0 65px rgba(255, 255, 255, 0.04);
+            pointer-events: none;
+        }
+
+        .welcome-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            color: #dbe7ff;
+            margin-bottom: 13px;
+        }
+
+        .welcome h2 {
+            font-size: clamp(22px, 3vw, 30px);
+            line-height: 1.3;
+            letter-spacing: -0.7px;
+        }
+
+        .welcome p {
+            margin-top: 12px;
+            max-width: 470px;
+            color: #e0eaff;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .welcome-badge {
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+            padding: 13px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* Flash messages */
+
+        .flash-messages {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .flash-message {
+            padding: 13px 15px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            font-size: 12px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .flash-message.error,
+        .flash-message.danger {
+            color: #842029;
+            background: #fff1f2;
+            border-color: #ffe0e3;
+        }
+
+        .flash-message.success {
+            color: #166534;
+            background: #f0fdf4;
+            border-color: #dcfce7;
+        }
+
+        .flash-message.warning {
+            color: #854d0e;
+            background: #fefce8;
+            border-color: #fef08a;
+        }
+
+        .flash-message.info,
+        .flash-message.message {
+            color: #1e40af;
+            background: #eff6ff;
+            border-color: #dbeafe;
+        }
+
+        /* Transfer form */
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin: 34px 0 17px;
+        }
+
+        .section-heading h2 {
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .section-tag {
+            color: var(--primary);
+            background: #edf3ff;
+            padding: 7px 11px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .transfer-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.5fr) minmax(230px, 0.8fr);
+            align-items: start;
+            gap: 20px;
+        }
+
+        .transfer-card,
+        .info-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 27px;
+            min-width: 0;
+        }
+
+        .card-heading {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin-bottom: 25px;
+        }
+
+        .transfer-icon {
+            width: 49px;
+            height: 49px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            background: #e8efff;
+            color: var(--primary);
+            border-radius: 14px;
+            font-size: 25px;
+        }
+
+        .card-heading h3 {
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .card-heading p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 5px;
+            line-height: 1.6;
+        }
+
+        .input-group {
+            margin-bottom: 21px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .input-field {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            border: 1px solid #dce3ee;
+            border-radius: 11px;
+            padding: 0 15px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-field:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .field-icon {
+            flex-shrink: 0;
+            color: var(--muted);
+            font-size: 17px;
+        }
+
+        .input-field input {
+            width: 100%;
+            min-width: 0;
+            padding: 16px 0;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: var(--text);
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .input-field input::placeholder {
+            color: #b0b9c8;
+            font-size: 13px;
+            font-weight: 400;
+        }
+
+        .input-field input::-webkit-inner-spin-button,
+        .input-field input::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .input-field input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .field-hint {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 9px;
+            line-height: 1.7;
+        }
+
+        .transfer-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 9px;
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 13px;
+            font-weight: 750;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .transfer-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .transfer-button:active {
+            transform: scale(0.99);
+        }
+
+        .back-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin-top: 11px;
+            padding: 13px;
+            background: #f7f9fc;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: #58657b;
+            font-size: 12px;
+            font-weight: 700;
+            transition: background 0.2s;
+        }
+
+        .back-button:hover {
+            background: #edf1f7;
+        }
+
+        /* Information card */
+
+        .info-card {
+            padding: 24px;
+        }
+
+        .info-card h3 {
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-item-icon {
+            display: grid;
+            place-items: center;
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            background: #edf3ff;
+            color: var(--primary);
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        .info-item strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .info-item p {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .security-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 23px;
+            padding: 14px;
+            border-radius: 11px;
+            background: #f0fdf4;
+            border: 1px solid #dcfce7;
+            color: #166534;
+        }
+
+        .security-banner span {
+            font-size: 16px;
+        }
+
+        .security-banner p {
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-top: 25px;
+            margin-top: 38px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .footer strong {
+            color: #657188;
+        }
+
+        /* Responsive layout */
+
+        @media (max-width: 1100px) {
+            .sidebar {
+                width: 205px;
+            }
+
+            .main {
+                padding: 28px 24px;
+            }
+
+            .transfer-layout {
+                grid-template-columns: minmax(0, 1.2fr) minmax(210px, 0.8fr);
+            }
+
+            .transfer-card,
+            .info-card {
+                padding: 21px;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .transfer-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .info-card {
+                padding: 23px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 15px 16px 12px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .brand {
+                margin-bottom: 16px;
+                padding: 0 3px;
+            }
+
+            .brand-icon {
+                width: 38px;
+                height: 38px;
+            }
+
+            .brand-name {
+                font-size: 19px;
+            }
+
+            .nav-label,
+            .sidebar-bottom {
+                display: none;
+            }
+
+            .nav-links {
+                display: flex;
+                overflow-x: auto;
+                gap: 7px;
+                padding-bottom: 3px;
+            }
+
+            .nav-link {
+                flex-shrink: 0;
+                padding: 10px 12px;
+                font-size: 11px;
+                gap: 7px;
+                border: 1px solid var(--border);
+            }
+
+            .nav-icon {
+                font-size: 15px;
+                width: auto;
+            }
+
+            .main {
+                padding: 24px 17px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                margin-bottom: 25px;
+            }
+
+            .profile {
+                padding: 6px;
+                border: none;
+                background: transparent;
+            }
+
+            .profile-details {
+                display: none;
+            }
+
+            .avatar {
+                width: 38px;
+                height: 38px;
+            }
+
+            .welcome {
+                padding: 25px 21px;
+                border-radius: 16px;
+            }
+
+            .welcome-badge {
+                display: none;
+            }
+
+            .section-heading {
+                margin-top: 28px;
+            }
+
+            .transfer-card {
+                padding: 21px;
+            }
+
+            .footer {
+                margin-top: 28px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition: none !important;
+            }
+        }
+    </style>
+<style>
+
+/* Shared JAB Bank sidebar account card and More Options menu */
+.sidebar-bottom { margin-top:auto; padding-top:18px; width:100%; }
+.sidebar-account-card { display:flex; align-items:center; gap:10px; width:100%; padding:12px; box-sizing:border-box; border:1px solid var(--border, #e3eaf4); border-radius:14px; background:#fff; color:var(--text, #183153); text-decoration:none; }
+.sidebar-account-card:hover { background:#f2f6fc; }
+.sidebar-account-icon { display:flex; align-items:center; justify-content:center; width:36px; height:36px; flex-shrink:0; border-radius:11px; background:#eaf1ff; color:var(--primary, #2459a9); font-size:17px; font-weight:800; }
+.sidebar-account-copy { display:flex; flex:1; flex-direction:column; gap:4px; min-width:0; }
+.sidebar-account-copy strong { font-size:12px; overflow-wrap:anywhere; }
+.sidebar-account-copy span { color:var(--muted, #75839a); font-size:11px; }
+.sidebar-account-arrow { margin-left:auto; color:#7b8ba3; font-size:22px; }
+
+.account-type-badge { display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; padding:8px 12px; border:1px solid #d8e5f8; border-radius:999px; background:#edf4ff; color:#2459a9; font-size:12px; font-weight:800; line-height:1.2; }
+.account-type-badge--savings { background:#eaf7ef; border-color:#ccebd7; color:#207245; }
+.account-type-badge--checking { background:#edf4ff; border-color:#d8e5f8; color:#2459a9; }
+.account-type-badge--business { background:#f2edff; border-color:#dfd4ff; color:#6841a5; }
+@media (max-width:700px) { .account-type-badge { padding:7px 9px; font-size:11px; } }
+.topbar-profile-actions { display:flex; align-items:center; justify-content:flex-end; gap:12px; min-width:0; }
+.utility-panel { position:relative; }
+.mini-action-button { width:42px; height:42px; border:1px solid var(--border, #e7ebf2); border-radius:12px; background:#fff; color:var(--text, #172033); font-size:25px; cursor:pointer; }
+.action-popover { display:none; position:absolute; z-index:1000; top:calc(100% + 10px); right:0; width:min(320px, calc(100vw - 32px)); padding:8px; background:#fff; border:1px solid var(--border, #e7ebf2); border-radius:15px; box-shadow:0 16px 40px rgba(23,32,51,.15); }
+.utility-panel.is-open .action-popover { display:block; }
+.more-options-header { display:flex; justify-content:space-between; align-items:center; padding:10px 12px; color:var(--text, #172033); font-size:13px; font-weight:800; }
+.action-item { display:flex; align-items:center; gap:11px; width:100%; padding:11px 12px; border:0; border-radius:10px; background:transparent; color:var(--text, #172033); text-align:left; font:inherit; cursor:pointer; text-decoration:none; }
+.action-item:hover { background:#f2f6fc; }
+.action-icon { display:grid; place-items:center; width:32px; height:32px; flex-shrink:0; border-radius:9px; background:#edf3ff; color:var(--primary, #2563eb); }
+.action-copy { display:flex; flex-direction:column; gap:3px; min-width:0; }
+.action-copy strong { font-size:12px; }
+.action-copy span { color:var(--muted, #738096); font-size:11px; line-height:1.4; }
+.menu-divider { height:1px; margin:7px 8px; background:var(--border, #e7ebf2); }
+.more-logout-form { margin:0; }
+.action-item--logout { color:#c0392b; }
+.action-item--logout .action-icon { background:#fff1f0; color:#c0392b; }
+@media (max-width:700px) { .topbar-profile-actions { gap:7px; } .profile { padding:7px 9px; } .profile-role { display:none; } }
+
+
+
+/* Dashboard-matched top navigation identity and account status */
+.topbar-identity { display:flex; align-items:center; justify-content:flex-end; gap:10px; min-width:0; }
+.account-badge { --badge-bg:#edf3ff; --badge-border:#dfeaff; --badge-color:var(--primary,#2563eb); display:inline-flex; align-items:center; justify-content:center; padding:9px 12px; border-radius:999px; background:var(--badge-bg); border:1px solid var(--badge-border); color:var(--badge-color); font-size:11px; font-weight:800; letter-spacing:.4px; white-space:nowrap; }
+.account-badge--savings { --badge-bg:#e8f8ee; --badge-border:#cfeed9; --badge-color:#15803d; }
+.account-badge--business { --badge-bg:#edf3ff; --badge-border:#dfeaff; --badge-color:#2563eb; }
+.account-badge--checking { --badge-bg:#fff3e5; --badge-border:#f7ddaf; --badge-color:#b7791f; }
+.account-status-badge { display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; padding:8px 12px; border:1px solid #ccebd7; border-radius:999px; background:#eaf7ef; color:#207245; font-size:12px; font-weight:800; line-height:1.2; }
+.account-status-frozen, .account-status-closed { background:#fff1f2; border-color:#fecdd3; color:#be123c; }
+.utility-actions { display:flex; align-items:center; gap:8px; padding-left:2px; }
+.utility-panel { position:relative; }
+.mini-action-button { width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--border,#e7ebf2); border-radius:10px; background:#fff; color:var(--text,#172033); font-size:12px; padding:12px 10px 10px; cursor:pointer; }
+.action-popover { display:none; position:absolute; z-index:1000; top:calc(100% + 10px); right:0; width:min(320px,calc(100vw - 32px)); padding:8px; background:#fff; border:1px solid var(--border,#e7ebf2); border-radius:15px; box-shadow:0 16px 40px rgba(23,32,51,.15); }
+.utility-panel.is-open .action-popover { display:block; }
+@media (max-width:700px) { .topbar-identity { gap:7px; } .account-badge,.account-status-badge { padding:7px 9px; font-size:10px; } .mini-action-button { width:34px; height:34px; } }
+</style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='more_options.css') }}">
+</head>
+
+<body>
+    <div class="layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="{{ url_for('pages.home') }}" class="brand">
+                <div class="brand-icon" aria-hidden="true">JAB</div>
+                <div>
+                    <div class="brand-name">Bank</div>
+                    <div class="brand-subtitle">Online Banking</div>
+                </div>
+            </a>
+
+            <div class="nav-label">MAIN MENU</div>
+
+            <nav class="nav-links" aria-label="Main navigation">
+        <a href="{{ url_for('pages.home') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">⌂</span>Dashboard</a>
+        <a href="{{ url_for('pages.bank_page', operation='deposit') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">↙</span>Deposit</a>
+        <a href="{{ url_for('pages.bank_page', operation='withdraw') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">↗</span>Withdraw</a>
+        <a href="{{ url_for('pages.bank_page', operation='transfer') }}" class="nav-link active"><span class="nav-icon" aria-hidden="true">⇄</span>Transfer</a>
+        <a href="{{ url_for('pages.receipts') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">▤</span>Transactions</a>
+        <a href="{{ url_for('pages.manage_bank_accounts') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">▣</span>Manage Bank Accounts</a>
+        <a href="{{ url_for('pages.account_page') }}" class="nav-link "><span class="nav-icon" aria-hidden="true">♙</span>My Account</a>
+    </nav>
+
+            <div class="sidebar-bottom">
+                <a href="{{ url_for('pages.account_page') }}" class="sidebar-account-card">
+                    <div class="sidebar-account-icon" aria-hidden="true">{{ session.get('username', 'C')[:1]|upper }}</div>
+                    <div class="sidebar-account-copy">
+                        <strong>{{ session.get('username', 'Customer') }}</strong>
+                        <span>Customer account</span>
+                    </div>
+                    <span class="sidebar-account-arrow" aria-hidden="true">›</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main">
+
+            <header class="topbar">
+                <div>
+                    <div class="breadcrumb">Bank / Banking / Transfer</div>
+                    <h1 class="page-title">Transfer Money</h1>
+                    <p class="page-subtitle">
+                        Send money to another account
+                    </p>
+                </div>
+
+                <div class="topbar-identity">
+                    <div class="account-badge {{ 'account-badge--savings' if (account_type|default('Savings')|lower) == 'savings' else 'account-badge--business' if (account_type|default('Savings')|lower) == 'business' else 'account-badge--checking' }}">
+                        {{ account_type|default('Savings', true)|title }}
+                    </div><span class="account-status-badge account-status-{{ current_account_status|default('active') }}" aria-label="Account status: {{ current_account_status|default('active')|title }}">{{ current_account_status|default('active')|title }}</span>
+                    <div class="utility-actions" aria-label="More options">
+                        <div class="utility-panel">
+                            <button type="button" class="mini-action-button" data-toggle-panel aria-expanded="false" aria-label="More options">⋯</button>
+                            {% include "_more_options_menu.html" %}
+                </div>
+            </header>
+{% include '_account_switcher.html' %}
+
+            <!-- Welcome banner -->
+            <section class="welcome">
+                <div>
+                    <div class="welcome-label">JABBANK SERVICES</div>
+                    <h2>Send money simply.<br>Stay in control.</h2>
+                    <p>Transfer funds to another account with confidence. Use a saved recipient for a quicker experience, and always verify the account details before sending.</p>
+                </div>
+
+                <div class="welcome-badge">
+                    🛡 &nbsp; JAB Online Banking<br><span class="welcome-account-id">Account ID: {{ account.account_id if account else "N/A" }}</span>
+                </div>
+            </section>
+
+
+            <!-- Transfer section -->
+            <section aria-labelledby="transfer-heading">
+                <div class="section-heading">
+                    <div>
+                        <h2 id="transfer-heading">Make a Transfer</h2>
+                        <p>Enter the recipient and transfer amount.</p>
+                    </div>
+
+                    <span class="section-tag">⇄ TRANSFER</span>
+                </div>
+
+                <div class="transfer-layout">
+
+                    <!-- Transfer form card -->
+                    <div class="transfer-card">
+                        <div class="card-heading">
+                            <div class="transfer-icon" aria-hidden="true">⇄</div>
+                            <div>
+                                <h3>Transfer Details</h3>
+                                <p>Provide the account details for your transaction.</p>
+                            </div>
+                        </div>
+
+                        <!-- Flask flash messages -->
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                <div class="flash-messages" role="status" aria-live="polite">
+                                    {% for category, message in messages %}
+                                        <div class="flash-message {{ category }}">
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+
+                        <div class="current-balance-card" role="status" aria-live="polite" style="margin: 18px 0 22px; padding: 18px 20px; border: 1px solid #d9e7f5; border-radius: 14px; background: linear-gradient(135deg, #f4f8ff, #ffffff);">
+                            <div style="font-size: 0.85rem; color: #53657b; margin-bottom: 6px;">Current Account Balance</div>
+                            <div style="font-size: clamp(1.6rem, 3vw, 2rem); font-weight: 750; color: #163b69; letter-spacing: -0.02em;">₱{{ "{:,.2f}".format(balance|default(0, true)|float) }}</div>
+                            <div style="font-size: 0.8rem; color: #64748b; margin-top: 6px;">Your balance updates after each successful transaction.</div>
+                        </div>
+
+                        <form
+                            action="{{ url_for('transactions.transaction', operation='transfer') }}"
+                            method="POST"
+                        >
+                            <input type="hidden" name="account_id" value="{{ account.account_id if account else '' }}">
+
+                            <div class="input-group">
+                                <label for="recipient_id">Recipient Account ID</label>
+
+                                <div class="input-field">
+                                    <span class="field-icon" aria-hidden="true">♙</span>
+
+                                    <input
+                                        type="number"
+                                        id="recipient_id"
+                                        name="recipient_id"
+                                        min="1"
+                                        step="1"
+                                        placeholder="Enter recipient account ID"
+                                        inputmode="numeric"
+                                        autocomplete="off"
+                                        aria-describedby="recipient-hint"
+                                        required
+                                    >
+                                </div>
+
+                                <p class="field-hint" id="recipient-hint">
+                                    Double-check the account ID to make sure
+                                    the money goes to the intended recipient.
+                                </p>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="amount">Amount to transfer</label>
+
+                                <div class="input-field">
+                                    <span class="field-icon" aria-hidden="true">₱</span>
+
+                                    <input
+                                        type="number"
+                                        id="amount"
+                                        name="amount"
+                                        min="0.01"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                        inputmode="decimal"
+                                        autocomplete="off"
+                                        aria-describedby="amount-hint"
+                                        required
+                                    >
+                                </div>
+
+                                <p class="field-hint" id="amount-hint">
+                                    Enter an amount greater than zero.
+                                </p>
+                            </div>
+
+                            <button type="submit" class="transfer-button">
+                                <span aria-hidden="true">⇄</span>
+                                Transfer Money
+                            </button>
+
+                        </form>
+                    </div>
+
+                    <!-- Saved recipient contact book -->
+                    <aside class="info-card" aria-label="Manage saved recipients">
+                        <h3>Save a recipient</h3>
+                        <p class="info-intro">Add trusted recipients once, then select them next time for a faster transfer.</p>
+                        <form method="POST" action="{{ url_for('pages.add_transfer_contact') }}" style="display:grid;gap:12px;margin-top:16px;">
+                            <label for="contact-name" style="font-size:.88rem;font-weight:650;color:#26364b;">Contact name</label>
+                            <input id="contact-name" name="beneficiary_name" type="text" maxlength="150" placeholder="e.g. Alex Santos" required style="width:100%;padding:12px;border:1px solid #d9e2ef;border-radius:10px;background:#fff;">
+                            <label for="contact-account" style="font-size:.88rem;font-weight:650;color:#26364b;">Recipient account ID</label>
+                            <input id="contact-account" name="recipient_id" type="number" min="1" step="1" placeholder="Enter account ID" required style="width:100%;padding:12px;border:1px solid #d9e2ef;border-radius:10px;background:#fff;">
+                            <button type="submit" style="padding:12px 16px;border:0;border-radius:10px;background:#2563eb;color:#fff;font-weight:700;cursor:pointer;">＋ Save recipient</button>
+                        </form>
+                        {% if saved_recipients %}
+                            <div class="saved-recipient-panel" style="margin:20px 0 0; padding:18px; border:1px solid #dbe6f5; border-radius:16px; background:#f7faff;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;">
+                                    <div>
+                                        <h3 style="font-size:1rem; color:#173b68; margin:0 0 4px;">Saved recipients</h3>
+                                        <p style="font-size:.82rem; color:#64748b; margin:0;">Select a contact to fill their account ID in the transfer form.</p>
+                                    </div>
+                                    <span aria-hidden="true" style="font-size:1.35rem;">♡</span>
+                                </div>
+                                <div style="display:grid; gap:9px;">
+                                    {% for contact in saved_recipients %}
+                                        <div style="display:flex; align-items:center; gap:10px; padding:10px 12px; background:#fff; border:1px solid #e3eaf4; border-radius:12px;">
+                                            <button type="button" class="saved-recipient-select" data-account-id="{{ contact.account_number|e }}" style="flex:1; display:flex; align-items:center; gap:10px; text-align:left; border:0; background:transparent; cursor:pointer; color:#173b68; min-width:0;">
+                                                <span style="width:36px;height:36px;display:grid;place-items:center;border-radius:50%;background:#e8f0ff;color:#2454b8;font-weight:700;">{{ (contact.beneficiary_name or 'R')[:1]|upper }}</span>
+                                                <span style="min-width:0;"><strong style="display:block;">{{ contact.beneficiary_name }}</strong><small style="color:#718096;">Account #{{ contact.account_number }}</small></span>
+                                            </button>
+                                            <form method="POST" action="{{ url_for('pages.delete_transfer_contact', beneficiary_id=contact.beneficiary_id) }}" onsubmit="return confirm('Remove this saved recipient?');">
+                                                <button type="submit" aria-label="Remove {{ contact.beneficiary_name }}" title="Remove contact" style="border:0;background:transparent;color:#94a3b8;cursor:pointer;font-size:1.1rem;padding:6px;">×</button>
+                                            </form>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="info-callout" style="margin-top:20px;">
+                                <strong>No saved recipients yet</strong> Add a recipient above and they will appear here for your next transfer.
+                            </div>
+                        {% endif %}
+
+                        <div class="info-callout" style="margin-top:18px;">
+                            <strong>Transfer safely</strong> Confirm the recipient's name and account ID before sending money. Saved contacts are private to your account.
+                        </div>
+                    </aside>
+
+                </div>
+            </section>
+
+        </main>
+    </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.saved-recipient-select').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const recipientInput = document.getElementById('recipient_id');
+            if (!recipientInput) return;
+            recipientInput.value = button.dataset.accountId || '';
+            recipientInput.focus();
+            recipientInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    });
+
+    const panels = document.querySelectorAll('.utility-panel');
+    panels.forEach(function (panel) {
+        const trigger = panel.querySelector('[data-toggle-panel]');
+        if (!trigger) return;
+        trigger.addEventListener('click', function (event) {
+            event.stopPropagation();
+            const wasOpen = panel.classList.contains('is-open');
+            panels.forEach(function (other) {
+                other.classList.remove('is-open');
+                const otherTrigger = other.querySelector('[data-toggle-panel]');
+                if (otherTrigger) otherTrigger.setAttribute('aria-expanded', 'false');
+            });
+            if (!wasOpen) {
+                panel.classList.add('is-open');
+                trigger.setAttribute('aria-expanded', 'true');
+            }
+        });
+    });
+    document.addEventListener('click', function (event) {
+        if (!event.target.closest('.utility-panel')) {
+            panels.forEach(function (panel) {
+                panel.classList.remove('is-open');
+                const trigger = panel.querySelector('[data-toggle-panel]');
+                if (trigger) trigger.setAttribute('aria-expanded', 'false');
+            });
+        }
+    });
+});
+</script>
+</body>
+</html>

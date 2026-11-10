@@ -1,0 +1,219 @@
+﻿
+.welcome {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 205px;
+    width: 100%;
+}
+
+.welcome-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+
+.balance-label {
+    margin-top: 24px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #dbe7ff;
+}
+
+.balance-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+#availableBalance {
+    display: block !important;
+    font-size: 64px !important;
+    line-height: 1.15 !important;
+    font-weight: 800 !important;
+    margin: 12px 0 !important;
+    letter-spacing: -2px;
+    color: #ffffff;
+}
+
+@media (max-width: 600px) {
+    #availableBalance {
+        font-size: 46px !important;
+    }
+}
+
+
+/* Divider above Log out in More Options */
+.menu-divider {
+    height: 1px;
+    margin: 8px 12px;
+    background: #e5eaf1;
+}
+
+/* Logout form inside the menu */
+.more-logout-form {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.action-item--logout {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: #c0392b;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.action-item--logout:hover {
+    background: #fff1f0;
+}
+
+.action-item--logout .action-icon {
+    color: #c0392b;
+}
+
+/* Keep the account card at the bottom of the sidebar */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+    padding: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.sidebar-account-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    border: 1px solid #e3eaf4;
+    border-radius: 14px;
+    background: #ffffff;
+    color: #183153;
+    text-decoration: none;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.sidebar-account-card:hover {
+    background: #f2f6fc;
+    border-color: #cbd9eb;
+}
+
+.sidebar-account-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: #eaf1ff;
+    color: #2459a9;
+    font-size: 19px;
+}
+
+.sidebar-account-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.sidebar-account-copy strong {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.sidebar-account-copy span {
+    color: #75839a;
+    font-size: 11px;
+}
+
+.sidebar-account-arrow {
+    margin-left: auto;
+    color: #7b8ba3;
+    font-size: 22px;
+}
+
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+    padding: 14px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.sidebar-account-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    border: 1px solid #e3eaf4;
+    border-radius: 14px;
+    background: #fff;
+    color: #183153;
+    text-decoration: none;
+}
+
+.sidebar-account-card:hover {
+    background: #f2f6fc;
+}
+
+.sidebar-account-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: #eaf1ff;
+    color: #2459a9;
+    font-size: 19px;
+}
+
+.sidebar-account-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sidebar-account-copy strong {
+    font-size: 13px;
+}
+
+.sidebar-account-copy span {
+    color: #75839a;
+    font-size: 11px;
+}
+
+.sidebar-account-arrow {
+    margin-left: auto;
+    font-size: 22px;
+}
+
+/* Admin access indicators */
+.admin-nav-label { margin-top: 22px; }
+.admin-nav-link { color: #1d4ed8; background: #eef4ff; }
+.admin-welcome-badge { background: #e8efff; color: #1d4ed8; border: 1px solid #cddcff; }
+.admin-tools-section { margin-top: 28px; }

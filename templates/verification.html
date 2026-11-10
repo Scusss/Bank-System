@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Identity Verification | JAB Bank</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <style>
+        .admin-page{max-width:1400px;margin:0 auto;padding:28px 32px 48px}.admin-top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px}.admin-top h1{font-size:clamp(24px,3vw,34px);margin:0 0 6px}.admin-top p,.muted{color:#738096}.admin-tag{display:inline-flex;align-items:center;border-radius:999px;padding:7px 12px;background:#e8efff;color:#1d4ed8;font-weight:800;font-size:12px}.admin-nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 24px}.admin-nav a,.back-link{display:inline-block;padding:10px 13px;border:1px solid #e3e8f1;border-radius:10px;background:#fff;color:#334155;text-decoration:none;font-size:13px;font-weight:700}.admin-nav a.active,.admin-nav a:hover{background:#1d4ed8;color:white;border-color:#1d4ed8}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}.stat,.panel{background:white;border:1px solid #e5eaf2;border-radius:16px;padding:18px;box-shadow:0 4px 16px rgba(24,39,75,.04)}.stat span{display:block;color:#738096;font-size:12px;margin-bottom:8px}.stat strong{font-size:24px;overflow-wrap:anywhere}.panel{margin-bottom:20px;overflow:hidden}.panel h2{font-size:18px;margin:0 0 14px}.table-wrap{width:100%;overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px;min-width:700px}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid #edf0f5;vertical-align:top}th{background:#f8fafc;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.04em}tr:last-child td{border-bottom:0}.role-form{display:flex;gap:7px;min-width:180px}.role-form select,.search-input{min-width:0;padding:8px;border:1px solid #dbe2ed;border-radius:8px;background:white}.btn{border:0;border-radius:8px;padding:9px 11px;background:#1d4ed8;color:white;font-weight:700;cursor:pointer}.btn:hover{background:#1e40af}.status{display:inline-block;border-radius:999px;padding:4px 8px;background:#edf7ee;color:#23743b;font-size:11px;font-weight:800}.status.inactive,.status-frozen,.status-closed{background:#fff1f2;color:#be123c}.status-active{background:#edf7ee;color:#23743b}.flash-list{margin:0 0 16px;padding:0;list-style:none}.flash-list li{padding:11px 13px;border-radius:9px;background:#eef5ff;margin-bottom:8px;font-size:13px}.flash-list li.error{background:#fff1f2;color:#9f1239}.empty{padding:28px;text-align:center;color:#738096}.account-list{line-height:1.8}.money{font-variant-numeric:tabular-nums;white-space:nowrap}.description{max-width:330px;overflow-wrap:anywhere}.admin-footer{margin-top:24px;color:#738096;font-size:12px}@media(max-width:700px){.admin-page{padding:18px 12px 32px}.stat strong{font-size:20px}}
+.admin-main{padding:28px 32px 48px}.admin-page{padding:0;max-width:1400px}.sidebar-logout{margin:0 0 10px}.sidebar-logout button{width:100%;border:1px solid #e3e8f1;background:#fff;color:#c0392b;font:inherit;font-weight:700;padding:10px 12px;border-radius:10px;cursor:pointer;text-align:left}.sidebar-logout button:hover{background:#fff1f0}@media(max-width:900px){.layout{flex-direction:column}.sidebar{position:static;height:auto;width:100%;min-width:0}.admin-main{padding:18px 12px 32px}}
+    
+.review-form{display:grid;gap:8px;min-width:230px}.review-form textarea{width:100%;min-height:54px;padding:8px;border:1px solid #dbe2ed;border-radius:8px;font:inherit;font-size:12px;resize:vertical}.review-actions{display:flex;gap:7px}.btn.reject{background:#be123c}.btn.reject:hover{background:#9f1239}.status-pending{background:#fff7e6;color:#b45309}.status-approved{background:#edf7ee;color:#23743b}.status-verified{background:#edf7ee;color:#23743b}.status-rejected{background:#fff1f2;color:#be123c}.kv{line-height:1.7}.kv span{color:#738096}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+    <a href="{{ url_for('verification.dashboard') }}" class="brand">
+        <div class="brand-icon" aria-hidden="true">JAB</div>
+        <div>
+            <div class="brand-name">Bank</div>
+            <div class="brand-subtitle">{{ 'Administration' if viewer_is_admin else 'Verification' }}</div>
+        </div>
+    </a>
+
+    <div class="nav-label">VERIFICATION</div>
+    <nav class="nav-links" aria-label="Verification navigation">
+        <a class="nav-link {% if show == 'pending' %}active{% endif %}" href="{{ url_for('verification.dashboard') }}"><span class="nav-icon" aria-hidden="true">⌛</span>Pending ({{ pending_count }})</a>
+        <a class="nav-link {% if show == 'reviewed' %}active{% endif %}" href="{{ url_for('verification.dashboard', show='reviewed') }}"><span class="nav-icon" aria-hidden="true">✓</span>Reviewed</a>
+        {% if viewer_is_admin %}
+        <a class="nav-link" href="{{ url_for('admin.account_requests') }}"><span class="nav-icon" aria-hidden="true">＋</span>Bank Account Requests</a>
+        <a class="nav-link" href="{{ url_for('admin.dashboard') }}"><span class="nav-icon" aria-hidden="true">⌂</span>Admin Overview</a>
+        {% endif %}
+    </nav>
+
+    <div class="sidebar-bottom">
+        <form class="sidebar-logout" action="{{ url_for('auth.logout') }}" method="POST">
+            <button type="submit">Log out</button>
+        </form>
+        <div class="sidebar-account-card">
+            <div class="sidebar-account-icon" aria-hidden="true">{{ session.get('username', 'V')[:1]|upper }}</div>
+            <div class="sidebar-account-copy">
+                <strong>{{ session.get('username', 'Officer') }}</strong>
+                <span>{{ 'Administrator' if viewer_is_admin else 'Verification Officer' }}</span>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<main class="main admin-main">
+<div class="admin-page">
+    <div class="admin-top">
+        <div><div class="muted">JAB BANK / VERIFICATION</div><h1>{% if show == 'reviewed' %}Reviewed Requests{% else %}Pending Verification Requests{% endif %}</h1><p>Review the user's account information and decide whether to verify it.</p></div>
+        <span class="admin-tag">🪪 {{ 'ADMIN ACCESS' if viewer_is_admin else 'VERIFICATION OFFICER' }}</span>
+    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}<ul class="flash-list">{% for category, message in messages %}<li class="{{ category }}">{{ message }}</li>{% endfor %}</ul>{% endif %}
+    {% endwith %}
+
+    <section class="panel"><div class="table-wrap"><table>
+      <thead><tr><th>Submitted</th><th>User</th><th>Account information</th><th>{% if show == 'reviewed' %}Decision{% else %}Review{% endif %}</th></tr></thead>
+      <tbody>
+      {% for item in items %}
+        {% set user = users_by_id.get(item.customer_id|string) %}
+        {% set d = details_by_id.get(item.customer_id|string) %}
+        <tr>
+          <td>{{ item.submitted_at.strftime('%Y-%m-%d %H:%M') if item.submitted_at else '—' }}</td>
+          <td><strong>{{ user.username if user else 'Unknown' }}</strong><br><span class="muted">{{ user.email if user else '' }}</span></td>
+          <td class="kv">
+            {% if d %}
+              <span>Name:</span> {{ d.first_name }} {{ d.middle_name or '' }} {{ d.last_name }} {{ d.suffix or '' }}<br>
+              <span>Birth date:</span> {{ d.birth_date.strftime('%Y-%m-%d') if d.birth_date else '—' }}<br>
+              <span>Phone:</span> {{ d.phone_number or '—' }}<br>
+              <span>Address:</span> {{ d.address or '—' }}
+            {% else %}<span class="muted">No details on file</span>{% endif %}
+          </td>
+          <td>
+            {% if item.verification_status == 'pending' %}
+              <form class="review-form" method="post" action="{{ url_for('verification.review', verification_id=item.verification_id) }}">
+                <textarea name="remarks" maxlength="1000" placeholder="Remarks (required when rejecting)"></textarea>
+                <div class="review-actions">
+                  <button class="btn" type="submit" name="decision" value="approve">Verify</button>
+                  <button class="btn reject" type="submit" name="decision" value="reject">Reject</button>
+                </div>
+              </form>
+            {% else %}
+              <span class="status status-{{ item.verification_status }}">{{ item.verification_status|title }}</span><br>
+              <span class="muted">{{ item.reviewed_at.strftime('%Y-%m-%d %H:%M') if item.reviewed_at else '' }}</span>
+              {% if item.review_remarks %}<br><span class="description">{{ item.review_remarks }}</span>{% endif %}
+            {% endif %}
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="4" class="empty">{% if show == 'reviewed' %}No reviewed requests yet.{% else %}No pending verification requests.{% endif %}</td></tr>
+      {% endfor %}
+      </tbody></table></div></section>
+</div>
+</main>
+</div>
+</body>
+</html>

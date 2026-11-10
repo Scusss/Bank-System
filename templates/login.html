@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f7fb">
+
+    <title>Customer Login | Bank</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+
+<body>
+
+    <main class="page-container">
+
+        <!-- Left Side: Bank Brand & Description -->
+        <div class="left-content">
+            <a href="{{ url_for('pages.home') }}" class="brand">
+                <div class="brand-icon" aria-hidden="true">JAB</div>
+                <div>
+                    <div class="brand-name">JABBank</div>
+                    <div class="brand-subtitle">Online Banking</div>
+                </div>
+            </a>
+
+            <p class="bank-description">
+                Experience secure, seamless, and intelligent digital banking designed for your modern lifestyle. Manage your accounts, transfer funds effortlessly, and achieve your financial goals with JABBank — your trusted partner in financial security and growth.
+            </p>
+        </div>
+
+        <!-- Right Side: Login Card -->
+        <section class="login-card">
+
+            <div class="welcome-icon" aria-hidden="true">♙</div>
+
+            <h1>Welcome back</h1>
+
+            <p class="subtitle">
+                Sign in with your JABBank username.
+            </p>
+
+            <!-- Flask flash messages -->
+            {% for message in get_flashed_messages() %}
+                <div class="message" role="alert">
+                    <span class="message-icon" aria-hidden="true">!</span>
+                    <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+
+            <!-- Login form -->
+            <form method="POST">
+
+                <div class="input-group">
+                    <label for="username">Username</label>
+
+                    <div class="input-field">
+                        <span class="input-icon" aria-hidden="true">♙</span>
+
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="Enter your username"
+                            autocomplete="username"
+                            required
+                            autofocus
+                        >
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+
+                    <div class="input-field">
+                        <span class="input-icon" aria-hidden="true">♙</span>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <button type="submit" class="login-button">
+                    Log In
+                    <span aria-hidden="true">→</span>
+                </button>
+
+                <div class="register-prompt">
+                    <span>New to JABBank?</span>
+                    <a href="{{ url_for('auth.register') }}" class="register-link">
+                        Create an account
+                    </a>
+                </div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
