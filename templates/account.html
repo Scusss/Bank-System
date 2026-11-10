@@ -306,6 +306,37 @@
             line-height: 1.8;
         }
 
+        .welcome-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .welcome-stat {
+            min-width: 96px;
+            padding: 9px 13px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 11px;
+        }
+
+        .welcome-stat span {
+            display: block;
+            margin-bottom: 3px;
+            color: #dbe7ff;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .welcome-stat strong {
+            font-size: 13px;
+            font-weight: 800;
+            overflow-wrap: anywhere;
+        }
+
         .welcome-badge {
             position: relative;
             z-index: 1;
@@ -929,11 +960,39 @@
             <!-- Welcome banner -->
             <section class="welcome">
                 <div class="welcome-content">
-                    <div class="welcome-label">JABBANK SERVICES</div>
-                    <h2>Your Account Details<br>and Bank Management</h2>
+                    <div class="welcome-label">YOUR PROFILE</div>
+                    <h2>Hello, {{ details.first_name if details and details.first_name else customer.username }}</h2>
                     <p>
-                        Review your details, then use the button on each bank type to open it.
+                        {% if verification_state != 'verified' %}
+                            Verify your identity to unlock bank account opening and keep your profile secure.
+                        {% elif missing_fields %}
+                            Your identity is verified. Complete your profile details to keep your records up to date.
+                        {% elif not accounts %}
+                            Your profile is complete and verified. You can now request your first bank account below.
+                        {% else %}
+                            Your profile is complete and verified. Manage your login details and bank accounts below.
+                        {% endif %}
                     </p>
+                    <div class="welcome-stats">
+                        <div class="welcome-stat">
+                            <span>Username</span>
+                            <strong>@{{ customer.username }}</strong>
+                        </div>
+                        <div class="welcome-stat">
+                            <span>Bank accounts</span>
+                            <strong>{{ accounts|length if accounts else 0 }}</strong>
+                        </div>
+                        <div class="welcome-stat">
+                            <span>Profile</span>
+                            <strong>{% if missing_fields %}{{ missing_fields|length }} missing{% else %}Complete{% endif %}</strong>
+                        </div>
+                        {% if customer.created_at %}
+                        <div class="welcome-stat">
+                            <span>Member since</span>
+                            <strong>{{ customer.created_at.strftime('%b %Y') }}</strong>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="welcome-badge">
                     {% if verification_state == 'verified' %}✔ &nbsp; Identity verified{% elif verification_state == 'pending' %}⌛ &nbsp; Verification pending{% else %}🛡 &nbsp; Not yet verified{% endif %}

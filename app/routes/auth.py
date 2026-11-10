@@ -106,6 +106,15 @@ def cleanup_supabase_user(user_id):
 # REGISTRATION
 # --------------------------------------------------
 
+@auth.route("/about")
+@auth.route("/privacy")
+@auth.route("/terms")
+def legal_page():
+    """Public information pages: what this site is and how data is handled."""
+    page = request.path.strip("/")
+    return render_template("legal.html", page=page)
+
+
 @auth.route("/register", methods=["GET", "POST"])
 def register():
 
@@ -150,9 +159,9 @@ def register():
         flash("Please enter a valid email address.")
         return render_template("register.html"), 400
 
-    if len(password) < 8 or len(password) > 256:
+    if len(password) < 12 or len(password) > 256:
         flash(
-            "Password must be between 8 and 256 characters."
+            "Password must be between 12 and 256 characters."
         )
         return render_template("register.html"), 400
 

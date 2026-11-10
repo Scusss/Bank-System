@@ -1158,13 +1158,14 @@
                                             <td class="description-cell">
                                                 {% if 'TRANSFER' in type_name %}
                                                     {% if receipt.recipient_name is defined and receipt.recipient_name %}
+                                                        <small>{{ 'From' if 'IN' in type_name.split() else 'To' }}</small><br>
                                                         <strong>{{ receipt.recipient_name }}</strong>
                                                     {% elif receipt.beneficiary_name is defined and receipt.beneficiary_name %}
                                                         <strong>{{ receipt.beneficiary_name }}</strong>
                                                     {% elif receipt.recipient_account_id is defined and receipt.recipient_account_id %}
                                                         Recipient account #{{ receipt.recipient_account_id }}
                                                     {% else %}
-                                                        Recipient details unavailable
+                                                        {{ 'Sender' if 'IN' in type_name.split() else 'Recipient' }} details unavailable
                                                     {% endif %}
                                                     {% if receipt.recipient_account_number is defined and receipt.recipient_account_number %}
                                                         <br><small>Account ending {{ receipt.recipient_account_number|string|replace(' ', '') }}</small>

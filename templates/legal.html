@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>{{ {'about': 'About', 'privacy': 'Privacy', 'terms': 'Terms'}[page] }} | JABBank Demo</title>
+    <style>
+        body { margin:0; padding:32px 18px; background:#f5f7fb; color:#172033; font:15px/1.75 system-ui,-apple-system,'Segoe UI',sans-serif; }
+        main { max-width:720px; margin:0 auto; padding:32px; background:#fff; border:1px solid #e7ebf2; border-radius:18px; }
+        h1 { margin:0 0 6px; font-size:26px; }
+        h2 { margin:26px 0 6px; font-size:16px; }
+        p, li { color:#4a5568; }
+        a { color:#2563eb; }
+        .notice { margin:18px 0; padding:12px 16px; border:1px solid #f1d58a; border-radius:12px; background:#fff9e6; color:#5c4a12; font-size:14px; }
+        nav { margin-top:26px; font-size:13px; }
+        nav a { margin-right:14px; }
+    </style>
+</head>
+<body>
+<main>
+    <h1>{{ {'about': 'About JABBank', 'privacy': 'Privacy', 'terms': 'Terms of use'}[page] }}</h1>
+    <div class="notice"><strong>Demo project &mdash; not a real bank.</strong> No real money is held or moved, and this site is not affiliated with any bank or financial institution.</div>
+
+    {% if page == 'about' %}
+        <p>JABBank is a student software project that demonstrates how an online banking application works: registering, identity verification steps, deposits, withdrawals, transfers and receipts. All balances and transactions are simulated.</p>
+        <h2>Technology</h2>
+        <p>Built with Python (Flask), a PostgreSQL database and Supabase, and hosted on Render.</p>
+        <h2>Please note</h2>
+        <p>Because this is a demonstration, you should use made-up information only. Do not enter real passwords you use elsewhere, real ID numbers or real bank details.</p>
+    {% elif page == 'privacy' %}
+        <p>This is a demonstration site. Any information you enter is used only to make the demo work and may be deleted at any time.</p>
+        <h2>What is stored</h2>
+        <p>Account details you type in (such as a username, email address, and profile or verification details) are stored in the project's database so the demo can show them back to you.</p>
+        <h2>What we ask of you</h2>
+        <p>Use fictional data. Please do not submit real identity documents, real financial information or passwords that you use on other sites.</p>
+        <h2>Sharing</h2>
+        <p>Data is not sold or used for advertising. It is not shared with third parties other than the hosting and database services needed to run the demo.</p>
+    {% else %}
+        <p>By using this demo you agree that it is provided for learning and demonstration purposes only, without any warranty.</p>
+        <ul>
+            <li>No real money, products or banking services are provided.</li>
+            <li>Do not use the site for real financial activity or to enter real personal data.</li>
+            <li>Accounts and data may be reset or removed at any time.</li>
+            <li>Do not attempt to disrupt, attack or misuse the site.</li>
+        </ul>
+    {% endif %}
+
+    <nav aria-label="Site information">
+        <a href="/about">About</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/login">Back to sign in</a>
+    </nav>
+</main>
+</body>
+</html>

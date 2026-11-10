@@ -873,6 +873,43 @@ def receipts():
 
     account_type_label = account_label(account)
 
+    # Transfers only store the other account's number in their description
+    # ("... to/from account #<number>"). Look up that account's owner so the
+    # receipts page can show the first and last name of the other party.
+    pattern = re.compile(r"account\s*#\s*([A-Za-z0-9-]+)")
+    counterpart_numbers = {}
+    for tx in transactions:
+        if str(tx.transaction_type).lower() in ("transfer_out", "transfer_in"):
+            match = pattern.search(tx.description or "")
+            if match:
+                counterpart_numbers[tx.transaction_id] = match.group(1)
+
+    if counterpart_numbers:
+        rows = (
+            db.session.query(
+                Account.account_number,
+                CustomerDetails.first_name,
+                CustomerDetails.last_name,
+            )
+            .outerjoin(
+                CustomerDetails,
+                CustomerDetails.customer_id == Account.customer_id,
+            )
+            .filter(
+                Account.account_number.in_(set(counterpart_numbers.values()))
+            )
+            .all()
+        )
+        names = {
+            number: " ".join(part for part in (first, last) if part)
+            for number, first, last in rows
+        }
+        for tx in transactions:
+            number = counterpart_numbers.get(tx.transaction_id)
+            if number:
+                tx.recipient_name = names.get(number) or None
+                tx.recipient_account_number = number[-4:]
+
     return render_template(
         "receipts.html",
         receipts=transactions,

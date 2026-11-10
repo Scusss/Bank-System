@@ -118,4 +118,17 @@ def create_app():
     app.register_blueprint(admin)
     app.register_blueprint(verification)
 
+    @app.after_request
+    def add_security_headers(response):
+        """Standard hardening headers; also keeps this demo out of search indexes."""
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "DENY")
+        response.headers.setdefault(
+            "Referrer-Policy", "strict-origin-when-cross-origin"
+        )
+        response.headers.setdefault(
+            "X-Robots-Tag", "noindex, nofollow, noarchive"
+        )
+        return response
+
     return app
