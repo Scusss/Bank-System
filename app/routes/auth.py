@@ -45,10 +45,6 @@ auth = Blueprint("auth", __name__)
 logger = logging.getLogger(__name__)
 
 
-# --------------------------------------------------
-# HELPER FUNCTIONS
-# --------------------------------------------------
-
 def delete_supabase_user(user_id):
     """Delete an Auth user after a failed database registration."""
 
@@ -103,10 +99,6 @@ def cleanup_supabase_user(user_id):
         )
 
 
-# --------------------------------------------------
-# REGISTRATION
-# --------------------------------------------------
-
 @auth.route("/about")
 @auth.route("/privacy")
 @auth.route("/terms")
@@ -140,7 +132,6 @@ def register():
 
     password = request.form.get("password", "")
 
-    # Validate required fields
     if (
         not username
         or len(username) > 50
@@ -166,7 +157,6 @@ def register():
         )
         return render_template("register.html"), 400
 
-    # Check for existing username or email
     existing_customer = AppUser.query.filter(
         db.or_(
             func.lower(AppUser.username) == username.lower(),
@@ -191,7 +181,6 @@ def register():
     try:
         supabase = get_supabase_client()
 
-        # Create Supabase Auth user
         response = supabase.auth.sign_up({
             "email": email,
             "password": password,
@@ -204,8 +193,6 @@ def register():
 
         auth_user_id = UUID(str(response.user.id))
 
-        # Create the USER account. No bank account is created here: the user
-        # must be verified first and then request a bank account.
         user = AppUser(
             user_id=auth_user_id,
             role_id=customer_role.role_id,
@@ -216,7 +203,6 @@ def register():
         db.session.add(user)
         db.session.flush()
 
-        # Account information lives with the user account.
         details = CustomerDetails(
             customer_id=auth_user_id,
             first_name=first_name,
@@ -241,7 +227,6 @@ def register():
             actor=user,
         )
 
-        # Commit PostgreSQL records
         db.session.commit()
 
         if response.session is None:
@@ -286,10 +271,6 @@ def register():
         return render_template("register.html"), 400
 
 
-# --------------------------------------------------
-# LOGIN
-# --------------------------------------------------
-
 @auth.route("/login", methods=["GET", "POST"])
 def login():
 
@@ -315,7 +296,6 @@ def login():
         flash("Invalid username or password.")
         return render_template("login.html"), 401
 
-    # Find customer by username
     customer = AppUser.query.filter(
         func.lower(AppUser.username) == username.lower()
     ).first()
@@ -345,7 +325,6 @@ def login():
     try:
         supabase = get_supabase_client()
 
-        # Supabase verifies the password
         response = supabase.auth.sign_in_with_password({
             "email": customer.email,
             "password": password,
@@ -358,18 +337,15 @@ def login():
             str(response.user.id)
         )
 
-        # Verify authenticated identity
         if authenticated_id != customer.user_id:
             raise ValueError("User identity mismatch.")
 
-        # Record successful login
         record_login_attempt(
             customer_id=customer.user_id,
             username=customer.username,
             status="success",
         )
 
-        # Establish Flask server-side session
         session.clear()
         session.permanent = True
 
@@ -398,7 +374,6 @@ def login():
         if role == ROLE_VERIFICATION_OFFICER:
             return redirect(url_for("verification.dashboard"))
 
-        # Customers land on the account page, not the banking dashboard.
         return redirect(url_for("pages.home"))
 
     except Exception:
@@ -417,17 +392,12 @@ def login():
         return render_template("login.html"), 401
 
 
-# --------------------------------------------------
-# LOGOUT
-# --------------------------------------------------
-
 @auth.route("/logout", methods=["POST"])
 def logout():
 
     access_token = session.get("access_token")
     refresh_token = session.get("refresh_token")
 
-    # Attempt Supabase sign-out
     if access_token and refresh_token:
         try:
             supabase = get_supabase_client()
@@ -444,7 +414,6 @@ def logout():
                 "Supabase sign-out failed."
             )
 
-    # Always clear the Flask session
     session.clear()
 
     flash(

@@ -8,11 +8,9 @@ from supabase import create_client
 
 load_dotenv()
 
-# Database
 db = SQLAlchemy()
 
 
-# Server-side sessions
 server_session = Session()
 
 

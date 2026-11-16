@@ -44,16 +44,13 @@ def transaction(operation):
         flash("Your account is unavailable. Please contact support.", "error")
         return redirect(url_for("auth.login"))
 
-    # Frozen accounts may sign in but cannot deposit, withdraw or transfer.
     if is_frozen(customer):
         return redirect(url_for("pages.home"))
 
-    # Staff accounts (admin, verification officer) cannot use customer banking.
     if is_staff(customer):
         flash("Staff accounts cannot perform customer banking.", "error")
         return redirect(url_for("auth.login"))
 
-    # Return to the page where the transaction was performed.
     def return_to_form():
         return redirect(
             url_for("pages.bank_page", operation=operation)
@@ -89,7 +86,6 @@ def transaction(operation):
         recipient_id = recipient_account.account_id
 
     try:
-        # Use the bank account the user selected (always one they own).
         form_account = (request.form.get("account_id") or "").strip()
         if form_account:
             try:
@@ -118,7 +114,6 @@ def transaction(operation):
             flash("You cannot transfer money to your own account.", "error")
             return return_to_form()
 
-        # Lock accounts in a consistent order for transfers.
         ids_to_lock = (
             sorted([sender_ref, recipient_id])
             if operation == "transfer"
@@ -139,7 +134,6 @@ def transaction(operation):
 
         sender = account_map.get(sender_ref)
 
-        # 1. Verify that the sender account exists
         if sender is None:
             db.session.rollback()
             flash("Your account could not be verified.", "error")
@@ -150,7 +144,6 @@ def transaction(operation):
             flash("Your account could not be verified.", "error")
             return return_to_form()
 
-        # 2. Verify account status
         if sender.status != "active":
             db.session.rollback()
             flash(
@@ -161,9 +154,6 @@ def transaction(operation):
             )
             return return_to_form()
 
-        # 3. Enforce the daily limit the customer set on this account.
-        #    The sender row is locked above, so concurrent requests on the
-        #    same account cannot slip past the limit together.
         if operation in {"withdraw", "transfer"}:
             kind = "withdrawal" if operation == "withdraw" else "transfer"
             limit = account_limits(sender)[kind]
@@ -181,7 +171,6 @@ def transaction(operation):
                 )
                 return return_to_form()
 
-        # 4. Check withdrawal balance
         if operation == "withdraw" and sender.balance < amount:
             db.session.rollback()
             flash("Insufficient funds.", "error")
@@ -274,7 +263,6 @@ def transaction(operation):
                 )
             ])
 
-        # Create a notification only after the transaction logic succeeds.
         notification_details = {
             "deposit": (
                 "Deposit successful",
@@ -309,5 +297,4 @@ def transaction(operation):
         db.session.rollback()
         raise
 
-    # Return to the same operation page after success.
     return return_to_form()

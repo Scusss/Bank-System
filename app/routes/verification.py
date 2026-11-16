@@ -47,7 +47,6 @@ def officer_required(view):
             session.clear()
             flash("Your account is unavailable. Please log in again.", "error")
             return redirect(url_for("auth.login"))
-        # Verification officers and administrators may review requests.
         if not (is_verification_officer(user) or is_admin(user)):
             abort(403)
         return view(*args, **kwargs)

@@ -18,7 +18,6 @@ def create_app():
         static_folder="../static",
     )
 
-    # Flask configuration
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
@@ -31,7 +30,6 @@ def create_app():
         "pool_pre_ping": True,
     }
 
-    # Server-side session configuration
     app.config["SESSION_TYPE"] = "filesystem"
 
     app.config["SESSION_FILE_DIR"] = os.path.join(
@@ -48,7 +46,6 @@ def create_app():
     app.config["SESSION_USE_SIGNER"] = True
     app.config["SESSION_COOKIE_NAME"] = "jabbank_session"
 
-    # Cookie security
     app.config["SESSION_COOKIE_HTTPONLY"] = True
 
     app.config["SESSION_COOKIE_SECURE"] = (
@@ -57,23 +54,19 @@ def create_app():
 
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
-    # Validate configuration
     if not app.config["SECRET_KEY"]:
         raise RuntimeError("SECRET_KEY is not configured.")
 
     if not app.config["SQLALCHEMY_DATABASE_URI"]:
         raise RuntimeError("DATABASE_URL is not configured.")
 
-    # Create session storage directory
     os.makedirs(
         app.config["SESSION_FILE_DIR"],
         exist_ok=True
     )
 
-    # Initialize extensions
     db.init_app(app)
 
-    # Initialize server-side sessions first
     server_session.init_app(app)
 
 
@@ -100,7 +93,6 @@ def create_app():
 
         status = customer.account_status if customer else "active"
         if customer is not None and status == "active":
-            # A customer whose bank account is frozen is shown as Frozen.
             from app.models import Account
             if Account.query.filter_by(
                 customer_id=customer.user_id, status="frozen"
@@ -112,7 +104,6 @@ def create_app():
             "unread_count": unread_count,
         }
 
-    # Register blueprints
     from app.routes.pages import pages
     from app.routes.transactions import transactions
     from app.routes.auth import auth

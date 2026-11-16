@@ -31,17 +31,12 @@ from app.models import (
     TransactionList,
 )
 
-# --------------------------------------------------
-# Constants
-# --------------------------------------------------
 
 ROLE_CUSTOMER = "customer"
 ROLE_ADMIN = "admin"
 ROLE_VERIFICATION_OFFICER = "verification_officer"
 
 VERIFICATION_PENDING = "pending"
-# Must match the database check constraint valid_verification_status
-# (pending, approved, rejected, requires_resubmission).
 VERIFICATION_VERIFIED = "approved"
 VERIFICATION_REJECTED = "rejected"
 
@@ -49,12 +44,8 @@ APPLICATION_PENDING = "pending"
 APPLICATION_APPROVED = "approved"
 APPLICATION_REJECTED = "rejected"
 
-# Used only when the account_type_limits table has no active rows.
 DEFAULT_ACCOUNT_TYPES = ["savings", "checking", "business"]
 
-# --------------------------------------------------
-# Roles
-# --------------------------------------------------
 
 def role_name(user):
     if user is None or user.role is None:
@@ -100,10 +91,6 @@ def is_access_blocked(user):
     return bool(user.is_locked)
 
 
-# --------------------------------------------------
-# Audit log and notifications
-# --------------------------------------------------
-
 def write_audit(
     action,
     entity_type=None,
@@ -140,7 +127,6 @@ def write_audit(
             )
         )
     except Exception:
-        # Audit logging must not hide the primary operation.
         pass
 
 
@@ -156,10 +142,6 @@ def notify(user_id, title, message, notification_type="account"):
         )
     )
 
-
-# --------------------------------------------------
-# Identity verification
-# --------------------------------------------------
 
 REQUIRED_PROFILE_FIELDS = [
     ("first_name", "first name"),
@@ -229,10 +211,6 @@ def verification_state(user_id):
     return record.verification_status, record
 
 
-# --------------------------------------------------
-# Bank types and bank account requests
-# --------------------------------------------------
-
 def available_bank_types():
     """Bank types a user may request (active rows in account_type_limits)."""
     rows = (
@@ -295,10 +273,6 @@ def bank_type_states(user_id):
         })
     return states
 
-
-# --------------------------------------------------
-# Bank accounts
-# --------------------------------------------------
 
 def generate_unique_account_number():
     """Generate an 8-digit account number formatted as XXXX-XXXX that is not in use."""
@@ -368,14 +342,8 @@ def selected_account(user_id):
     return accounts[0]
 
 
-# --------------------------------------------------
-# Daily limits
-# --------------------------------------------------
-
-# Daily limits reset at midnight bank time.
 BANK_TIMEZONE = ZoneInfo("Asia/Manila")
 
-# kind -> (limit column, transaction_list.transaction_type it counts)
 LIMIT_KINDS = {
     "withdrawal": ("daily_withdrawal_limit", "withdrawal"),
     "transfer": ("daily_transfer_limit", "transfer_out"),

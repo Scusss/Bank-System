@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
     <style>
         .admin-page{max-width:1400px;margin:0 auto;padding:28px 32px 48px}.admin-top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px}.admin-top h1{font-size:clamp(24px,3vw,34px);margin:0 0 6px}.admin-top p,.muted{color:#738096}.admin-tag{display:inline-flex;align-items:center;border-radius:999px;padding:7px 12px;background:#e8efff;color:#1d4ed8;font-weight:800;font-size:12px}.admin-nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 24px}.admin-nav a,.back-link{display:inline-block;padding:10px 13px;border:1px solid #e3e8f1;border-radius:10px;background:#fff;color:#334155;text-decoration:none;font-size:13px;font-weight:700}.admin-nav a.active,.admin-nav a:hover{background:#1d4ed8;color:white;border-color:#1d4ed8}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}.stat,.panel{background:white;border:1px solid #e5eaf2;border-radius:16px;padding:18px;box-shadow:0 4px 16px rgba(24,39,75,.04)}.stat span{display:block;color:#738096;font-size:12px;margin-bottom:8px}.stat strong{font-size:24px;overflow-wrap:anywhere}.panel{margin-bottom:20px;overflow:hidden}.panel h2{font-size:18px;margin:0 0 14px}.table-wrap{width:100%;overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px;min-width:700px}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid #edf0f5;vertical-align:top}th{background:#f8fafc;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.04em}tr:last-child td{border-bottom:0}.role-form{display:flex;gap:7px;min-width:180px}.role-form select,.search-input{min-width:0;padding:8px;border:1px solid #dbe2ed;border-radius:8px;background:white}.btn{border:0;border-radius:8px;padding:9px 11px;background:#1d4ed8;color:white;font-weight:700;cursor:pointer}.btn:hover{background:#1e40af}.status{display:inline-block;border-radius:999px;padding:4px 8px;background:#edf7ee;color:#23743b;font-size:11px;font-weight:800}.status.inactive,.status-frozen,.status-closed{background:#fff1f2;color:#be123c}.status-active{background:#edf7ee;color:#23743b}.flash-list{margin:0 0 16px;padding:0;list-style:none}.flash-list li{padding:11px 13px;border-radius:9px;background:#eef5ff;margin-bottom:8px;font-size:13px}.flash-list li.error{background:#fff1f2;color:#9f1239}.empty{padding:28px;text-align:center;color:#738096}.account-list{line-height:1.8}.money{font-variant-numeric:tabular-nums;white-space:nowrap}.description{max-width:330px;overflow-wrap:anywhere}.admin-footer{margin-top:24px;color:#738096;font-size:12px}@media(max-width:700px){.admin-page{padding:18px 12px 32px}.stat strong{font-size:20px}}
-.admin-main{padding:28px 32px 48px}.admin-page{padding:0;max-width:1400px}.sidebar-logout{margin:0 0 10px}.sidebar-logout button{width:100%;border:1px solid #e3e8f1;background:#fff;color:#c0392b;font:inherit;font-weight:700;padding:10px 12px;border-radius:10px;cursor:pointer;text-align:left}.sidebar-logout button:hover{background:#fff1f0}@media(max-width:900px){.layout{flex-direction:column}.sidebar{position:static;height:auto;width:100%;min-width:0}.admin-main{padding:18px 12px 32px}}
+.admin-main{padding:28px 32px 48px}.admin-page{padding:0;max-width:1400px}.sidebar-logout{margin:0 0 10px}.sidebar-logout button{width:100%;border:1px solid #e3e8f1;background:#fff;color:#c0392b;font:inherit;font-weight:700;padding:10px 12px;border-radius:10px;cursor:pointer;text-align:left}.sidebar-logout button:hover{background:#fff1f0}.backup-form{display:grid;gap:12px;max-width:620px}.backup-form input[type=file],.backup-form input[type=text]{padding:10px;border:1px solid #dbe2ed;border-radius:8px;font:inherit}.backup-form label{font-weight:700;color:#334155}.backup-warning{border-color:#fecaca;background:#fffafa}.backup-warning h2{color:#9f1239}.backup-confirm{display:flex;align-items:flex-start;gap:9px;font-weight:500!important}.backup-confirm input{margin-top:4px}.backup-help{font-size:13px;color:#738096;line-height:1.6}.backup-danger-button{background:#be123c}.backup-danger-button:hover{background:#9f1239}@media(max-width:900px){.layout{flex-direction:column}.sidebar{position:static;height:auto;width:100%;min-width:0}.admin-main{padding:18px 12px 32px}}
     </style>
 </head>
 <body>
@@ -31,6 +31,7 @@
         <a class="nav-link {% if view_name == 'transactions' %}active{% endif %}" href="{{ url_for('admin.transactions') }}"><span class="nav-icon" aria-hidden="true">▤</span>All Transactions</a>
         <a class="nav-link {% if view_name == 'audit' %}active{% endif %}" href="{{ url_for('admin.audit_logs') }}"><span class="nav-icon" aria-hidden="true">✓</span>Audit Logs</a>
         <a class="nav-link {% if view_name == 'login_history' %}active{% endif %}" href="{{ url_for('admin.login_history') }}"><span class="nav-icon" aria-hidden="true">◷</span>Login History</a>
+        <a class="nav-link {% if view_name == 'database_backup' %}active{% endif %}" href="{{ url_for('admin.database_backup') }}"><span class="nav-icon" aria-hidden="true">▣</span>Database Backup</a>
     </nav>
 
     <div class="sidebar-bottom">
@@ -50,14 +51,33 @@
 <main class="main admin-main">
 <div class="admin-page">
     <div class="admin-top">
-        <div><div class="muted">JAB BANK / ADMINISTRATION</div><h1>{% if view_name == 'users' %}Manage Users{% elif view_name == 'account_requests' %}Bank Account Requests{% elif view_name == 'transactions' %}All Transactions{% elif view_name == 'audit' %}Audit Logs{% elif view_name == 'login_history' %}Login History{% else %}Admin Dashboard{% endif %}</h1><p>Administrator accounts do not have access to customer banking.</p></div>
+        <div><div class="muted">JAB BANK / ADMINISTRATION</div><h1>{% if view_name == 'users' %}Manage Users{% elif view_name == 'account_requests' %}Bank Account Requests{% elif view_name == 'transactions' %}All Transactions{% elif view_name == 'audit' %}Audit Logs{% elif view_name == 'login_history' %}Login History{% elif view_name == 'database_backup' %}Database Backup and Restore{% else %}Admin Dashboard{% endif %}</h1><p>Administrator accounts do not have access to customer banking.</p></div>
         <span class="admin-tag">🛡 ADMIN ACCESS</span>
     </div>
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}<ul class="flash-list">{% for category, message in messages %}<li class="{{ category }}">{{ message }}</li>{% endfor %}</ul>{% endif %}
     {% endwith %}
 
-    {% if view_name == 'dashboard' %}
+    {% if view_name == 'database_backup' %}
+      <section class="panel"><h2>Download a database backup</h2><p class="backup-help">Creates a PostgreSQL custom-format backup of the <code>public</code> schema and downloads it directly. The backup is not retained on the server.</p>
+        <form class="backup-form" method="post" action="{{ url_for('admin.download_database_backup') }}">
+          <input type="hidden" name="csrf_token" value="{{ database_backup_csrf_token }}">
+          <button class="btn" type="submit">Create and download backup</button>
+        </form>
+      </section>
+      <section class="panel backup-warning"><h2>Restore a database backup</h2><p class="backup-help"><strong>This is destructive.</strong> Restoring drops and recreates the live <code>public</code> schema. Existing public-schema data will be replaced; other schemas are excluded. The operation runs as one transaction and rolls back if PostgreSQL reports an error.</p>
+        <form class="backup-form" method="post" enctype="multipart/form-data" action="{{ url_for('admin.restore_database_backup') }}">
+          <input type="hidden" name="csrf_token" value="{{ database_backup_csrf_token }}">
+          <label for="backup-file">PostgreSQL custom-format backup</label>
+          <input id="backup-file" type="file" name="backup_file" accept=".dump,.backup" required>
+          <label class="backup-confirm"><input type="checkbox" name="confirm_restore" value="yes" required><span>I understand that restoring replaces the live <code>public</code> schema.</span></label>
+          <label for="confirm-phrase">Type RESTORE to confirm</label>
+          <input id="confirm-phrase" type="text" name="confirm_phrase" autocomplete="off" required>
+          <button class="btn backup-danger-button" type="submit">Restore database</button>
+        </form>
+      </section>
+
+    {% elif view_name == 'dashboard' %}
       <section class="stats">
         <div class="stat"><span>Registered Users</span><strong>{{ total_customers }}</strong></div>
         <div class="stat"><span><a href="{{ url_for('verification.dashboard') }}" style="color:inherit">Pending Verifications</a></span><strong>{{ pending_verifications }}</strong></div>

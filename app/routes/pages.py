@@ -73,7 +73,6 @@ def login_required(view):
         try:
             customer_uuid = UUID(str(customer_id))
 
-            # Verify the Supabase access token
             supabase = get_supabase_client()
 
             response = supabase.auth.get_user(access_token)
@@ -86,7 +85,6 @@ def login_required(view):
             if authenticated_id != customer_uuid:
                 raise ValueError("User identity mismatch")
 
-            # Verify customer still exists and is active
             customer = db.session.get(AppUser, customer_uuid)
 
             if is_access_blocked(customer):
@@ -94,7 +92,6 @@ def login_required(view):
                 flash("Your account is unavailable.")
                 return redirect(url_for("auth.login"))
 
-            # Staff use their own consoles, not customer banking.
             if is_admin(customer):
                 return redirect(url_for("admin.dashboard"))
 
@@ -157,7 +154,6 @@ def home():
 
     balance = account.balance if account else 0
 
-    # Count unread notifications for this customer.
     unread_count = Notification.query.filter_by(
         customer_id=customer.user_id,
         is_read=False,
@@ -192,15 +188,10 @@ def switch_account():
         flash("That bank account could not be selected.", "error")
 
     target = request.form.get("next") or ""
-    # Only allow same-site relative redirects.
     if not target.startswith("/") or target.startswith("//"):
         target = url_for("pages.home")
     return redirect(target)
 
-
-# --------------------------------------------------
-# USER ACCOUNT (profile, verification, bank requests)
-# --------------------------------------------------
 
 def _parse_birth_date(raw):
     try:
@@ -275,7 +266,6 @@ def account_page():
     )
 
 
-
 @pages.route("/manage-bank-accounts")
 @login_required
 def manage_bank_accounts():
@@ -290,7 +280,6 @@ def manage_bank_accounts():
         accounts=user_accounts(customer.user_id),
         account_type="Manage Bank Accounts",
     )
-
 
 
 @pages.route("/account/profile", methods=["POST"])
@@ -362,8 +351,6 @@ def request_email_change():
 
     old_email = customer.email
     try:
-        # Use the server-side Supabase admin API so the login email can be
-        # changed immediately without requiring the user to confirm first.
         admin = get_supabase_admin_client()
         admin.auth.admin.update_user_by_id(
             str(customer.user_id),
@@ -446,10 +433,7 @@ def verify_email_change():
             session.pop("pending_email_change", None)
             return redirect(url_for("pages.account_page"))
 
-        # The local email was already changed when the user chose Save.
-        # This endpoint now only completes Supabase's optional verification.
 
-        # Keep the active Flask session aligned with the newly issued tokens.
         if response.session:
             session["access_token"] = response.session.access_token
             session["refresh_token"] = response.session.refresh_token
@@ -503,7 +487,6 @@ def update_account_details():
             flash("Enter a valid birth date.", "error")
             return redirect(url_for("pages.account_page"))
 
-    # Details that were already verified must not be changed silently.
     if is_verified(customer.user_id) and details is not None and (
         (details.first_name, details.last_name, details.birth_date)
         != (first_name, last_name, birth_date or details.birth_date)
@@ -766,7 +749,6 @@ def bank_page(operation):
 
     customer = get_current_customer()
 
-    # Frozen customers can sign in but cannot deposit, withdraw or transfer.
     if is_frozen(customer):
         return redirect(url_for("pages.home"))
 
@@ -780,7 +762,6 @@ def bank_page(operation):
         )
         return redirect(url_for("pages.account_page"))
 
-    # A frozen bank account cannot deposit, withdraw or transfer.
     if (account.status or "active") == "frozen":
         return redirect(url_for("pages.home"))
 
@@ -882,9 +863,6 @@ def receipts():
 
     account_type_label = account_label(account)
 
-    # Transfers only store the other account's number in their description
-    # ("... to/from account #<number>"). Look up that account's owner so the
-    # receipts page can show the first and last name of the other party.
     pattern = re.compile(r"account\s*#\s*([A-Za-z0-9-]+)")
     counterpart_numbers = {}
     for tx in transactions:

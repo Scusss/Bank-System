@@ -6,8 +6,6 @@ from sqlalchemy.dialects.postgresql import UUID, INET, JSONB
 
 from app.extensions import db
 
-# External Supabase Auth table reference.
-# Registers auth.users in SQLAlchemy metadata (not managed by Flask).
 auth_users = db.Table(
     "users",
     db.metadata,
@@ -15,10 +13,6 @@ auth_users = db.Table(
     schema="auth",
 )
 
-
-# =========================================================
-# ENUMS
-# =========================================================
 
 class TransactionType(enum.Enum):
     DEPOSIT = "deposit"
@@ -30,10 +24,6 @@ class TransactionType(enum.Enum):
     ADJUSTMENT = "adjustment"
 
 
-# =========================================================
-# ROLES
-# =========================================================
-
 class Role(db.Model):
     __tablename__ = "roles"
 
@@ -41,10 +31,6 @@ class Role(db.Model):
     role_name = db.Column(db.String(30), unique=True, nullable=False)
     description = db.Column(db.Text)
 
-
-# =========================================================
-# APP USERS  (the USER account - no bank data lives here)
-# =========================================================
 
 class AppUser(db.Model):
     __tablename__ = "app_users"
@@ -100,8 +86,6 @@ class AppUser(db.Model):
 
     role = db.relationship("Role")
 
-    # Account information (name, phone, birth date, address) belongs to the
-    # user account, not to any bank account.
     details = db.relationship(
         "CustomerDetails",
         back_populates="user",
@@ -115,15 +99,9 @@ class AppUser(db.Model):
     )
 
 
-# =========================================================
-# ACCOUNT APPLICATIONS
-# =========================================================
-
 class AccountApplication(db.Model):
     __tablename__ = "account_applications"
     __table_args__ = (
-        # A user can request each bank type only once while the request is
-        # pending or approved (a rejected request may be re-submitted).
         db.Index(
             "uq_account_applications_active_type",
             "customer_id",
@@ -184,10 +162,6 @@ class AccountApplication(db.Model):
         "Account", foreign_keys=[resulting_account_id]
     )
 
-
-# =========================================================
-# ACCOUNT TYPE LIMITS
-# =========================================================
 
 class AccountTypeLimit(db.Model):
     __tablename__ = "account_type_limits"
@@ -262,10 +236,6 @@ class AccountTypeLimit(db.Model):
     )
 
 
-# =========================================================
-# ACCOUNTS
-# =========================================================
-
 class Account(db.Model):
     __tablename__ = "accounts"
 
@@ -337,10 +307,6 @@ class Account(db.Model):
     owner = db.relationship("AppUser", back_populates="accounts")
 
 
-# =========================================================
-# ACCOUNT LIMIT OVERRIDES
-# =========================================================
-
 class AccountLimitOverride(db.Model):
     __tablename__ = "account_limit_overrides"
 
@@ -384,9 +350,6 @@ class AccountLimitOverride(db.Model):
         db.DateTime(timezone=True)
     )
 
-# =========================================================
-# ACCOUNT SELF-SET LIMITS
-# =========================================================
 
 class AccountSelfLimit(db.Model):
     """Daily limits a customer sets on their own bank account.
@@ -417,9 +380,6 @@ class AccountSelfLimit(db.Model):
         onupdate=db.func.now()
     )
 
-# =========================================================
-# CUSTOMER DETAILS
-# =========================================================
 
 class CustomerDetails(db.Model):
     __tablename__ = "customer_details"
@@ -482,10 +442,6 @@ class CustomerDetails(db.Model):
     user = db.relationship("AppUser", back_populates="details")
 
 
-# =========================================================
-# BENEFICIARIES
-# =========================================================
-
 class Beneficiary(db.Model):
     __tablename__ = "beneficiaries"
 
@@ -526,14 +482,9 @@ class Beneficiary(db.Model):
     )
 
 
-# =========================================================
-# IDENTITY VERIFICATIONS
-# =========================================================
-
 class IdentityVerification(db.Model):
     __tablename__ = "identity_verifications"
     __table_args__ = (
-        # Only one pending verification request per user at a time.
         db.Index(
             "uq_identity_verifications_one_pending",
             "customer_id",
@@ -553,7 +504,6 @@ class IdentityVerification(db.Model):
         nullable=False
     )
 
-    # Not used by the button-only verification flow; kept optional.
     document_type = db.Column(
         db.String(50)
     )
@@ -590,10 +540,6 @@ class IdentityVerification(db.Model):
     reviewer = db.relationship("AppUser", foreign_keys=[reviewed_by])
 
 
-# =========================================================
-# LOANS
-# =========================================================
-
 class Loan(db.Model):
     __tablename__ = "loans"
 
@@ -613,10 +559,6 @@ class Loan(db.Model):
         db.ForeignKey("accounts.account_id")
     )
 
-
-# =========================================================
-# LOAN PAYMENTS
-# =========================================================
 
 class LoanPayment(db.Model):
     __tablename__ = "loan_payments"
@@ -658,10 +600,6 @@ class LoanPayment(db.Model):
     )
 
 
-# =========================================================
-# TRANSACTIONS
-# =========================================================
-
 class TransactionList(db.Model):
     __tablename__ = "transaction_list"
 
@@ -694,10 +632,6 @@ class TransactionList(db.Model):
     )
 
 
-# =========================================================
-# LOGIN HISTORY
-# =========================================================
-
 class LoginHistory(db.Model):
     __tablename__ = "login_history"
 
@@ -721,10 +655,6 @@ class LoginHistory(db.Model):
     )
 
 
-# =========================================================
-# NOTIFICATIONS
-# =========================================================
-
 class Notification(db.Model):
     __tablename__ = "notifications"
 
@@ -747,10 +677,6 @@ class Notification(db.Model):
         server_default=db.func.now()
     )
 
-
-# =========================================================
-# AUDIT LOGS
-# =========================================================
 
 class AuditLog(db.Model):
     __tablename__ = "audit_logs"

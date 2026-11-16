@@ -1,12 +1,30 @@
+import hmac
 import logging
+import secrets
 from functools import wraps
 from uuid import UUID
 
 from datetime import datetime, timezone
 
-from flask import Blueprint, abort, flash, redirect, render_template, request, session, url_for
+from flask import (
+    Blueprint,
+    abort,
+    flash,
+    redirect,
+    render_template,
+    request,
+    Response,
+    session,
+    url_for,
+)
 from sqlalchemy import func, select
 
+from app.database_backup import (
+    MAX_BACKUP_SIZE,
+    DatabaseBackupError,
+    create_backup,
+    restore_backup,
+)
 from app.extensions import db
 from app.models import (
     Account,
@@ -60,6 +78,48 @@ def admin_required(view):
     return wrapped
 
 
+def _database_backup_csrf_token():
+    token = session.get("database_backup_csrf")
+    if not isinstance(token, str):
+        token = secrets.token_urlsafe(32)
+        session["database_backup_csrf"] = token
+    return token
+
+
+def _validate_database_backup_csrf():
+    expected = session.get("database_backup_csrf")
+    provided = request.form.get("csrf_token", "")
+    if (
+        not isinstance(expected, str)
+        or not provided
+        or not provided.isascii()
+        or not hmac.compare_digest(expected, provided)
+    ):
+        logger.warning(
+            "Rejected database backup request with a missing or invalid "
+            "CSRF token."
+        )
+        flash(
+            "Your backup page expired or could not be verified. "
+            "Reload the page and try again.",
+            "error",
+        )
+        return False
+    return True
+
+
+def _stream_database_backup(temporary_directory, dump_path):
+    try:
+        with dump_path.open("rb") as dump_file:
+            while True:
+                chunk = dump_file.read(1024 * 1024)
+                if not chunk:
+                    break
+                yield chunk
+    finally:
+        temporary_directory.cleanup()
+
+
 @admin.route("/")
 @admin_required
 def dashboard():
@@ -97,6 +157,90 @@ def dashboard():
         masked_account_numbers=masked_account_numbers,
         recent_logs=recent_logs,
     )
+
+
+@admin.route("/database-backup", methods=["GET"])
+@admin_required
+def database_backup():
+    response = Response(
+        render_template(
+            "admin.html",
+            view_name="database_backup",
+            database_backup_csrf_token=_database_backup_csrf_token(),
+        )
+    )
+    response.headers["Cache-Control"] = "no-store, private"
+    return response
+
+
+@admin.route("/database-backup/download", methods=["POST"])
+@admin_required
+def download_database_backup():
+    if not _validate_database_backup_csrf():
+        return redirect(url_for("admin.database_backup"))
+    try:
+        temporary_directory, dump_path, filename = create_backup()
+    except DatabaseBackupError as error:
+        flash(str(error), "error")
+        return redirect(url_for("admin.database_backup"))
+
+    try:
+        dump_size = dump_path.stat().st_size
+    except OSError as error:
+        temporary_directory.cleanup()
+        logger.error(
+            "Could not read the generated database backup: error_type=%s",
+            type(error).__name__,
+        )
+        flash("Could not prepare the database backup download.", "error")
+        return redirect(url_for("admin.database_backup"))
+
+    response = Response(
+        _stream_database_backup(temporary_directory, dump_path),
+        mimetype="application/octet-stream",
+    )
+    response.headers.set("Content-Disposition", "attachment", filename=filename)
+    response.headers["Content-Length"] = str(dump_size)
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.call_on_close(temporary_directory.cleanup)
+    return response
+
+
+@admin.route("/database-backup/restore", methods=["POST"])
+@admin_required
+def restore_database_backup():
+    request.max_content_length = MAX_BACKUP_SIZE + 1024 * 1024
+    if not _validate_database_backup_csrf():
+        return redirect(url_for("admin.database_backup"))
+    if (
+        request.form.get("confirm_restore") != "yes"
+        or request.form.get("confirm_phrase", "").strip() != "RESTORE"
+    ):
+        flash(
+            "Confirm the restore by checking the box and entering RESTORE.",
+            "error",
+        )
+        return redirect(url_for("admin.database_backup"))
+
+    backup_file = request.files.get("backup_file")
+    if backup_file is None or not backup_file.filename:
+        flash("Choose a PostgreSQL backup file to restore.", "error")
+        return redirect(url_for("admin.database_backup"))
+
+    try:
+        restore_backup(backup_file.stream)
+    except DatabaseBackupError as error:
+        flash(str(error), "error")
+    else:
+        flash("The public database schema was restored successfully.", "success")
+    return redirect(url_for("admin.database_backup"))
+
+
+@admin.errorhandler(413)
+def database_backup_upload_too_large(_error):
+    flash("The uploaded backup exceeds the 512 MB size limit.", "error")
+    return redirect(url_for("admin.database_backup"))
 
 
 @admin.route("/users")
@@ -186,9 +330,6 @@ def update_account_status(customer_id):
     now = datetime.now(timezone.utc)
 
     if new_status == "frozen":
-        # Freeze the customer's BANK accounts. The user account stays active
-        # so the customer can still sign in, but cannot deposit, withdraw or
-        # transfer from a frozen bank account.
         target.account_status = "active"
         target.is_locked = False
         for account in accounts:
@@ -205,7 +346,6 @@ def update_account_status(customer_id):
                 account.frozen_at = None
                 account.status_reason = None
     else:
-        # Closed: the customer can no longer sign in at all.
         target.account_status = "closed"
         target.is_locked = True
 
@@ -269,10 +409,6 @@ def login_history():
     entries = LoginHistory.query.order_by(LoginHistory.login_time.desc()).limit(250).all()
     return render_template("admin.html", view_name="login_history", entries=entries)
 
-
-# --------------------------------------------------
-# BANK ACCOUNT REQUESTS
-# --------------------------------------------------
 
 @admin.route("/account-requests")
 @admin_required
