@@ -196,9 +196,16 @@ After that, the admin can change other users' roles from **Admin → Manage
 Users**. To make a verification officer, use the same query with
 `'verification_officer'`.
 
-### 4. Configure Supabase email change
+### 4. Configure Supabase Auth
 
-The email-change flow uses Supabase's one-time code:
+**Sign-up:** turn **Confirm email** off (Authentication → Sign In / Providers
+→ Email; the menu names can change between dashboard versions). The app
+creates the user, saves their profile and sends them straight to the login
+page, so people can sign in right after registering. With confirmation on,
+Supabase would block sign-in until the user clicked an emailed link, and the
+"you can now log in" message would be misleading.
+
+**Email change:** the app uses Supabase's one-time code. Set it up like this:
 
 1. Go to **Authentication → Email Templates → Change Email**.
 2. Include the numeric code with `{{ .Token }}`, not only the link variable.
