@@ -50,8 +50,8 @@ Supabase Auth.
 | Status | Effect |
 |---|---|
 | Active | Full access. |
-| Frozen | Cannot sign in. Existing sessions are rejected on the next protected request. |
-| Closed | Cannot sign in until an admin sets the status back to Active. |
+| Frozen | The user can still sign in and view account details, receipts and notifications, but deposits, withdrawals and transfers are disabled on their bank accounts. |
+| Closed | Cannot sign in. Existing sessions are rejected on the next protected request, until an admin sets the status back to Active. |
 
 Admins cannot freeze or close their own signed-in account. All status changes
 are written to the audit log.
@@ -145,6 +145,16 @@ SESSION_COOKIE_SECURE=false
 | `SESSION_COOKIE_SECURE` | Set to `true` when served over HTTPS. |
 | `PG_DUMP_PATH`, `PG_RESTORE_PATH`, `PSQL_PATH` | Optional. Full paths to the PostgreSQL tools (see below). |
 
+**Where to find the Supabase values**
+
+| Value | Where in the Supabase dashboard |
+|---|---|
+| `SUPABASE_URL`, API keys | Project Settings → API (or API Keys) |
+| `DATABASE_URL` | Click **Connect** at the top of the project, then copy the connection string. The session pooler on port 5432 works for the app and for backups. Replace `[YOUR-PASSWORD]` with your database password. |
+
+The database password is the one you set when creating the project. You can
+reset it under Project Settings → Database.
+
 Generate a secret key with:
 `python -c "import secrets; print(secrets.token_urlsafe(48))"`
 
@@ -153,20 +163,38 @@ rotate it in the Supabase dashboard.
 
 ### 3. Prepare the database
 
-Run the files in `migrations/` in order, using the Supabase SQL editor. Read
-each one first and take a backup before running.
+**New database (most people):** open the Supabase **SQL Editor**, paste the
+contents of `migrations/000_base_schema.sql`, and click **Run**. It creates
+every table and index, and adds the starting data the app needs:
 
-| File | What it does |
+- the roles `customer`, `admin` and `verification_officer`
+- the bank account types `savings`, `checking` and `business`
+
+Migrations `001` to `003` are **not** needed on a new database, because the
+base schema already includes them. They are kept only for upgrading an older
+database that was created before those changes.
+
+| File | Use it when |
 |---|---|
-| `001_separate_user_and_bank_accounts.sql` | Separates user accounts from bank accounts, adds the verification officer role and related tables. |
-| `002_account_self_limits.sql` | Adds customer-set daily limits. |
-| `003_account_number_format.sql` | Renumbers accounts to `XXXX-XXXX`. Safe to re-run. |
+| `000_base_schema.sql` | Setting up a new database. |
+| `001_separate_user_and_bank_accounts.sql` | Upgrading an old database that still has a `customer` table. |
+| `002_account_self_limits.sql` | Upgrading an old database without customer-set limits. |
+| `003_account_number_format.sql` | Renumbering old accounts to `XXXX-XXXX`. Safe to re-run. |
 
-Existing account holders are not verified automatically. See the optional
-step near the end of migration 001 if you need that.
+Read any script before running it and take a backup first.
 
-To create an officer or admin, change the user's role from **Admin → Manage
-Users**, or with SQL as described at the end of migration 001.
+**Create the first admin:** register a normal user in the app, then run this
+in the SQL Editor (replace the username):
+
+```sql
+UPDATE public.app_users
+SET role_id = (SELECT role_id FROM public.roles WHERE role_name = 'admin')
+WHERE username = 'your-username';
+```
+
+After that, the admin can change other users' roles from **Admin → Manage
+Users**. To make a verification officer, use the same query with
+`'verification_officer'`.
 
 ### 4. Configure Supabase email change
 
