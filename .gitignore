@@ -45,4 +45,4 @@ htmlcov/
 .ipynb_checkpoints/
 
 instance/
-__pycache__
+__pycache__/
