@@ -69,10 +69,10 @@ Change a user's role from **Admin → Manage Users**.
 ## Project structure
 
 ```
-Bank-System-main/
+Bank-System/
 ├── run.py                  # Entry point
 ├── requirements.txt
-├── .env                    # Local secrets (never commit)
+├── .env.example            # Template for your local .env
 ├── app/
 │   ├── __init__.py         # App factory, sessions, security headers
 │   ├── extensions.py       # SQLAlchemy, sessions, Supabase clients
@@ -87,7 +87,7 @@ Bank-System-main/
 │       └── admin.py        # Admin console and database backup
 ├── templates/              # Jinja2 templates
 ├── static/                 # CSS
-├── migrations/             # SQL migrations (run in order)
+├── migrations/             # SQL scripts (000 sets up a new database)
 └── tests/                  # Unit tests
 ```
 
